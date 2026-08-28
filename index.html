@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1600">
+<title>GeoIntel</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="app">
+
+  <!-- HEADER -->
+  <header id="header">
+    <div class="logo-block">
+      <div class="logo-mark">◈</div>
+      <div class="logo-text">
+        <div class="logo-name">GeoIntel</div>
+        <div class="logo-subtitle">Geopolitical Intelligence</div>
+      </div>
+    </div>
+
+    <nav id="main-nav">
+      <button class="nav-tab active" data-view="chat">Chat</button>
+      <button class="nav-tab" data-view="explore">KB · Explore</button>
+      <button class="nav-tab" data-view="dashboard">KB · Dashboard</button>
+      <button class="nav-tab" data-view="admin">Admin</button>
+    </nav>
+
+    <div class="hdr-right">
+      <div class="dossier-selector">
+        <div class="dossier-label">DOSSIER</div>
+        <button class="dossier-btn">
+          <span class="dossier-name">Global overview</span>
+          <span class="dossier-chev">▾</span>
+        </button>
+      </div>
+      <button class="hdr-icon-btn" title="Archive">⎘</button>
+      <div class="user-badge">
+        <div class="user-avatar">GD</div>
+        <div class="user-meta">
+          <div class="user-name">G. Di Filippo</div>
+          <div class="user-role">Analyst</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main id="main">
+
+    <!-- CHAT VIEW -->
+    <section class="view active" data-view="chat">
+      <div class="chat-shell" id="chat-shell">
+        <!-- LANDING STATE -->
+        <div class="flow-state" data-state="landing">
+
+          <!-- LEFT: CHAT PANEL -->
+          <aside class="chat-panel">
+            <div class="panel-hdr">
+              <div class="panel-title">Ask</div>
+              <div class="panel-subtitle">Session · new</div>
+            </div>
+
+            <div class="chat-body">
+              <div class="opening-message">
+                <p><em>Ready to answer. Ask about the state of any actor, the drivers of a dossier, or a projection over a horizon you specify. I will pull the relevant subgraph and answer with sources.</em></p>
+              </div>
+
+              <div class="suggested-prompts">
+                <div class="prompts-label">TRY ONE OF THESE</div>
+                <button class="prompt-btn" data-prompt="taiwan-asis">
+                  <span class="prompt-arrow">→</span>
+                  <span class="prompt-text"><em>Baseline path of Taiwan Strait stability over the next 12 months</em></span>
+                </button>
+                <button class="prompt-btn" data-prompt="ukraine-whatif">
+                  <span class="prompt-arrow">→</span>
+                  <span class="prompt-text"><em>What if Ukraine's Western support drops materially in Q4 2026?</em></span>
+                </button>
+                <button class="prompt-btn" data-prompt="taiwan-sens">
+                  <span class="prompt-arrow">→</span>
+                  <span class="prompt-text"><em>Which relationships hold the most leverage over Taiwan Strait kinetic risk?</em></span>
+                </button>
+              </div>
+            </div>
+
+            <div class="chat-input-block">
+              <div class="chat-input-wrap">
+                <textarea class="chat-input" placeholder="Ask about actors, arcs, scenarios..." rows="2"></textarea>
+                <button class="run-btn idle">RUN →</button>
+              </div>
+              <div class="input-hint">Answer first · Deep-Think from the report if needed</div>
+            </div>
+          </aside>
+
+          <!-- CENTER: GRAPH -->
+          <section class="center-panel">
+            <div class="center-hdr">
+              <div class="center-hdr-left">
+                <div class="ctx-tag">GLOBAL · MULTI-DOSSIER</div>
+                <div class="center-title">The world in arcs</div>
+              </div>
+              <div class="center-hdr-right">
+                <div class="meta-row"><span class="meta-lbl">ACTORS</span><span class="meta-val">147</span></div>
+                <div class="meta-row"><span class="meta-lbl">ARCS SHOWN</span><span class="meta-val">428</span></div>
+                <div class="meta-row"><span class="meta-lbl">FILTER</span><span class="meta-val">weight ≥ 3</span></div>
+                <div class="meta-row"><span class="meta-lbl">ZOOM</span><span class="meta-val">1.0×</span></div>
+              </div>
+            </div>
+
+            <div class="graph-canvas" id="graph-canvas">
+              <svg id="global-graph" viewBox="0 0 900 620" preserveAspectRatio="xMidYMid meet"></svg>
+
+              <div class="graph-legend">
+                <div class="legend-title">LEGEND</div>
+                <div class="legend-row"><span class="lg-swatch amber-ring"></span><span>Central actor</span></div>
+                <div class="legend-row"><span class="lg-swatch muted-ring"></span><span>Peripheral</span></div>
+                <div class="legend-row"><span class="lg-line red"></span><span>Antagonistic</span></div>
+                <div class="legend-row"><span class="lg-line green"></span><span>Aligned</span></div>
+                <div class="legend-row"><span class="lg-line amber"></span><span>Complex</span></div>
+                <div class="legend-row"><span class="lg-line thick"></span><span>Weight ≥ 4</span></div>
+              </div>
+            </div>
+
+            <div class="graph-controls">
+              <button class="gc-btn active">◉ WEIGHT ≥ 3</button>
+              <button class="gc-btn">FORCE LAYOUT</button>
+              <button class="gc-btn">FILTERS</button>
+              <div class="gc-zoom">
+                <button class="gc-zoom-btn">−</button>
+                <span class="gc-zoom-lbl">ZOOM</span>
+                <button class="gc-zoom-btn">+</button>
+              </div>
+            </div>
+
+            <div class="graph-hints">
+              <em>ZOOM IN reveals lower-weight arcs · CLICK A NODE to focus &amp; open panel</em>
+            </div>
+          </section>
+
+          <!-- RIGHT: INTEL PANEL -->
+          <aside class="intel-panel">
+            <div class="intel-section">
+              <div class="section-label">GLOBAL EVIDENCE</div>
+              <div class="gauge-block">
+                <div class="gauge-5bar" data-value="4">
+                  <div class="gb-seg on"></div>
+                  <div class="gb-seg on"></div>
+                  <div class="gb-seg on"></div>
+                  <div class="gb-seg on partial"></div>
+                  <div class="gb-seg off"></div>
+                </div>
+                <div class="gauge-value">3.8 <span class="gauge-value-slash">/</span> 5</div>
+                <div class="gauge-caption">MODERATE-HIGH</div>
+              </div>
+            </div>
+
+            <div class="intel-section">
+              <div class="section-label">MOST ACTIVE ARCS</div>
+              <ol class="arcs-list">
+                <li class="arc-row">
+                  <span class="arc-idx">01</span>
+                  <span class="arc-pair">RUS ↔ UKR</span>
+                  <span class="vol-tag hi">H</span>
+                  <span class="arc-w">w 4.8</span>
+                </li>
+                <li class="arc-row">
+                  <span class="arc-idx">02</span>
+                  <span class="arc-pair">IRN ↔ ISR</span>
+                  <span class="vol-tag hi">H</span>
+                  <span class="arc-w">w 4.5</span>
+                </li>
+                <li class="arc-row">
+                  <span class="arc-idx">03</span>
+                  <span class="arc-pair">USA ↔ PRC</span>
+                  <span class="vol-tag med">M</span>
+                  <span class="arc-w">w 4.9</span>
+                </li>
+                <li class="arc-row">
+                  <span class="arc-idx">04</span>
+                  <span class="arc-pair">USA ↔ IRN</span>
+                  <span class="vol-tag hi">H</span>
+                  <span class="arc-w">w 4.2</span>
+                </li>
+                <li class="arc-row">
+                  <span class="arc-idx">05</span>
+                  <span class="arc-pair">PRC ↔ TWN</span>
+                  <span class="vol-tag med">M</span>
+                  <span class="arc-w">w 4.6</span>
+                </li>
+              </ol>
+            </div>
+
+            <div class="intel-section">
+              <div class="section-label">RECENT UPDATES</div>
+              <div class="update-row">
+                <div class="update-meta"><span class="src-tag">MERICS</span><span class="update-ts">2 MIN AGO</span></div>
+                <div class="update-headline"><em>Beijing signals restraint on Taiwan overflight after MOFA briefing</em></div>
+              </div>
+              <div class="update-row">
+                <div class="update-meta"><span class="src-tag">ECFR</span><span class="update-ts">17 MIN AGO</span></div>
+                <div class="update-headline"><em>Ukraine Q4 funding gap widens as US supplemental stalls in Senate</em></div>
+              </div>
+              <div class="update-row">
+                <div class="update-meta"><span class="src-tag">ISPI</span><span class="update-ts">41 MIN AGO</span></div>
+                <div class="update-headline"><em>Oman-mediated backchannel between Tehran and Washington resumes</em></div>
+              </div>
+            </div>
+          </aside>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- STUB VIEWS -->
+    <section class="view" data-view="explore">
+      <div class="stub-view">KB · Explore -- Fase 3</div>
+    </section>
+    <section class="view" data-view="dashboard">
+      <div class="stub-view">KB · Dashboard -- Fase 3</div>
+    </section>
+    <section class="view" data-view="admin">
+      <div class="stub-view">Admin -- Fase 3</div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer id="footer">
+    <div class="ft-left">
+      <span class="ft-item"><span class="ft-lbl">GRAPH</span> updated 5m ago</span>
+      <span class="ft-sep">·</span>
+      <span class="ft-item"><span class="ft-lbl">ARTICLES</span> 27,533</span>
+      <span class="ft-sep">·</span>
+      <span class="ft-item"><span class="ft-lbl">SOURCES</span> 11 active</span>
+      <span class="ft-sep">·</span>
+      <span class="ft-item"><span class="ft-lbl">DOSSIER</span> global overview</span>
+    </div>
+    <div class="ft-right">
+      <span class="ft-status ok">● CONNECTED · REAL-TIME</span>
+    </div>
+  </footer>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
