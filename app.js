@@ -27,35 +27,41 @@
   });
 
   // ========================================================================
-  // GLOBAL GRAPH -- SVG radial layout
+  // GLOBAL GRAPH -- SVG radial layout, neutral (no focus) state
   // ========================================================================
 
   var CENTRAL_ACTORS = [
-    { id: 'USA', label: 'USA', angle: 90 },
-    { id: 'PRC', label: 'PRC', angle: 30 },
-    { id: 'RUS', label: 'RUS', angle: 330 },
-    { id: 'IRN', label: 'IRN', angle: 270 },
-    { id: 'ISR', label: 'ISR', angle: 210 },
-    { id: 'EU',  label: 'EU',  angle: 150 },
-    { id: 'JPN', label: 'JPN', angle: 60 },
-    { id: 'KOR', label: 'KOR', angle: 0 },
-    { id: 'TWN', label: 'TWN', angle: 15 },
-    { id: 'IND', label: 'IND', angle: 315 },
-    { id: 'TUR', label: 'TUR', angle: 240 },
-    { id: 'KSA', label: 'KSA', angle: 195 }
+    { id: 'USA', label: 'USA', angle: 0 },
+    { id: 'JPN', label: 'JPN', angle: 30 },
+    { id: 'KOR', label: 'KOR', angle: 60 },
+    { id: 'TWN', label: 'TWN', angle: 90 },
+    { id: 'PRC', label: 'PRC', angle: 120 },
+    { id: 'IND', label: 'IND', angle: 150 },
+    { id: 'RUS', label: 'RUS', angle: 180 },
+    { id: 'TUR', label: 'TUR', angle: 210 },
+    { id: 'IRN', label: 'IRN', angle: 240 },
+    { id: 'KSA', label: 'KSA', angle: 270 },
+    { id: 'ISR', label: 'ISR', angle: 300 },
+    { id: 'EU',  label: 'EU',  angle: 330 }
   ];
 
   var PERIPHERAL_ACTORS = [
-    { id: 'POL', angle: 135 }, { id: 'BLR', angle: 300 },
-    { id: 'CAN', angle: 105 }, { id: 'MEX', angle: 75 },
-    { id: 'EGY', angle: 225 }, { id: 'BRA', angle: 45 },
-    { id: 'PHL', angle: 350 }, { id: 'SUD', angle: 250 },
-    { id: 'MMR', angle: 355 }, { id: 'AUS', angle: 10 },
-    { id: 'GBR', angle: 120 }, { id: 'DEU', angle: 165 },
-    { id: 'SYR', angle: 280 }, { id: 'UKR', angle: 310 }
+    { id: 'CAN', angle: 12 },
+    { id: 'AUS', angle: 48 },
+    { id: 'PHL', angle: 78 },
+    { id: 'MMR', angle: 102 },
+    { id: 'MEX', angle: 355 },
+    { id: 'BRA', angle: 340 },
+    { id: 'UKR', angle: 195 },
+    { id: 'BLR', angle: 175 },
+    { id: 'POL', angle: 160 },
+    { id: 'DEU', angle: 320 },
+    { id: 'GBR', angle: 335 },
+    { id: 'SYR', angle: 225 },
+    { id: 'EGY', angle: 285 },
+    { id: 'SUD', angle: 258 }
   ];
 
-  // Arcs colored by polarity (hostile/aligned/complex) and weight-tiered
   var ARCS = [
     { s: 'USA', t: 'PRC', pol: 'complex', w: 4.9 },
     { s: 'USA', t: 'RUS', pol: 'hostile', w: 4.4 },
@@ -107,7 +113,7 @@
     return '#E8A93E';
   }
   function polToOpacity(w) {
-    return Math.max(0.35, Math.min(0.9, (w - 2.8) / 2.5));
+    return Math.max(0.3, Math.min(0.75, (w - 2.8) / 2.8));
   }
 
   function polar(cx, cy, r, angDeg) {
@@ -155,14 +161,12 @@
       if (!s || !t) return;
       var color = polToColor(a.pol);
       var op = polToOpacity(a.w);
-      var thickness = a.w >= 4.3 ? 2.5 : (a.w >= 3.7 ? 1.6 : 1);
-      // Curve slightly for readability
+      var thickness = a.w >= 4.3 ? 2 : (a.w >= 3.7 ? 1.3 : 0.9);
       var mx = (s.x + t.x) / 2;
       var my = (s.y + t.y) / 2;
       var dx = t.x - s.x, dy = t.y - s.y;
       var dist = Math.sqrt(dx*dx + dy*dy);
-      var offset = dist * 0.10;
-      // Perpendicular
+      var offset = dist * 0.08;
       var nx = -dy / dist, ny = dx / dist;
       var ctrlX = mx + nx * offset;
       var ctrlY = my + ny * offset;
@@ -183,25 +187,24 @@
       var g = svgEl('g', { transform: 'translate(' + p.x + ',' + p.y + ')' });
 
       if (p.central) {
-        // Ring circle
+        // Neutral state: dim outline, panel-color fill, muted label
         g.appendChild(svgEl('circle', {
-          r: 22,
-          fill: '#1A1710',
-          stroke: '#E8A93E',
-          'stroke-width': 2
+          r: 20,
+          fill: '#0D1220',
+          stroke: '#8E6A2D',
+          'stroke-width': 1.5
         }));
-        // Label
         g.appendChild(svgEl('text', {
           'text-anchor': 'middle',
           'dominant-baseline': 'central',
-          fill: '#E8ECEF',
+          fill: '#A0A9BD',
           'font-family': 'Georgia, serif',
           'font-size': 11,
           'font-weight': 500
         }, p.label));
       } else {
         g.appendChild(svgEl('circle', {
-          r: 12,
+          r: 11,
           fill: '#12172A',
           stroke: '#3D4A73',
           'stroke-width': 1
@@ -247,7 +250,6 @@
         runBtn.classList.remove('active');
       }
     });
-    // Suggested prompt clicks fill input
     document.querySelectorAll('.prompt-btn').forEach(function(btn) {
       btn.addEventListener('click', function() {
         var txt = btn.querySelector('.prompt-text em').textContent;
