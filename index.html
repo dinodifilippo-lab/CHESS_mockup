@@ -10,7 +10,6 @@
 
 <div id="app">
 
-  <!-- HEADER -->
   <header id="header">
     <div class="logo-block">
       <div class="logo-mark">◈</div>
@@ -36,7 +35,6 @@
         </button>
         <div class="dossier-menu" id="dossier-menu"></div>
       </div>
-      <button class="hdr-icon-btn" title="Archive">⎘</button>
       <div class="user-badge">
         <div class="user-avatar">GD</div>
         <div class="user-meta">
@@ -47,15 +45,20 @@
     </div>
   </header>
 
-  <!-- MAIN -->
   <main id="main">
 
-    <!-- CHAT VIEW -->
     <section class="view active" data-view="chat">
       <div class="chat-shell" id="chat-shell">
 
-        <!-- LEFT: CHAT PANEL (persistent across states) -->
         <aside class="chat-panel">
+          <div class="chat-topbar">
+            <div class="chat-topbar-title">Session</div>
+            <div class="chat-topbar-icons">
+              <button class="chat-icon-btn" id="new-chat-btn" title="New chat">✎</button>
+              <button class="chat-icon-btn" id="archive-btn" title="Archive">⎘</button>
+            </div>
+          </div>
+
           <div class="panel-hdr">
             <div class="panel-title">Ask</div>
             <div class="panel-subtitle" id="chat-subtitle">Session · new</div>
@@ -69,9 +72,7 @@
             <span class="bc-reports" id="bc-reports"></span>
           </div>
 
-          <div class="chat-body" id="chat-body">
-            <!-- Populated by JS: landing shows opening + prompts; other states show turns -->
-          </div>
+          <div class="chat-body" id="chat-body"></div>
 
           <div class="chat-input-block">
             <div class="chat-input-wrap">
@@ -82,27 +83,18 @@
           </div>
         </aside>
 
-        <!-- CENTER + RIGHT: rendered dynamically per state -->
         <section class="center-panel" id="center-panel"></section>
-        <aside class="intel-panel" id="intel-panel"></aside>
+        <aside class="intel-panel hidden" id="intel-panel"></aside>
 
       </div>
     </section>
 
-    <!-- STUB VIEWS -->
-    <section class="view" data-view="explore">
-      <div class="stub-view">KB · Explore -- Phase 3</div>
-    </section>
-    <section class="view" data-view="dashboard">
-      <div class="stub-view">KB · Dashboard -- Phase 3</div>
-    </section>
-    <section class="view" data-view="admin">
-      <div class="stub-view">Admin -- Phase 3</div>
-    </section>
+    <section class="view" data-view="explore"><div class="stub-view">KB · Explore -- Phase 3</div></section>
+    <section class="view" data-view="dashboard"><div class="stub-view">KB · Dashboard -- Phase 3</div></section>
+    <section class="view" data-view="admin"><div class="stub-view">Admin -- Phase 3</div></section>
 
   </main>
 
-  <!-- FOOTER -->
   <footer id="footer">
     <div class="ft-left" id="footer-left">
       <span class="ft-item"><span class="ft-lbl">GRAPH</span> updated 5m ago</span>
@@ -117,6 +109,20 @@
       <span class="ft-status ok">● CONNECTED · REAL-TIME</span>
     </div>
   </footer>
+
+  <div class="full-report-overlay" id="full-report-overlay">
+    <div class="fro-hdr">
+      <div class="fro-title" id="fro-title"></div>
+      <button class="fro-close" id="fro-close">× CLOSE</button>
+    </div>
+    <div class="fro-body">
+      <div class="fro-lattice">
+        <div class="fro-section-label">◉ FULL TRAJECTORY LATTICE</div>
+        <svg id="fro-lattice-svg" preserveAspectRatio="xMidYMid meet"></svg>
+      </div>
+      <div class="fro-narrative" id="fro-narrative"></div>
+    </div>
+  </div>
 
 </div>
 
