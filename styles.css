@@ -977,3 +977,36 @@ em { font-style: italic; }
   50% { opacity: 0.55; }
 }
 .pulse-amber { animation: pulse-amber 1.5s ease-in-out infinite; }
+
+.evidence-appendix {
+  margin: var(--sp-md-lg) 0;
+  padding-top: var(--sp-md);
+  border-top: 1px solid var(--border-subtle);
+  opacity: 0.92;
+}
+.ev-item-compact { padding: 10px 0; }
+.ev-item-compact .ev-n { font-size: 11px; min-width: 24px; padding-top: 3px; }
+.ev-item-compact .ev-text { font-size: 12px; line-height: 1.55; }
+.sources-strip {
+  display: flex; flex-wrap: wrap; gap: 12px;
+  padding: 8px 0; margin-bottom: var(--sp-sm);
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--accent-amber); letter-spacing: 0.5px;
+}
+.source-inline {
+  padding: 3px 8px; background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+}
+.divergence-inline {
+  margin-top: 12px; padding: 8px 12px;
+  background: var(--bg-amber-3); border-left: 2px solid var(--accent-amber-dim);
+  font-family: var(--font-serif); font-style: italic;
+  font-size: 11.5px; color: var(--text-body-serif-alt); line-height: 1.5;
+}
+.sensitivity-inline {
+  font-family: var(--font-serif); font-size: 12.5px;
+  color: var(--text-body-serif); line-height: 1.7;
+  padding: 4px 0;
+}
+.sensitivity-inline em { color: var(--semantic-green-light); font-style: italic; }
+
