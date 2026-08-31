@@ -656,4 +656,3 @@ em { font-style: italic; }
 .matrix-cell.hi { background: var(--bg-amber-15); color: var(--accent-amber); border: 1px solid var(--accent-amber-dim); }
 .matrix-cell.med { background: var(--bg-amber-6); color: var(--text-primary); border: 1px solid var(--border-panel); }
 .matrix-cell.low { background: var(--bg-elevated); color: var(--text-tertiary); border: 1px solid var(--border-subtle); }
-
