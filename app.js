@@ -1,4 +1,4 @@
-// CHESS Mockup -- Phase 3 revision
+// CHESS Mockup -- Phase 3 revision++
 // Rotation sphere + Dashboard (6 tiles, no recent extractions) + Admin + Explore (5 sub-tabs, socioeconomic actor data, sources matrix)
 
 (function() {
