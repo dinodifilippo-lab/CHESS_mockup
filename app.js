@@ -1,16 +1,15 @@
-// GeoIntel Mockup -- Phase 3
-// Adds: sphere rotation (auto + drag), Dashboard, Admin, Explore renderers
+// CHESS Mockup -- Phase 3 revision
+// Rotation sphere + Dashboard (6 tiles, no recent extractions) + Admin + Explore (5 sub-tabs, socioeconomic actor data, sources matrix)
 
 (function() {
   'use strict';
 
   var STATE = {
     view: 'chat', flow: 'landing', activeScenario: null,
-    scenarioHistory: [], activeDossier: 'global',
-    turns: [], dtProgress: 0, timers: [], pendingScenarioId: null,
+    scenarioHistory: [], turns: [], dtProgress: 0, timers: [], pendingScenarioId: null,
     sphere: { rotY: 0.35, rotX: 0.18, autoRotate: true, lastInteract: 0, dragging: false },
     admin: { section: 'sources' },
-    explore: { sub: 'news', selected: null }
+    explore: { sub: 'news', selected: null, matrixDossier: 'all' }
   };
 
   function clearTimers() {
@@ -35,44 +34,6 @@
       else if (target === 'explore') renderExplore();
     });
   });
-
-  var dossierBtn = document.getElementById('dossier-btn');
-  var dossierMenu = document.getElementById('dossier-menu');
-  var dossierName = document.getElementById('dossier-name');
-  var ftDossier = document.getElementById('ft-dossier');
-
-  function renderDossierMenu() {
-    dossierMenu.innerHTML = '';
-    window.GEODATA.dossiers.forEach(function(d) {
-      var item = document.createElement('button');
-      item.className = 'dossier-menu-item';
-      item.textContent = d.name;
-      item.addEventListener('click', function() {
-        selectDossier(d.id);
-        dossierMenu.classList.remove('open');
-      });
-      dossierMenu.appendChild(item);
-    });
-  }
-  renderDossierMenu();
-  dossierBtn.addEventListener('click', function(e) { e.stopPropagation(); dossierMenu.classList.toggle('open'); });
-  document.addEventListener('click', function() { dossierMenu.classList.remove('open'); });
-
-  function selectDossier(dossierId) {
-    var d = window.GEODATA.dossiers.find(function(x) { return x.id === dossierId; });
-    if (!d) return;
-    STATE.activeDossier = dossierId;
-    dossierName.textContent = d.name;
-    ftDossier.textContent = d.name.toLowerCase();
-    resetToLanding();
-  }
-  function selectDossierSilent(dossierId) {
-    var d = window.GEODATA.dossiers.find(function(x) { return x.id === dossierId; });
-    if (!d) return;
-    STATE.activeDossier = dossierId;
-    dossierName.textContent = d.name;
-    ftDossier.textContent = d.name.toLowerCase();
-  }
 
   function svgEl(tag, attrs, text) {
     var el = document.createElementNS('http://www.w3.org/2000/svg', tag);
@@ -189,12 +150,10 @@
     svg.appendChild(nodesG);
   }
 
-  // Sphere interaction: drag + auto-rotate
   function attachSphereInteraction() {
     var svg = document.getElementById('global-graph');
     if (!svg) return;
     var startX = 0, startY = 0, startRotY = 0, startRotX = 0;
-
     function onDown(e) {
       var p = e.touches ? e.touches[0] : e;
       STATE.sphere.dragging = true;
@@ -210,7 +169,6 @@
       var dx = p.clientX - startX, dy = p.clientY - startY;
       STATE.sphere.rotY = startRotY + dx * 0.008;
       STATE.sphere.rotX = startRotX + dy * 0.008;
-      // Clamp X rotation
       if (STATE.sphere.rotX > 1.2) STATE.sphere.rotX = 1.2;
       if (STATE.sphere.rotX < -1.2) STATE.sphere.rotX = -1.2;
       STATE.sphere.lastInteract = Date.now();
@@ -221,7 +179,6 @@
       STATE.sphere.dragging = false;
       STATE.sphere.lastInteract = Date.now();
     }
-
     svg.addEventListener('mousedown', onDown);
     document.addEventListener('mousemove', onMove);
     document.addEventListener('mouseup', onUp);
@@ -230,12 +187,10 @@
     document.addEventListener('touchend', onUp);
   }
 
-  // Auto-rotate loop
   setInterval(function() {
     if (STATE.view !== 'chat' || STATE.flow !== 'landing') return;
     var now = Date.now();
     if (STATE.sphere.dragging) return;
-    // Resume auto-rotate after 3 seconds of inactivity
     if (!STATE.sphere.autoRotate && now - STATE.sphere.lastInteract > 3000) {
       STATE.sphere.autoRotate = true;
     }
@@ -245,7 +200,6 @@
     }
   }, 50);
 
-  // Subgraph rendering (unchanged from Phase 2)
   var CENTRAL_ACTORS = [
     { id: 'USA', angle: 0 }, { id: 'JPN', angle: 30 }, { id: 'KOR', angle: 60 },
     { id: 'TWN', angle: 90 }, { id: 'PRC', angle: 120 }, { id: 'IND', angle: 150 },
@@ -424,14 +378,14 @@
   }
 
   function renderLandingCenter() {
-    centerPanel.innerHTML = '<div class="center-hdr"><div class="center-hdr-left"><div class="ctx-tag">GLOBAL · MULTI-DOSSIER</div><div class="center-title">The world in arcs</div></div><div class="center-hdr-right"><div class="meta-row"><span class="meta-lbl">ACTORS</span><span class="meta-val">147</span></div><div class="meta-row"><span class="meta-lbl">ARCS</span><span class="meta-val">428</span></div><div class="meta-row"><span class="meta-lbl">VIEW</span><span class="meta-val">sphere</span></div></div></div><div class="graph-canvas"><svg id="global-graph" preserveAspectRatio="xMidYMid meet"></svg></div><div class="graph-hints"><em>Drag to rotate · Ask a question to pull the relevant subgraph into focus</em></div>';
+    centerPanel.innerHTML = '<div class="demo-banner">◇ DEMO ONLY -- NOT REAL DATA</div><div class="center-hdr"><div class="center-hdr-left"><div class="ctx-tag">GLOBAL · MULTI-DOSSIER</div><div class="center-title">The world in arcs</div></div><div class="center-hdr-right"><div class="meta-row"><span class="meta-lbl">ACTORS</span><span class="meta-val">147</span></div><div class="meta-row"><span class="meta-lbl">ARCS</span><span class="meta-val">428</span></div><div class="meta-row"><span class="meta-lbl">VIEW</span><span class="meta-val">sphere</span></div></div></div><div class="graph-canvas"><svg id="global-graph" preserveAspectRatio="xMidYMid meet"></svg></div><div class="graph-hints"><em>Drag to rotate · Ask a question to pull the relevant subgraph into focus</em></div>';
     renderGlobalGraph('global-graph');
     attachSphereInteraction();
   }
 
   function renderAskingCenter() {
     var s = STATE.activeScenario;
-    centerPanel.innerHTML = '<div class="center-hdr"><div class="center-hdr-left"><div class="ctx-tag amber">◉ FOCUSED ON QUESTION SUBGRAPH</div><div class="center-title">' + s.dossier + ' <em>· the arcs in play</em></div></div><div class="center-hdr-right"><div class="meta-row"><span class="meta-lbl">ACTORS</span><span class="meta-val amber">' + s.subgraph.actorCount + '</span></div><div class="meta-row"><span class="meta-lbl">ARCS</span><span class="meta-val amber">' + s.subgraph.arcCount + '</span></div><div class="meta-row"><span class="meta-lbl">REST</span><span class="meta-val">dimmed</span></div></div></div><div class="graph-canvas"><svg id="subgraph-svg" class="subgraph-svg" preserveAspectRatio="xMidYMid meet"></svg><div class="graph-status"><div class="gs-title">◉ SUBGRAPH FILTERED BY QUESTION</div><div class="gs-body">Pulling relevant actors and arcs into focus.</div></div></div>';
+    centerPanel.innerHTML = '<div class="demo-banner">◇ DEMO ONLY -- NOT REAL DATA</div><div class="center-hdr"><div class="center-hdr-left"><div class="ctx-tag amber">◉ FOCUSED ON QUESTION SUBGRAPH</div><div class="center-title">' + s.dossier + ' <em>· the arcs in play</em></div></div><div class="center-hdr-right"><div class="meta-row"><span class="meta-lbl">ACTORS</span><span class="meta-val amber">' + s.subgraph.actorCount + '</span></div><div class="meta-row"><span class="meta-lbl">ARCS</span><span class="meta-val amber">' + s.subgraph.arcCount + '</span></div><div class="meta-row"><span class="meta-lbl">REST</span><span class="meta-val">dimmed</span></div></div></div><div class="graph-canvas"><svg id="subgraph-svg" class="subgraph-svg" preserveAspectRatio="xMidYMid meet"></svg><div class="graph-status"><div class="gs-title">◉ SUBGRAPH FILTERED BY QUESTION</div><div class="gs-body">Pulling relevant actors and arcs into focus.</div></div></div>';
     renderSubgraph('subgraph-svg', s);
   }
 
@@ -471,6 +425,7 @@
     }).join(' ');
     var tierBlock = s.dtReport ? ('<div class="dt-tier-block"><div class="tier-card" data-tier="light"><div class="tier-title">Light</div><div class="tier-cost">~ $0.05</div><div class="tier-desc">Top-N seeds only, shallow tree. Fast, indicative.</div><button class="tier-btn">RUN LIGHT</button></div><div class="tier-card recommended" data-tier="standard"><div class="tier-title amber">Standard <span class="tier-reco">RECOMMENDED</span></div><div class="tier-cost amber">~ $0.30</div><div class="tier-desc">Full seeds + MCTS. Balanced depth and cost.</div><button class="tier-btn filled">◆ RUN STANDARD</button></div><div class="tier-card" data-tier="heavy"><div class="tier-title">Heavy</div><div class="tier-cost red">~ $1.20</div><div class="tier-desc">Deeper tree, more iterations, validation loop.</div><button class="tier-btn">RUN HEAVY</button></div></div>') : '';
     centerPanel.innerHTML =
+      '<div class="demo-banner">◇ DEMO ONLY -- NOT REAL DATA</div>' +
       '<div class="report-meta-bar"><span class="rmb-badge">◆ L1 ANSWER</span><span>' + s.dossier + '</span><span class="rmb-sep">·</span><span>Level 1 · RAG</span><span class="rmb-sep">·</span><span>Composed ' + r.composedAt + '</span><div class="rmb-actions"><button class="rmb-action">SAVE</button><button class="rmb-action">↓ PDF</button></div></div>' +
       '<h1 class="report-title">' + r.title + '</h1>' +
       '<div class="report-subtitle">' + r.subtitle + '</div>' +
@@ -514,7 +469,7 @@
       return '<div class="phase-card ' + cls + '"><span class="phase-n">' + n + '</span><span class="phase-name">' + p + '</span>' + (i < phases.length - 1 ? '<span class="phase-chev">›</span>' : '') + '</div>';
     }).join('');
     var mctsIter = Math.floor(progress * 200);
-    centerPanel.innerHTML = '<div class="center-hdr"><div class="center-hdr-left"><div class="ctx-tag amber">◆ DEEP-THINK STANDARD · RUNNING</div><div class="center-title"><em>' + s.question + '</em></div></div><div class="center-hdr-right"><div class="meta-row"><span class="meta-lbl">STARTED</span><span class="meta-val amber">' + nowHM() + '</span></div><div class="meta-row"><span class="meta-lbl">ETA</span><span class="meta-val">' + Math.floor((1 - progress) * 200) + 's</span></div></div></div><div class="dt-phase-bar">' + phaseHtml + '</div><div class="dt-counters"><div class="counter-cell"><span class="counter-lbl">ITERATIONS</span><span class="counter-val">' + mctsIter + '</span><span class="counter-sub green">▲ 3.2/s</span></div><div class="counter-cell"><span class="counter-lbl">SEEDS</span><span class="counter-val">4</span><span class="counter-sub">scenarios</span></div><div class="counter-cell"><span class="counter-lbl">NODES</span><span class="counter-val">' + (240 + Math.floor(progress * 1000)) + '</span><span class="counter-sub green">+1 dynamic</span></div><div class="counter-cell accent"><span class="counter-lbl">TURN</span><span class="counter-val">t = ' + Math.min(5, Math.floor(progress * 6)) + ' / 5</span><span class="counter-sub amber">active</span></div></div><div class="dt-tree-canvas"><svg id="dt-tree-svg" preserveAspectRatio="xMidYMid meet"></svg></div>';
+    centerPanel.innerHTML = '<div class="demo-banner">◇ DEMO ONLY -- NOT REAL DATA</div><div class="center-hdr"><div class="center-hdr-left"><div class="ctx-tag amber">◆ DEEP-THINK STANDARD · RUNNING</div><div class="center-title"><em>' + s.question + '</em></div></div><div class="center-hdr-right"><div class="meta-row"><span class="meta-lbl">STARTED</span><span class="meta-val amber">' + nowHM() + '</span></div><div class="meta-row"><span class="meta-lbl">ETA</span><span class="meta-val">' + Math.floor((1 - progress) * 200) + 's</span></div></div></div><div class="dt-phase-bar">' + phaseHtml + '</div><div class="dt-counters"><div class="counter-cell"><span class="counter-lbl">ITERATIONS</span><span class="counter-val">' + mctsIter + '</span><span class="counter-sub green">▲ 3.2/s</span></div><div class="counter-cell"><span class="counter-lbl">SEEDS</span><span class="counter-val">4</span><span class="counter-sub">scenarios</span></div><div class="counter-cell"><span class="counter-lbl">NODES</span><span class="counter-val">' + (240 + Math.floor(progress * 1000)) + '</span><span class="counter-sub green">+1 dynamic</span></div><div class="counter-cell accent"><span class="counter-lbl">TURN</span><span class="counter-val">t = ' + Math.min(5, Math.floor(progress * 6)) + ' / 5</span><span class="counter-sub amber">active</span></div></div><div class="dt-tree-canvas"><svg id="dt-tree-svg" preserveAspectRatio="xMidYMid meet"></svg></div>';
     renderDTTree('dt-tree-svg', progress);
   }
 
@@ -574,6 +529,7 @@
     }).join('');
     var fullReportBtn = r.fullReport ? '<button class="rmb-action primary" id="full-report-btn">◆ FULL REPORT</button>' : '';
     centerPanel.innerHTML =
+      '<div class="demo-banner">◇ DEMO ONLY -- NOT REAL DATA</div>' +
       '<div class="report-meta-bar"><span class="rmb-badge dt">◆ DEEP-THINK · STANDARD</span><span>' + s.dossier + '</span><span class="rmb-sep">·</span><span>' + r.stats.iterations + ' iterations</span><span class="rmb-sep">·</span><span>Composed ' + nowHM() + '</span><div class="rmb-actions">' + fullReportBtn + '<button class="rmb-action">SAVE</button><button class="rmb-action">↓ PDF</button></div></div>' +
       '<h1 class="report-title">' + r.title + '</h1>' +
       '<div class="report-subtitle">' + r.subtitle + '</div>' +
@@ -725,9 +681,9 @@
 
   function renderFull() { renderChatBody(); renderBreadcrumb(); renderCenterAndIntel(); renderFooter(); }
 
-  // ==========================================================================
-  // DASHBOARD
-  // ==========================================================================
+  // =====================================================================
+  // DASHBOARD (6 tiles, no recent extractions, banner in body)
+  // =====================================================================
   function renderDashboard() {
     var d = window.GEODATA.phase3.dashboard;
     var shell = document.getElementById('dashboard-shell');
@@ -736,37 +692,36 @@
       var cls = v >= 45 ? ' hi' : '';
       return '<div class="dash-spark-bar' + cls + '" style="height:' + h + 'px"></div>';
     }).join('');
-    var covHtml = '<div class="dash-matrix"><div class="dash-matrix-h">SOURCE</div><div class="dash-matrix-h">UKR</div><div class="dash-matrix-h">TWN</div><div class="dash-matrix-h">IRN</div><div class="dash-matrix-h">GLB</div>';
-    d.coverage.forEach(function(row) {
-      covHtml += '<div class="dash-matrix-r">' + row.source + '</div>';
-      covHtml += '<div class="dash-matrix-cell ' + row.ukr + '">' + row.ukr.toUpperCase() + '</div>';
-      covHtml += '<div class="dash-matrix-cell ' + row.twn + '">' + row.twn.toUpperCase() + '</div>';
-      covHtml += '<div class="dash-matrix-cell ' + row.irn + '">' + row.irn.toUpperCase() + '</div>';
-      covHtml += '<div class="dash-matrix-cell ' + row.glb + '">' + row.glb.toUpperCase() + '</div>';
-    });
-    covHtml += '</div>';
-    var recentHtml = d.recent.map(function(r) {
-      return '<div class="dash-recent-row"><div class="dash-recent-t">' + r.t + '</div><div class="dash-recent-src">' + r.src + '</div><div class="dash-recent-body"><em>' + r.body + '</em></div></div>';
+    var topActorsHtml = d.topActors.map(function(a, i) {
+      var idx = i + 1; if (idx < 10) idx = '0' + idx;
+      return '<div class="dash-kv-row"><span class="dash-kv-k">' + idx + ' &nbsp; ' + a.code + '</span><span class="dash-kv-v amber">' + a.arcs + ' arcs</span></div>';
     }).join('');
+    var maxArcCount = Math.max.apply(null, d.arcDistribution.map(function(b) { return b.count; }));
+    var arcDistHtml = '<div class="dash-arc-dist">';
+    d.arcDistribution.forEach(function(bin) {
+      var barPct = (bin.count / maxArcCount) * 100;
+      arcDistHtml += '<div class="dash-arc-row"><span class="dash-arc-lbl">' + bin.bin + '</span><div class="dash-arc-bar-wrap"><div class="dash-arc-bar" style="width:' + barPct + '%"></div></div><span class="dash-arc-count">' + bin.count + '</span></div>';
+    });
+    arcDistHtml += '</div>';
     var healthHtml = d.health.map(function(h) {
       return '<div class="dash-kv-row"><span class="dash-kv-k">' + h.k + '</span><span class="dash-kv-v ' + h.cls + '">' + h.v + '</span></div>';
     }).join('');
     shell.innerHTML =
       '<div class="demo-banner">◇ DEMO ONLY -- NOT REAL DATA</div>' +
-      '<div class="dash-hdr-block"><div class="ctx-tag">KNOWLEDGE BASE · DASHBOARD</div><h1>System <em>state</em></h1></div>' +
+      '<div class="dash-hdr-block"><div class="ctx-tag">DASHBOARD</div><h1>System <em>state</em></h1></div>' +
       '<div class="dash-grid">' +
-      '<div class="dash-tile"><div class="dash-tile-hdr"><div class="dash-tile-title">Corpus totals</div><div class="dash-tile-badge">LIVE</div></div><div class="dash-tile-body"><div class="dash-big-num">' + d.corpus.articles.toLocaleString() + '</div><div class="dash-big-num-sub">articles ingested</div><div class="dash-kv-row" style="margin-top:14px"><span class="dash-kv-k">Sources active</span><span class="dash-kv-v amber">' + d.corpus.sources + '</span></div><div class="dash-kv-row"><span class="dash-kv-k">Embedded</span><span class="dash-kv-v green">' + d.corpus.embedded.toLocaleString() + ' (' + d.corpus.embeddedPct + '%)</span></div><div class="dash-kv-row"><span class="dash-kv-k">Graph nodes</span><span class="dash-kv-v">' + d.corpus.graphNodes.toLocaleString() + '</span></div><div class="dash-kv-row"><span class="dash-kv-k">Graph arcs</span><span class="dash-kv-v">' + d.corpus.graphArcs.toLocaleString() + '</span></div></div></div>' +
+      '<div class="dash-tile"><div class="dash-tile-hdr"><div class="dash-tile-title">Corpus totals</div><div class="dash-tile-badge">LIVE</div></div><div class="dash-tile-body"><div class="dash-big-num">' + d.corpus.articles.toLocaleString() + '</div><div class="dash-big-num-sub">articles ingested</div><div class="dash-kv-row" style="margin-top:14px"><span class="dash-kv-k">Sources active</span><span class="dash-kv-v amber">' + d.corpus.sources + '</span></div><div class="dash-kv-row"><span class="dash-kv-k">Embedded</span><span class="dash-kv-v green">' + d.corpus.embedded.toLocaleString() + ' (' + d.corpus.embeddedPct + '%)</span></div></div></div>' +
       '<div class="dash-tile"><div class="dash-tile-hdr"><div class="dash-tile-title">Ingestion cadence</div><div class="dash-tile-badge">LAST 15 DAYS</div></div><div class="dash-tile-body"><div class="dash-big-num">' + d.ingestionSpark[d.ingestionSpark.length-1] + '</div><div class="dash-big-num-sub">articles today</div><div class="dash-spark">' + sparkHtml + '</div></div></div>' +
-      '<div class="dash-tile"><div class="dash-tile-hdr"><div class="dash-tile-title">Coverage matrix</div><div class="dash-tile-badge">BY DOSSIER</div></div><div class="dash-tile-body">' + covHtml + '</div></div>' +
-      '<div class="dash-tile"><div class="dash-tile-hdr"><div class="dash-tile-title">Graph state</div><div class="dash-tile-badge">DERIVED</div></div><div class="dash-tile-body"><div class="dash-kv-row"><span class="dash-kv-k">Nodes</span><span class="dash-kv-v amber">' + d.corpus.graphNodes.toLocaleString() + '</span></div><div class="dash-kv-row"><span class="dash-kv-k">Arcs</span><span class="dash-kv-v">' + d.corpus.graphArcs.toLocaleString() + '</span></div><div class="dash-kv-row"><span class="dash-kv-k">Avg arc weight</span><span class="dash-kv-v">3.42</span></div><div class="dash-kv-row"><span class="dash-kv-k">Density</span><span class="dash-kv-v">0.011</span></div><div class="dash-kv-row"><span class="dash-kv-k">Last KG rebuild</span><span class="dash-kv-v">6h ago</span></div></div></div>' +
-      '<div class="dash-tile"><div class="dash-tile-hdr"><div class="dash-tile-title">Recent extractions</div><div class="dash-tile-badge">STREAM</div></div><div class="dash-tile-body">' + recentHtml + '</div></div>' +
+      '<div class="dash-tile"><div class="dash-tile-hdr"><div class="dash-tile-title">Graph state</div><div class="dash-tile-badge">DERIVED</div></div><div class="dash-tile-body"><div class="dash-kv-row"><span class="dash-kv-k">Actors (nodes)</span><span class="dash-kv-v amber">' + d.corpus.graphNodes + '</span></div><div class="dash-kv-row"><span class="dash-kv-k">Arcs</span><span class="dash-kv-v amber">' + d.corpus.graphArcs + '</span></div><div class="dash-kv-row"><span class="dash-kv-k">Avg arc weight</span><span class="dash-kv-v">' + d.graphState.avgWeight + '</span></div><div class="dash-kv-row"><span class="dash-kv-k">Density</span><span class="dash-kv-v">' + d.graphState.density + '</span></div><div class="dash-kv-row"><span class="dash-kv-k">Strongly connected</span><span class="dash-kv-v">' + d.graphState.stronglyConnected + '</span></div><div class="dash-kv-row"><span class="dash-kv-k">Last KG rebuild</span><span class="dash-kv-v">' + d.graphState.lastRebuild + '</span></div></div></div>' +
+      '<div class="dash-tile"><div class="dash-tile-hdr"><div class="dash-tile-title">Top actors by centrality</div><div class="dash-tile-badge">GRAPH</div></div><div class="dash-tile-body">' + topActorsHtml + '</div></div>' +
+      '<div class="dash-tile"><div class="dash-tile-hdr"><div class="dash-tile-title">Arc weight distribution</div><div class="dash-tile-badge">GRAPH</div></div><div class="dash-tile-body">' + arcDistHtml + '</div></div>' +
       '<div class="dash-tile"><div class="dash-tile-hdr"><div class="dash-tile-title">System health</div><div class="dash-tile-badge">METRICS</div></div><div class="dash-tile-body">' + healthHtml + '</div></div>' +
       '</div>';
   }
 
-  // ==========================================================================
+  // =====================================================================
   // ADMIN
-  // ==========================================================================
+  // =====================================================================
   function renderAdmin() {
     var main = document.getElementById('admin-main');
     document.querySelectorAll('.admin-nav-item').forEach(function(item) {
@@ -802,9 +757,9 @@
       '<div class="admin-stub"><div class="admin-stub-title">' + titles[section] + '</div><div class="admin-stub-body">This section is a placeholder in the current demo. Full functionality will be added in subsequent phases.</div></div>';
   }
 
-  // ==========================================================================
-  // EXPLORE
-  // ==========================================================================
+  // =====================================================================
+  // EXPLORE (5 sub-tabs: News, Analyses, Primary, Structured, Sources)
+  // =====================================================================
   function renderExplore() {
     document.querySelectorAll('.sub-tab').forEach(function(tab) {
       tab.classList.toggle('active', tab.getAttribute('data-sub') === STATE.explore.sub);
@@ -817,9 +772,10 @@
     var body = document.getElementById('explore-body');
     var e = window.GEODATA.phase3.explore;
     if (STATE.explore.sub === 'news')            renderExploreList(body, e.news, 'news');
-    else if (STATE.explore.sub === 'structured') renderExploreStructured(body, e.structured);
-    else if (STATE.explore.sub === 'primary')    renderExploreList(body, e.primary, 'primary');
     else if (STATE.explore.sub === 'analyses')   renderExploreList(body, e.analyses, 'analyses');
+    else if (STATE.explore.sub === 'primary')    renderExploreList(body, e.primary, 'primary');
+    else if (STATE.explore.sub === 'structured') renderExploreStructured(body, e.structured);
+    else if (STATE.explore.sub === 'sources')    renderExploreSources(body, e.sourcesMatrix);
   }
 
   function renderExploreList(body, items, kind) {
@@ -841,12 +797,31 @@
   }
 
   function renderExploreStructured(body, items) {
-    var filtersHtml = '<div class="filter-group"><div class="filter-label">ACTOR TYPE</div><button class="filter-chip active">All</button><button class="filter-chip">State</button><button class="filter-chip">Institution</button><button class="filter-chip">Corporate</button></div><div class="filter-group"><div class="filter-label">MIN ARCS</div><button class="filter-chip active">Any</button><button class="filter-chip">10+</button><button class="filter-chip">20+</button><button class="filter-chip">30+</button></div>';
+    var filtersHtml = '<div class="filter-group"><div class="filter-label">ACTOR TYPE</div><button class="filter-chip active">All</button><button class="filter-chip">State</button><button class="filter-chip">Institution</button><button class="filter-chip">Corporate</button></div><div class="filter-group"><div class="filter-label">REGION</div><button class="filter-chip active">Any</button><button class="filter-chip">Europe</button><button class="filter-chip">Asia</button><button class="filter-chip">Middle East</button><button class="filter-chip">Americas</button></div>';
     var listHtml = items.map(function(a) {
-      return '<div class="expl-actor-row" data-code="' + a.code + '"><span class="expl-actor-code">' + a.code + '</span><span class="expl-actor-name">' + a.name + '</span><span class="expl-actor-arcs">' + a.type + ' · ' + a.arcs + ' arcs</span></div>';
+      return '<div class="expl-actor-row" data-code="' + a.code + '"><span class="expl-actor-code">' + a.code + '</span><span class="expl-actor-name">' + a.name + '</span><span class="expl-actor-arcs">' + a.type + '</span></div>';
     }).join('');
     var sel = STATE.explore.selected;
-    var detailHtml = sel ? ('<div class="expl-detail-hdr"><div class="expl-detail-title">' + sel.name + ' <span style="color:#E8A93E">(' + sel.code + ')</span></div><div class="expl-detail-meta">' + sel.type + ' · ' + sel.arcs + ' outgoing arcs</div></div><div class="expl-detail-body">This actor participates in ' + sel.arcs + ' relationships across the knowledge graph. Full profile would include arc list, event timeline, source distribution, and centrality metrics.</div><div class="expl-ask-widget"><div class="expl-ask-label">◉ ASK ABOUT ' + sel.code + '</div><input class="expl-ask-input" placeholder="Ask about this actor..."></div>') : '<div class="expl-empty">Select an actor to see the detail</div>';
+    var detailHtml;
+    if (sel) {
+      var dataRowsHtml = '';
+      var labels = {
+        gdp: "GDP (nominal)", gdpGrowth: "GDP growth", population: "Population",
+        militarySpend: "Military spend", militaryPctGdp: "Military % of GDP",
+        tradeBalance: "Trade balance", exportTop: "Top exports",
+        politicalRegime: "Political regime", allianceCore: "Core alliances",
+        revenue: "Revenue", grossMargin: "Gross margin", employees: "Employees",
+        headquartered: "Headquartered", leadingNodeShare: "Leading-node share",
+        capexPlan: "Capex plan", keyMarkets: "Key markets", strategicRole: "Strategic role"
+      };
+      Object.keys(sel.data).forEach(function(k) {
+        var lbl = labels[k] || k;
+        dataRowsHtml += '<div class="expl-data-row"><span class="expl-data-k">' + lbl + '</span><span class="expl-data-v">' + sel.data[k] + '</span></div>';
+      });
+      detailHtml = '<div class="expl-detail-hdr"><div class="expl-detail-title">' + sel.name + ' <span style="color:#E8A93E">(' + sel.code + ')</span></div><div class="expl-detail-meta">' + sel.type + '</div></div><div class="expl-data-block">' + dataRowsHtml + '</div><div class="expl-ask-widget"><div class="expl-ask-label">◉ ASK ABOUT ' + sel.code + '</div><input class="expl-ask-input" placeholder="Ask about this actor..."></div>';
+    } else {
+      detailHtml = '<div class="expl-empty">Select an actor to see structured data</div>';
+    }
     body.innerHTML = '<aside class="expl-filters">' + filtersHtml + '</aside><div class="expl-list">' + listHtml + '</div><aside class="expl-detail">' + detailHtml + '</aside>';
     document.querySelectorAll('.expl-actor-row').forEach(function(el) {
       el.addEventListener('click', function() {
@@ -857,9 +832,46 @@
     });
   }
 
-  // ==========================================================================
-  // FLOW TRANSITIONS (unchanged from Phase 2)
-  // ==========================================================================
+  function renderExploreSources(body, matrix) {
+    var filtersHtml = '<div class="filter-group"><div class="filter-label">DOSSIER FILTER</div><button class="filter-chip ' + (STATE.explore.matrixDossier === 'all' ? 'active' : '') + '" data-mdos="all">All dossiers</button>';
+    matrix.dossiers.forEach(function(d) {
+      filtersHtml += '<button class="filter-chip ' + (STATE.explore.matrixDossier === d ? 'active' : '') + '" data-mdos="' + d + '">' + d + '</button>';
+    });
+    filtersHtml += '</div><div class="filter-group"><div class="filter-label">MIN VOLUME</div><button class="filter-chip active">Any</button><button class="filter-chip">1000+</button><button class="filter-chip">3000+</button><button class="filter-chip">5000+</button></div><div class="filter-group"><div class="filter-label">PERIOD</div><button class="filter-chip active">All time</button><button class="filter-chip">Last month</button><button class="filter-chip">Last quarter</button></div>';
+
+    var headHtml = '<tr><th>Source</th><th>Volume</th>';
+    var dossiersToShow = STATE.explore.matrixDossier === 'all' ? matrix.dossiers : [STATE.explore.matrixDossier];
+    dossiersToShow.forEach(function(d) { headHtml += '<th>' + d + '</th>'; });
+    headHtml += '</tr>';
+
+    var rowsHtml = matrix.rows.map(function(row) {
+      var cellsHtml = '';
+      dossiersToShow.forEach(function(d) {
+        var v = row.dist[d];
+        var lbl = v === 'hi' ? 'HIGH' : v === 'med' ? 'MED' : 'LOW';
+        cellsHtml += '<td><span class="matrix-cell ' + v + '">' + lbl + '</span></td>';
+      });
+      return '<tr><td><span class="src-name">' + row.source + '</span></td><td class="src-num">' + row.articles.toLocaleString() + '</td>' + cellsHtml + '</tr>';
+    }).join('');
+
+    body.innerHTML =
+      '<aside class="expl-filters">' + filtersHtml + '</aside>' +
+      '<div class="expl-matrix-wrap">' +
+      '<div class="expl-matrix-caption">Convergence heat-map: how densely each source covers each dossier. HIGH means the source is a primary voice for that dossier; LOW means peripheral coverage.</div>' +
+      '<table class="matrix-table"><thead>' + headHtml + '</thead><tbody>' + rowsHtml + '</tbody></table>' +
+      '</div>';
+
+    document.querySelectorAll('[data-mdos]').forEach(function(el) {
+      el.addEventListener('click', function() {
+        STATE.explore.matrixDossier = el.getAttribute('data-mdos');
+        renderExplore();
+      });
+    });
+  }
+
+  // =====================================================================
+  // FLOW TRANSITIONS
+  // =====================================================================
   function resetToLanding() {
     clearTimers();
     overlay.classList.remove('open');
@@ -885,7 +897,6 @@
     if (!s) return;
     if (STATE.activeScenario) STATE.scenarioHistory.push(STATE.activeScenario);
     STATE.activeScenario = s;
-    if (s.dossierId) selectDossierSilent(s.dossierId);
     STATE.turns.push({ type: 'user', body: s.question, ts: nowHM() });
     goToAsking();
   }

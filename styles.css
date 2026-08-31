@@ -626,3 +626,34 @@ em { font-style: italic; }
 
 @keyframes pulse-amber { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
 .pulse-amber { animation: pulse-amber 1.5s ease-in-out infinite; }
+/* ==========================================================================
+   PHASE 3 REVISION -- additional styles
+   ========================================================================== */
+
+/* Dashboard: arc weight distribution */
+.dash-arc-dist { display: flex; flex-direction: column; gap: 6px; padding-top: 4px; }
+.dash-arc-row { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 10px; }
+.dash-arc-lbl { min-width: 60px; color: var(--text-tertiary); letter-spacing: 0.5px; }
+.dash-arc-bar-wrap { flex: 1; height: 12px; background: var(--bg-elevated); position: relative; }
+.dash-arc-bar { height: 100%; background: linear-gradient(90deg, var(--accent-amber-dim) 0%, var(--accent-amber) 100%); }
+.dash-arc-count { min-width: 32px; text-align: right; color: var(--accent-amber); font-size: 10px; }
+
+/* Explore Structured: data block */
+.expl-data-block { padding: 4px 0; }
+.expl-data-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dotted var(--border-subtle); font-family: var(--font-mono); font-size: 11px; }
+.expl-data-row:last-child { border-bottom: none; }
+.expl-data-k { color: var(--text-tertiary); letter-spacing: 0.3px; font-size: 10px; }
+.expl-data-v { color: var(--text-primary); text-align: right; font-size: 10.5px; max-width: 60%; }
+
+/* Explore Sources matrix */
+.expl-matrix-wrap { flex: 1; padding: var(--sp-md) var(--sp-md-lg); overflow-y: auto; }
+.expl-matrix-caption { font-family: var(--font-serif); font-style: italic; font-size: 12px; color: var(--text-secondary); line-height: 1.5; margin-bottom: var(--sp-md); max-width: 640px; }
+.matrix-table { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 11px; }
+.matrix-table th { text-align: left; padding: 10px 12px; background: var(--bg-elevated); color: var(--text-tertiary); letter-spacing: 1.2px; text-transform: uppercase; font-size: 9px; border-bottom: 1px solid var(--border-panel); font-weight: normal; }
+.matrix-table td { padding: 12px; color: var(--text-secondary); border-bottom: 1px solid var(--border-subtle); }
+.matrix-table tr:hover td { background: var(--bg-elevated); }
+.matrix-cell { display: inline-block; padding: 4px 10px; font-size: 9px; letter-spacing: 1.2px; font-family: var(--font-mono); }
+.matrix-cell.hi { background: var(--bg-amber-15); color: var(--accent-amber); border: 1px solid var(--accent-amber-dim); }
+.matrix-cell.med { background: var(--bg-amber-6); color: var(--text-primary); border: 1px solid var(--border-panel); }
+.matrix-cell.low { background: var(--bg-elevated); color: var(--text-tertiary); border: 1px solid var(--border-subtle); }
+

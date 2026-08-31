@@ -1,4 +1,5 @@
-// GeoIntel Mockup -- Phase 3 (adds phase3 data block for Dashboard/Admin/Explore)
+// CHESS Mockup -- Phase 3 revision
+// DEMO ONLY - NOT REAL DATA
 
 window.GEODATA = {
 
@@ -33,10 +34,9 @@ window.GEODATA = {
     "iran-fu-b": ["iran-fu-a"]
   },
 
-  // ==========================================================================
-  // PHASE 3 DATA -- Dashboard, Admin, Explore
-  // All values are DEMO ONLY - NOT REAL DATA
-  // ==========================================================================
+  // =====================================================================
+  // PHASE 3 DATA
+  // =====================================================================
   phase3: {
 
     dashboard: {
@@ -45,50 +45,61 @@ window.GEODATA = {
         sources: 6,
         embedded: 27533,
         embeddedPct: 100,
-        graphNodes: 2847,
-        graphArcs: 8912
+        graphNodes: 147,
+        graphArcs: 428
       },
       ingestionSpark: [12, 18, 24, 22, 31, 28, 35, 42, 38, 45, 51, 48, 55, 62, 58],
-      coverage: [
-        { source: "ISPI",    ukr: "hi",  twn: "med", irn: "hi",  glb: "hi" },
-        { source: "ECFR",    ukr: "hi",  twn: "low", irn: "med", glb: "hi" },
-        { source: "MERICS",  ukr: "low", twn: "hi",  irn: "med", glb: "med" },
-        { source: "Bruegel", ukr: "med", twn: "med", irn: "low", glb: "hi" },
-        { source: "CSIS",    ukr: "hi",  twn: "hi",  irn: "hi",  glb: "hi" },
-        { source: "FP",      ukr: "med", twn: "med", irn: "hi",  glb: "med" }
+      topActors: [
+        { code: "USA", arcs: 42, io: "in/out" },
+        { code: "PRC", arcs: 38, io: "in/out" },
+        { code: "EU",  arcs: 33, io: "in/out" },
+        { code: "RUS", arcs: 29, io: "in/out" },
+        { code: "DEU", arcs: 26, io: "in/out" },
+        { code: "IRN", arcs: 24, io: "in/out" },
+        { code: "JPN", arcs: 22, io: "in/out" },
+        { code: "ISR", arcs: 21, io: "in/out" },
+        { code: "UKR", arcs: 19, io: "in/out" },
+        { code: "TWN", arcs: 18, io: "in/out" }
       ],
-      recent: [
-        { t: "2m ago",  src: "MERICS",  body: "Beijing signals restraint on Taiwan overflight after MOFA briefing" },
-        { t: "17m ago", src: "ECFR",    body: "Ukraine Q4 funding gap widens as US supplemental stalls" },
-        { t: "41m ago", src: "ISPI",    body: "Oman-mediated backchannel between Tehran and Washington resumes" },
-        { t: "1h ago",  src: "CSIS",    body: "PLA amphibious exercise pattern deviates from calendar cycle" },
-        { t: "2h ago",  src: "Bruegel", body: "German 2027 budget draft signals Ukraine envelope rebalancing" },
-        { t: "3h ago",  src: "FP",      body: "Israel doctrine paper on preemption gains coalition backing" }
+      arcDistribution: [
+        { bin: "w < 2",   count:  38, pct:  8.9 },
+        { bin: "w 2-3",   count: 124, pct: 29.0 },
+        { bin: "w 3-4",   count: 168, pct: 39.3 },
+        { bin: "w 4-4.5", count:  71, pct: 16.6 },
+        { bin: "w > 4.5", count:  27, pct:  6.3 }
       ],
+      graphState: {
+        avgWeight: 3.42,
+        density: 0.040,
+        lastRebuild: "6h ago",
+        weightedAvg: 3.68,
+        stronglyConnected: 12,
+        isolatedNodes: 4
+      },
       health: [
-        { k: "Embedding lag",     v: "0.4s",   cls: "green" },
-        { k: "Extraction lag",    v: "2.1m",   cls: "amber" },
-        { k: "API error rate",    v: "0.02%",  cls: "green" },
-        { k: "Job queue depth",   v: "3",      cls: "green" },
-        { k: "Storage used",      v: "42.8 GB",cls: "" },
-        { k: "Last KG rebuild",   v: "6h ago", cls: "" }
+        { k: "Embedding lag",   v: "0.4s",    cls: "green" },
+        { k: "Extraction lag",  v: "2.1m",    cls: "amber" },
+        { k: "API error rate",  v: "0.02%",   cls: "green" },
+        { k: "Job queue depth", v: "3",       cls: "green" },
+        { k: "Storage used",    v: "42.8 GB", cls: "" },
+        { k: "Last KG rebuild", v: "6h ago",  cls: "" }
       ]
     },
 
     admin: {
       sources: [
-        { name: "ISPI",             kind: "Think tank",        articles: 4218, lastSync: "12m ago",  status: "ok",   region: "Europe" },
-        { name: "ECFR",             kind: "Think tank",        articles: 5104, lastSync: "8m ago",   status: "ok",   region: "Europe" },
-        { name: "MERICS",           kind: "Research institute",articles: 3892, lastSync: "24m ago",  status: "ok",   region: "Europe / China focus" },
-        { name: "Bruegel",          kind: "Economic think tank",articles: 2967,lastSync: "18m ago",  status: "ok",   region: "Europe" },
-        { name: "CSIS",             kind: "Think tank",        articles: 6841, lastSync: "3m ago",   status: "ok",   region: "USA" },
-        { name: "Foreign Policy",   kind: "Magazine",          articles: 4511, lastSync: "41m ago",  status: "warn", region: "USA" }
+        { name: "ISPI",           kind: "Think tank",         articles: 4218, lastSync: "12m ago", status: "ok",   region: "Europe" },
+        { name: "ECFR",           kind: "Think tank",         articles: 5104, lastSync: "8m ago",  status: "ok",   region: "Europe" },
+        { name: "MERICS",         kind: "Research institute", articles: 3892, lastSync: "24m ago", status: "ok",   region: "Europe / China focus" },
+        { name: "Bruegel",        kind: "Economic think tank",articles: 2967, lastSync: "18m ago", status: "ok",   region: "Europe" },
+        { name: "CSIS",           kind: "Think tank",         articles: 6841, lastSync: "3m ago",  status: "ok",   region: "USA" },
+        { name: "Foreign Policy", kind: "Magazine",           articles: 4511, lastSync: "41m ago", status: "warn", region: "USA" }
       ]
     },
 
     explore: {
       news: [
-        { id: "n1",  src: "MERICS",  date: "Aug 30 2026", dossier: "Taiwan", title: "PLA Justice Mission drill patterns show shift toward off-calendar tempo", snippet: "The most recent PLA exercise sequence departs from the calendar-coincident pattern established since 2022, with implications for early-warning frameworks that rely on scheduled activity for baseline detection." },
+        { id: "n1",  src: "MERICS",  date: "Aug 30 2026", dossier: "Taiwan",  title: "PLA Justice Mission drill patterns show shift toward off-calendar tempo", snippet: "The most recent PLA exercise sequence departs from the calendar-coincident pattern established since 2022, with implications for early-warning frameworks that rely on scheduled activity for baseline detection." },
         { id: "n2",  src: "ECFR",    date: "Aug 28 2026", dossier: "Ukraine", title: "German 2027 budget draft opens Ukraine envelope to Bundestag amendment", snippet: "The Finance Ministry's initial draft preserves the headline Ukraine allocation but introduces conditional language that leaves substantive space for coalition partners to propose reductions during committee review." },
         { id: "n3",  src: "CSIS",    date: "Aug 27 2026", dossier: "Iran",    title: "Bessent economic pressure campaign targets secondary sanctions on Chinese refiners", snippet: "Treasury guidance issued this week signals expanded secondary sanctions targeting Shandong teapot refineries and their intermediary networks in the UAE and Malaysia." },
         { id: "n4",  src: "ISPI",    date: "Aug 26 2026", dossier: "Iran",    title: "Oman-mediated Hormuz shipping channel proposal advances", snippet: "Muscat's proposal for a temporary corridor through the Strait of Hormuz has entered technical discussions between Iranian and Omani maritime authorities, with implicit US acquiescence." },
@@ -98,31 +109,102 @@ window.GEODATA = {
         { id: "n8",  src: "CSIS",    date: "Aug 22 2026", dossier: "Ukraine", title: "US supplemental status remains uncertain into Q1 2027", snippet: "Senate calendar constraints and House Republican coalition dynamics make near-term action unlikely; the operational assumption in Kyiv shifts toward planning without additional US support." }
       ],
       structured: [
-        { code: "USA", name: "United States",         type: "State",           arcs: 42 },
-        { code: "PRC", name: "China",                 type: "State",           arcs: 38 },
-        { code: "RUS", name: "Russia",                type: "State",           arcs: 29 },
-        { code: "IRN", name: "Iran",                  type: "State",           arcs: 24 },
-        { code: "ISR", name: "Israel",                type: "State",           arcs: 21 },
-        { code: "EU",  name: "European Union",        type: "Institution",     arcs: 33 },
-        { code: "JPN", name: "Japan",                 type: "State",           arcs: 22 },
-        { code: "TWN", name: "Taiwan",                type: "State",           arcs: 18 },
-        { code: "UKR", name: "Ukraine",               type: "State",           arcs: 19 },
-        { code: "DEU", name: "Germany",               type: "State",           arcs: 26 },
-        { code: "TSMC",name: "Taiwan Semiconductor",  type: "Corporate actor", arcs: 12 },
-        { code: "OMN", name: "Oman",                  type: "State",           arcs:  9 }
+        { code: "USA", name: "United States",     type: "State", data: {
+          gdp: "$28,780 bn", gdpGrowth: "+2.4%", population: "334.9 M",
+          militarySpend: "$886 bn", militaryPctGdp: "3.4%",
+          tradeBalance: "-$785 bn", exportTop: "Machinery, aircraft, oil",
+          politicalRegime: "Federal presidential republic", allianceCore: "NATO, AUKUS, Quad"
+        }},
+        { code: "PRC", name: "China",             type: "State", data: {
+          gdp: "$18,530 bn", gdpGrowth: "+4.8%", population: "1,410 M",
+          militarySpend: "$296 bn", militaryPctGdp: "1.7%",
+          tradeBalance: "+$823 bn", exportTop: "Electronics, machinery, textiles",
+          politicalRegime: "Single-party socialist republic", allianceCore: "SCO, BRICS+"
+        }},
+        { code: "RUS", name: "Russia",            type: "State", data: {
+          gdp: "$2,020 bn", gdpGrowth: "+3.6%", population: "144.2 M",
+          militarySpend: "$109 bn", militaryPctGdp: "5.9%",
+          tradeBalance: "+$118 bn", exportTop: "Oil, gas, metals, weapons",
+          politicalRegime: "Federal semi-presidential republic", allianceCore: "CSTO, EAEU, BRICS+"
+        }},
+        { code: "IRN", name: "Iran",              type: "State", data: {
+          gdp: "$367 bn", gdpGrowth: "+3.4%", population: "89.2 M",
+          militarySpend: "$10.3 bn", militaryPctGdp: "2.8%",
+          tradeBalance: "+$28 bn", exportTop: "Oil, petrochemicals",
+          politicalRegime: "Theocratic republic", allianceCore: "SCO, informal Sino-Russian axis"
+        }},
+        { code: "ISR", name: "Israel",            type: "State", data: {
+          gdp: "$520 bn", gdpGrowth: "+2.0%", population: "9.8 M",
+          militarySpend: "$27 bn", militaryPctGdp: "5.2%",
+          tradeBalance: "+$8 bn", exportTop: "High-tech, diamonds, chemicals",
+          politicalRegime: "Parliamentary democracy", allianceCore: "US strategic partnership, Abraham Accords"
+        }},
+        { code: "EU",  name: "European Union",    type: "Institution", data: {
+          gdp: "$19,400 bn", gdpGrowth: "+1.2%", population: "448.4 M",
+          militarySpend: "$367 bn (aggregate)", militaryPctGdp: "1.9%",
+          tradeBalance: "+$412 bn", exportTop: "Machinery, vehicles, pharma",
+          politicalRegime: "Supranational union", allianceCore: "NATO (most members)"
+        }},
+        { code: "JPN", name: "Japan",             type: "State", data: {
+          gdp: "$4,410 bn", gdpGrowth: "+1.1%", population: "125.1 M",
+          militarySpend: "$50.2 bn", militaryPctGdp: "1.1%",
+          tradeBalance: "+$21 bn", exportTop: "Vehicles, machinery, electronics",
+          politicalRegime: "Parliamentary constitutional monarchy", allianceCore: "US-Japan Treaty, Quad"
+        }},
+        { code: "TWN", name: "Taiwan",            type: "State", data: {
+          gdp: "$790 bn", gdpGrowth: "+3.8%", population: "23.6 M",
+          militarySpend: "$19 bn", militaryPctGdp: "2.4%",
+          tradeBalance: "+$85 bn", exportTop: "Semiconductors, electronics",
+          politicalRegime: "Semi-presidential republic", allianceCore: "US Taiwan Relations Act (informal)"
+        }},
+        { code: "UKR", name: "Ukraine",           type: "State", data: {
+          gdp: "$178 bn", gdpGrowth: "+3.2%", population: "37.8 M",
+          militarySpend: "$65 bn (incl. Western aid)", militaryPctGdp: "36.5%",
+          tradeBalance: "-$21 bn", exportTop: "Grain, metals, machinery",
+          politicalRegime: "Semi-presidential republic under martial law", allianceCore: "EU candidate, NATO partner"
+        }},
+        { code: "DEU", name: "Germany",           type: "State", data: {
+          gdp: "$4,590 bn", gdpGrowth: "+0.4%", population: "84.5 M",
+          militarySpend: "$67.7 bn", militaryPctGdp: "1.5%",
+          tradeBalance: "+$248 bn", exportTop: "Vehicles, machinery, chemicals",
+          politicalRegime: "Federal parliamentary republic", allianceCore: "NATO, EU"
+        }},
+        { code: "TSMC",name: "Taiwan Semiconductor",type: "Corporate actor", data: {
+          revenue: "$85 bn", grossMargin: "54%", employees: "~76,000",
+          headquartered: "Hsinchu, Taiwan",
+          leadingNodeShare: "~90% global", capexPlan: "$40 bn (2026)",
+          keyMarkets: "Apple, NVIDIA, AMD, Qualcomm", strategicRole: "Choke-point in global semiconductor supply chain"
+        }},
+        { code: "OMN", name: "Oman",              type: "State", data: {
+          gdp: "$108 bn", gdpGrowth: "+1.8%", population: "4.6 M",
+          militarySpend: "$5.7 bn", militaryPctGdp: "5.3%",
+          tradeBalance: "+$16 bn", exportTop: "Oil, gas",
+          politicalRegime: "Absolute monarchy", allianceCore: "GCC, historical mediator role"
+        }}
       ],
       primary: [
-        { id: "p1", src: "Japan MoD",     date: "Jul 2026", title: "Defense of Japan 2026 (Annual White Paper)", snippet: "Official Japanese defence policy document, explicitly names Taiwan Strait stability as a Japanese security interest for the first time." },
-        { id: "p2", src: "US Treasury",   date: "Aug 2026", title: "OFAC guidance on secondary sanctions expansion -- Iran oil trade", snippet: "Technical guidance detailing the scope and enforcement approach for the Bessent 'economic operation' targeting third-country buyers of Iranian oil." },
-        { id: "p3", src: "PLA",           date: "Dec 2025", title: "Justice Mission 2025 exercise summary (Chinese source translation)", snippet: "Post-exercise summary from PLA-affiliated media, providing the doctrinal framing that positions the exercise as blockade rehearsal rather than amphibious assault." },
-        { id: "p4", src: "European Council", date: "Jun 2026", title: "Council conclusions on European Peace Facility Ukraine tranche", snippet: "Formal conclusions on the multi-annual European support envelope, including the burden-sharing formula and disbursement schedule." }
+        { id: "p1", src: "Japan MoD",        date: "Jul 2026", title: "Defense of Japan 2026 (Annual White Paper)",                              snippet: "Official Japanese defence policy document, explicitly names Taiwan Strait stability as a Japanese security interest for the first time." },
+        { id: "p2", src: "US Treasury",      date: "Aug 2026", title: "OFAC guidance on secondary sanctions expansion -- Iran oil trade",         snippet: "Technical guidance detailing the scope and enforcement approach for the Bessent 'economic operation' targeting third-country buyers of Iranian oil." },
+        { id: "p3", src: "PLA",              date: "Dec 2025", title: "Justice Mission 2025 exercise summary (Chinese source translation)",     snippet: "Post-exercise summary from PLA-affiliated media, providing the doctrinal framing that positions the exercise as blockade rehearsal rather than amphibious assault." },
+        { id: "p4", src: "European Council", date: "Jun 2026", title: "Council conclusions on European Peace Facility Ukraine tranche",          snippet: "Formal conclusions on the multi-annual European support envelope, including the burden-sharing formula and disbursement schedule." }
       ],
       analyses: [
-        { id: "a1", src: "IISS",    date: "Apr 2026", title: "Attrition and adaptation: Ukraine's evolving war effort", snippet: "IISS assessment of the shift in the Ukrainian force posture under reduced Western support, with implications for the 2026-2027 horizon." },
-        { id: "a2", src: "The Diplomat", date: "Jan 2026", title: "China's Taiwan drills are crossing a new line", snippet: "Analysis of the Justice Mission 2025 exercise and the normalisation of PLA activity inside Taiwan's contiguous zone." },
-        { id: "a3", src: "CSIS",    date: "Jul 2026", title: "Semiconductor dispersion and Taiwan risk", snippet: "Detailed technical and strategic analysis of TSMC's dispersion strategy and its interaction with Chinese calculations on Taiwan." },
-        { id: "a4", src: "ECFR",    date: "Aug 2026", title: "Europe's hybrid response deficit", snippet: "Assessment of the structural constraints on European coordination against Russian hybrid pressure, with proposed institutional pathways." }
-      ]
+        { id: "a1", src: "IISS",         date: "Apr 2026", title: "Attrition and adaptation: Ukraine's evolving war effort", snippet: "IISS assessment of the shift in the Ukrainian force posture under reduced Western support, with implications for the 2026-2027 horizon." },
+        { id: "a2", src: "The Diplomat", date: "Jan 2026", title: "China's Taiwan drills are crossing a new line",           snippet: "Analysis of the Justice Mission 2025 exercise and the normalisation of PLA activity inside Taiwan's contiguous zone." },
+        { id: "a3", src: "CSIS",         date: "Jul 2026", title: "Semiconductor dispersion and Taiwan risk",                snippet: "Detailed technical and strategic analysis of TSMC's dispersion strategy and its interaction with Chinese calculations on Taiwan." },
+        { id: "a4", src: "ECFR",         date: "Aug 2026", title: "Europe's hybrid response deficit",                        snippet: "Assessment of the structural constraints on European coordination against Russian hybrid pressure, with proposed institutional pathways." }
+      ],
+      sourcesMatrix: {
+        dossiers: ["Ukraine", "Taiwan", "Iran", "Global"],
+        rows: [
+          { source: "ISPI",    articles: 4218, dist: { Ukraine: "hi",  Taiwan: "med", Iran: "hi",  Global: "hi"  } },
+          { source: "ECFR",    articles: 5104, dist: { Ukraine: "hi",  Taiwan: "low", Iran: "med", Global: "hi"  } },
+          { source: "MERICS",  articles: 3892, dist: { Ukraine: "low", Taiwan: "hi",  Iran: "med", Global: "med" } },
+          { source: "Bruegel", articles: 2967, dist: { Ukraine: "med", Taiwan: "med", Iran: "low", Global: "hi"  } },
+          { source: "CSIS",    articles: 6841, dist: { Ukraine: "hi",  Taiwan: "hi",  Iran: "hi",  Global: "hi"  } },
+          { source: "FP",      articles: 4511, dist: { Ukraine: "med", Taiwan: "med", Iran: "hi",  Global: "med" } }
+        ]
+      }
     }
 
   },
@@ -131,12 +213,9 @@ window.GEODATA = {
 
     "ukraine-main": {
       question: "How could the Ukraine situation evolve over the next 12 months?",
-      dossier: "Ukraine / Russia / NATO",
-      dossierId: "ukraine",
-      parent: null,
+      dossier: "Ukraine / Russia / NATO", dossierId: "ukraine", parent: null,
       subgraph: {
-        focus: ["UKR", "RUS", "USA", "EU", "DEU", "POL"],
-        peripheral: ["GBR", "BLR", "TUR"],
+        focus: ["UKR", "RUS", "USA", "EU", "DEU", "POL"], peripheral: ["GBR", "BLR", "TUR"],
         arcs: [
           { s: "RUS", t: "UKR", w: 4.8, vol: "H", pol: "hostile" },
           { s: "USA", t: "UKR", w: 3.6, vol: "H", pol: "aligned" },
@@ -150,12 +229,7 @@ window.GEODATA = {
         actorCount: 9, arcCount: 8, passageCount: 58, sourceCount: 6
       },
       evidenceStrength: 4.0, evidenceCaption: "HIGH",
-      thinkingSteps: [
-        "Subgraph resolved: 9 actors, 8 arcs",
-        "Corpus retrieval: 58 passages, 6 sources",
-        "Composing positioned answer",
-        "Validation on critical arcs"
-      ],
+      thinkingSteps: ["Subgraph resolved: 9 actors, 8 arcs","Corpus retrieval: 58 passages, 6 sources","Composing positioned answer","Validation on critical arcs"],
       l1Report: {
         title: "The war has entered an attrition phase where the modal path is neither victory nor collapse.",
         subtitle: "A positioned reading of the Ukraine dossier over a 12-month horizon.",
@@ -194,10 +268,10 @@ window.GEODATA = {
         robustness: 3.5, robustnessCaption: "MEDIUM-HIGH",
         robustnessNote: "Distribution stable across 4 restart seeds (max delta 5pp). Confidence limited by dependence on political catalysts across three polities (US, DEU, EU-level).",
         drivingArcs: [
-          { pair: "USA ↔ UKR", desc: "Pivot: supplemental cycle", pol: "amber" },
-          { pair: "DEU ↔ EU",  desc: "Driver: budget stress",     pol: "amber" },
+          { pair: "USA ↔ UKR", desc: "Pivot: supplemental cycle",     pol: "amber" },
+          { pair: "DEU ↔ EU",  desc: "Driver: budget stress",         pol: "amber" },
           { pair: "EU ↔ UKR",  desc: "Anchor: multi-annual envelope", pol: "green" },
-          { pair: "RUS ↔ UKR", desc: "Frame: attrition dynamic",  pol: "red" }
+          { pair: "RUS ↔ UKR", desc: "Frame: attrition dynamic",      pol: "red" }
         ],
         assumptions: [
           "A1: No Russian battlefield breakthrough in the horizon.",
