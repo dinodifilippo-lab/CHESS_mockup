@@ -1,5 +1,5 @@
-// GeoIntel Mockup -- Phase 2 revised v2
-// Report layout: thesis + implication in cima, evidence + sources in fondo ridotti
+// GeoIntel Mockup -- Phase 3
+// Adds: sphere rotation (auto + drag), Dashboard, Admin, Explore renderers
 
 (function() {
   'use strict';
@@ -7,7 +7,10 @@
   var STATE = {
     view: 'chat', flow: 'landing', activeScenario: null,
     scenarioHistory: [], activeDossier: 'global',
-    turns: [], dtProgress: 0, timers: [], pendingScenarioId: null
+    turns: [], dtProgress: 0, timers: [], pendingScenarioId: null,
+    sphere: { rotY: 0.35, rotX: 0.18, autoRotate: true, lastInteract: 0, dragging: false },
+    admin: { section: 'sources' },
+    explore: { sub: 'news', selected: null }
   };
 
   function clearTimers() {
@@ -27,6 +30,9 @@
         if (v.getAttribute('data-view') === target) v.classList.add('active');
         else v.classList.remove('active');
       });
+      if (target === 'dashboard') renderDashboard();
+      else if (target === 'admin') renderAdmin();
+      else if (target === 'explore') renderExplore();
     });
   });
 
@@ -114,7 +120,7 @@
     var cx = 450, cy = 310, R = 260;
     var actors = GLOBAL_ACTORS_SPHERE;
     var pts3d = fibSphere(actors.length);
-    var rotY = 0.35, rotX = 0.18;
+    var rotY = STATE.sphere.rotY, rotX = STATE.sphere.rotX;
     var cosY = Math.cos(rotY), sinY = Math.sin(rotY);
     var cosX = Math.cos(rotX), sinX = Math.sin(rotX);
     var positions = pts3d.map(function(p, i) {
@@ -183,6 +189,63 @@
     svg.appendChild(nodesG);
   }
 
+  // Sphere interaction: drag + auto-rotate
+  function attachSphereInteraction() {
+    var svg = document.getElementById('global-graph');
+    if (!svg) return;
+    var startX = 0, startY = 0, startRotY = 0, startRotX = 0;
+
+    function onDown(e) {
+      var p = e.touches ? e.touches[0] : e;
+      STATE.sphere.dragging = true;
+      STATE.sphere.autoRotate = false;
+      STATE.sphere.lastInteract = Date.now();
+      startX = p.clientX; startY = p.clientY;
+      startRotY = STATE.sphere.rotY; startRotX = STATE.sphere.rotX;
+      e.preventDefault();
+    }
+    function onMove(e) {
+      if (!STATE.sphere.dragging) return;
+      var p = e.touches ? e.touches[0] : e;
+      var dx = p.clientX - startX, dy = p.clientY - startY;
+      STATE.sphere.rotY = startRotY + dx * 0.008;
+      STATE.sphere.rotX = startRotX + dy * 0.008;
+      // Clamp X rotation
+      if (STATE.sphere.rotX > 1.2) STATE.sphere.rotX = 1.2;
+      if (STATE.sphere.rotX < -1.2) STATE.sphere.rotX = -1.2;
+      STATE.sphere.lastInteract = Date.now();
+      renderGlobalGraph('global-graph');
+      e.preventDefault();
+    }
+    function onUp() {
+      STATE.sphere.dragging = false;
+      STATE.sphere.lastInteract = Date.now();
+    }
+
+    svg.addEventListener('mousedown', onDown);
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+    svg.addEventListener('touchstart', onDown, { passive: false });
+    document.addEventListener('touchmove', onMove, { passive: false });
+    document.addEventListener('touchend', onUp);
+  }
+
+  // Auto-rotate loop
+  setInterval(function() {
+    if (STATE.view !== 'chat' || STATE.flow !== 'landing') return;
+    var now = Date.now();
+    if (STATE.sphere.dragging) return;
+    // Resume auto-rotate after 3 seconds of inactivity
+    if (!STATE.sphere.autoRotate && now - STATE.sphere.lastInteract > 3000) {
+      STATE.sphere.autoRotate = true;
+    }
+    if (STATE.sphere.autoRotate) {
+      STATE.sphere.rotY += 0.003;
+      renderGlobalGraph('global-graph');
+    }
+  }, 50);
+
+  // Subgraph rendering (unchanged from Phase 2)
   var CENTRAL_ACTORS = [
     { id: 'USA', angle: 0 }, { id: 'JPN', angle: 30 }, { id: 'KOR', angle: 60 },
     { id: 'TWN', angle: 90 }, { id: 'PRC', angle: 120 }, { id: 'IND', angle: 150 },
@@ -328,13 +391,10 @@
     if (!s) return;
     var isDT = STATE.flow === 'dt-running';
     var steps = isDT ? [
-      'Subgraph resolved',
-      'First-mover selected (' + (s.subgraph.focus[0] || 'USA') + ')',
-      '4 seeds generated',
-      'Full expansion turns 0-2',
+      'Subgraph resolved', 'First-mover selected (' + (s.subgraph.focus[0] || 'USA') + ')',
+      '4 seeds generated', 'Full expansion turns 0-2',
       'MCTS sampling · iter ' + Math.floor(STATE.dtProgress * 200) + ' / ~200',
-      'Aggregating outcomes',
-      'Composing report'
+      'Aggregating outcomes', 'Composing report'
     ] : s.thinkingSteps;
     var itemsHtml = steps.map(function(step, i) {
       var progress = STATE.dtProgress;
@@ -364,13 +424,14 @@
   }
 
   function renderLandingCenter() {
-    centerPanel.innerHTML = '<div class="center-hdr"><div class="center-hdr-left"><div class="ctx-tag">GLOBAL · MULTI-DOSSIER</div><div class="center-title">The world in arcs</div></div><div class="center-hdr-right"><div class="meta-row"><span class="meta-lbl">ACTORS</span><span class="meta-val">147</span></div><div class="meta-row"><span class="meta-lbl">ARCS</span><span class="meta-val">428</span></div><div class="meta-row"><span class="meta-lbl">VIEW</span><span class="meta-val">sphere · 1.0×</span></div></div></div><div class="graph-canvas"><svg id="global-graph" preserveAspectRatio="xMidYMid meet"></svg></div><div class="graph-controls"><button class="gc-btn active">◉ SPHERE</button><button class="gc-btn">ROTATE</button><button class="gc-btn">FILTERS</button><div class="gc-zoom"><button class="gc-zoom-btn">−</button><span class="gc-zoom-lbl">ZOOM</span><button class="gc-zoom-btn">+</button></div></div><div class="graph-hints"><em>Ask a question to pull the relevant subgraph into focus</em></div>';
+    centerPanel.innerHTML = '<div class="center-hdr"><div class="center-hdr-left"><div class="ctx-tag">GLOBAL · MULTI-DOSSIER</div><div class="center-title">The world in arcs</div></div><div class="center-hdr-right"><div class="meta-row"><span class="meta-lbl">ACTORS</span><span class="meta-val">147</span></div><div class="meta-row"><span class="meta-lbl">ARCS</span><span class="meta-val">428</span></div><div class="meta-row"><span class="meta-lbl">VIEW</span><span class="meta-val">sphere</span></div></div></div><div class="graph-canvas"><svg id="global-graph" preserveAspectRatio="xMidYMid meet"></svg></div><div class="graph-hints"><em>Drag to rotate · Ask a question to pull the relevant subgraph into focus</em></div>';
     renderGlobalGraph('global-graph');
+    attachSphereInteraction();
   }
 
   function renderAskingCenter() {
     var s = STATE.activeScenario;
-    centerPanel.innerHTML = '<div class="center-hdr"><div class="center-hdr-left"><div class="ctx-tag amber">◉ FOCUSED ON QUESTION SUBGRAPH</div><div class="center-title">' + s.dossier + ' <em>· the arcs in play</em></div></div><div class="center-hdr-right"><div class="meta-row"><span class="meta-lbl">ACTORS</span><span class="meta-val amber">' + s.subgraph.actorCount + '</span></div><div class="meta-row"><span class="meta-lbl">ARCS</span><span class="meta-val amber">' + s.subgraph.arcCount + '</span></div><div class="meta-row"><span class="meta-lbl">REST</span><span class="meta-val">dimmed</span></div></div></div><div class="graph-canvas"><svg id="subgraph-svg" class="subgraph-svg" preserveAspectRatio="xMidYMid meet"></svg><div class="graph-status"><div class="gs-title">◉ SUBGRAPH FILTERED BY QUESTION</div><div class="gs-body">Pulling relevant actors and arcs into focus.</div></div></div><div class="graph-controls"><button class="gc-btn active">◉ SUBGRAPH FOCUS</button><button class="gc-btn">RESTORE GLOBAL</button><div class="gc-zoom"><button class="gc-zoom-btn">−</button><span class="gc-zoom-lbl">ZOOM</span><button class="gc-zoom-btn">+</button></div></div>';
+    centerPanel.innerHTML = '<div class="center-hdr"><div class="center-hdr-left"><div class="ctx-tag amber">◉ FOCUSED ON QUESTION SUBGRAPH</div><div class="center-title">' + s.dossier + ' <em>· the arcs in play</em></div></div><div class="center-hdr-right"><div class="meta-row"><span class="meta-lbl">ACTORS</span><span class="meta-val amber">' + s.subgraph.actorCount + '</span></div><div class="meta-row"><span class="meta-lbl">ARCS</span><span class="meta-val amber">' + s.subgraph.arcCount + '</span></div><div class="meta-row"><span class="meta-lbl">REST</span><span class="meta-val">dimmed</span></div></div></div><div class="graph-canvas"><svg id="subgraph-svg" class="subgraph-svg" preserveAspectRatio="xMidYMid meet"></svg><div class="graph-status"><div class="gs-title">◉ SUBGRAPH FILTERED BY QUESTION</div><div class="gs-body">Pulling relevant actors and arcs into focus.</div></div></div>';
     renderSubgraph('subgraph-svg', s);
   }
 
@@ -396,7 +457,6 @@
     intelPanel.innerHTML = '<div class="intel-section"><span class="intel-badge">◉ QUESTION CONTEXT</span><div class="intel-focus-card"><div class="focus-title">' + s.dossier + '</div><div class="focus-meta">' + s.subgraph.actorCount + ' actors · ' + s.subgraph.arcCount + ' arcs · ' + s.subgraph.passageCount + ' passages</div></div></div><div class="intel-section"><div class="section-label">SUBGRAPH EVIDENCE STRENGTH</div><div class="gauge-block">' + gaugeHtml(s.evidenceStrength) + '<div class="gauge-value">' + s.evidenceStrength.toFixed(1) + ' <span class="gauge-value-slash">/</span> 5</div><div class="gauge-caption">' + s.evidenceCaption + '</div></div></div><div class="intel-section"><div class="section-label">TOP ARCS IN SCOPE</div><ol class="arcs-list">' + arcRowsHtml + '</ol></div>';
   }
 
-  // L1 REPORT -- NEW LAYOUT: thesis + implication in cima grandi, evidence in fondo ridotta
   function renderL1ReportCenter() {
     var s = STATE.activeScenario;
     var r = s.l1Report;
@@ -406,21 +466,12 @@
       }).join('');
       return '<div class="ev-item ev-item-compact"><div class="ev-n">' + e.n + '</div><div class="ev-body"><div class="ev-text">' + e.body + '</div><div class="ev-citations">' + citesHtml + '</div></div></div>';
     }).join('');
-
     var sourcesHtml = r.sources.map(function(src) {
       return '<div class="source-inline">' + src.name + ' <span style="color:#6B7590;font-size:9px">· ' + src.passages + '</span></div>';
     }).join(' ');
-
     var tierBlock = s.dtReport ? ('<div class="dt-tier-block"><div class="tier-card" data-tier="light"><div class="tier-title">Light</div><div class="tier-cost">~ $0.05</div><div class="tier-desc">Top-N seeds only, shallow tree. Fast, indicative.</div><button class="tier-btn">RUN LIGHT</button></div><div class="tier-card recommended" data-tier="standard"><div class="tier-title amber">Standard <span class="tier-reco">RECOMMENDED</span></div><div class="tier-cost amber">~ $0.30</div><div class="tier-desc">Full seeds + MCTS. Balanced depth and cost.</div><button class="tier-btn filled">◆ RUN STANDARD</button></div><div class="tier-card" data-tier="heavy"><div class="tier-title">Heavy</div><div class="tier-cost red">~ $1.20</div><div class="tier-desc">Deeper tree, more iterations, validation loop.</div><button class="tier-btn">RUN HEAVY</button></div></div>') : '';
-
     centerPanel.innerHTML =
-      '<div class="report-meta-bar">' +
-      '<span class="rmb-badge">◆ L1 ANSWER</span>' +
-      '<span>' + s.dossier + '</span><span class="rmb-sep">·</span>' +
-      '<span>Level 1 · RAG</span><span class="rmb-sep">·</span>' +
-      '<span>Composed ' + r.composedAt + '</span>' +
-      '<div class="rmb-actions"><button class="rmb-action">SAVE</button><button class="rmb-action">↓ PDF</button></div>' +
-      '</div>' +
+      '<div class="report-meta-bar"><span class="rmb-badge">◆ L1 ANSWER</span><span>' + s.dossier + '</span><span class="rmb-sep">·</span><span>Level 1 · RAG</span><span class="rmb-sep">·</span><span>Composed ' + r.composedAt + '</span><div class="rmb-actions"><button class="rmb-action">SAVE</button><button class="rmb-action">↓ PDF</button></div></div>' +
       '<h1 class="report-title">' + r.title + '</h1>' +
       '<div class="report-subtitle">' + r.subtitle + '</div>' +
       '<div class="report-block thesis"><div class="rb-label">THESIS</div><div class="rb-body">' + r.thesis + '</div></div>' +
@@ -433,7 +484,6 @@
       '</div>' +
       '<div class="feedback-strip"><span class="fb-label">WAS THIS USEFUL?</span><button class="fb-btn">◍ Helpful</button><button class="fb-btn">◍ Not useful</button><span class="fb-note">helps calibrate the system on pilot</span></div>' +
       tierBlock;
-
     document.querySelectorAll('.tier-card').forEach(function(card) {
       card.addEventListener('click', function() { startDeepThink(card.getAttribute('data-tier')); });
     });
@@ -515,7 +565,6 @@
     }).join('') + '</div><div class="intel-section"><div class="section-label">CURRENT MOVE</div><div class="current-move-card"><div class="cm-label">◉ SEED · t = ' + Math.min(5, Math.floor(progress * 6)) + ' · MCTS</div><div class="cm-body">Evaluating <em>' + s.subgraph.focus[0] + '</em> move on <em>' + s.subgraph.focus[0] + '-' + (s.subgraph.focus[1] || 'target') + '</em> arc.</div><div class="cm-stats"><span class="cm-delta">Delta: +0.42</span> · UCB: 1.87 · Visits: ' + (10 + Math.floor(progress * 40)) + '</div></div></div>';
   }
 
-  // DT REPORT -- NEW LAYOUT: thesis + implication in cima, scenarios + lattice + sensitivity in fondo
   function renderDTReportCenter() {
     var s = STATE.activeScenario;
     var r = s.dtReport;
@@ -524,15 +573,8 @@
       return '<div class="scenario-item ' + (isModal ? 'modal' : '') + '"><div class="sc-badge"><div class="sc-code">' + sc.code + '</div><div class="sc-tag">' + sc.tag + '</div><div class="sc-pct">' + sc.pct + '%</div><div class="sc-ci">CI ' + sc.ci + '</div></div><div class="sc-body">' + sc.body + '</div></div>';
     }).join('');
     var fullReportBtn = r.fullReport ? '<button class="rmb-action primary" id="full-report-btn">◆ FULL REPORT</button>' : '';
-
     centerPanel.innerHTML =
-      '<div class="report-meta-bar">' +
-      '<span class="rmb-badge dt">◆ DEEP-THINK · STANDARD</span>' +
-      '<span>' + s.dossier + '</span><span class="rmb-sep">·</span>' +
-      '<span>' + r.stats.iterations + ' iterations</span><span class="rmb-sep">·</span>' +
-      '<span>Composed ' + nowHM() + '</span>' +
-      '<div class="rmb-actions">' + fullReportBtn + '<button class="rmb-action">SAVE</button><button class="rmb-action">↓ PDF</button></div>' +
-      '</div>' +
+      '<div class="report-meta-bar"><span class="rmb-badge dt">◆ DEEP-THINK · STANDARD</span><span>' + s.dossier + '</span><span class="rmb-sep">·</span><span>' + r.stats.iterations + ' iterations</span><span class="rmb-sep">·</span><span>Composed ' + nowHM() + '</span><div class="rmb-actions">' + fullReportBtn + '<button class="rmb-action">SAVE</button><button class="rmb-action">↓ PDF</button></div></div>' +
       '<h1 class="report-title">' + r.title + '</h1>' +
       '<div class="report-subtitle">' + r.subtitle + '</div>' +
       '<div class="report-block thesis"><div class="rb-label">THESIS</div><div class="rb-body">' + r.thesis + '</div></div>' +
@@ -545,7 +587,6 @@
       '</div>' +
       '<div class="feedback-strip"><span class="fb-label">WAS THIS USEFUL?</span><button class="fb-btn">◍ Helpful</button><button class="fb-btn">◍ Not useful</button><span class="fb-note">helps calibrate the system on pilot</span></div>' +
       '<div class="rerun-strip"><div class="rerun-text">Not robust enough? Deepen at higher tier -- same question, more iterations, tighter intervals.</div><button class="rerun-btn">◆ RE-RUN HEAVY ($1.20)</button></div>';
-
     renderLattice('dt-lattice-svg', r, false);
     var fullBtn = document.getElementById('full-report-btn');
     if (fullBtn) fullBtn.addEventListener('click', openFullReport);
@@ -684,6 +725,141 @@
 
   function renderFull() { renderChatBody(); renderBreadcrumb(); renderCenterAndIntel(); renderFooter(); }
 
+  // ==========================================================================
+  // DASHBOARD
+  // ==========================================================================
+  function renderDashboard() {
+    var d = window.GEODATA.phase3.dashboard;
+    var shell = document.getElementById('dashboard-shell');
+    var sparkHtml = d.ingestionSpark.map(function(v) {
+      var h = 6 + v * 0.9;
+      var cls = v >= 45 ? ' hi' : '';
+      return '<div class="dash-spark-bar' + cls + '" style="height:' + h + 'px"></div>';
+    }).join('');
+    var covHtml = '<div class="dash-matrix"><div class="dash-matrix-h">SOURCE</div><div class="dash-matrix-h">UKR</div><div class="dash-matrix-h">TWN</div><div class="dash-matrix-h">IRN</div><div class="dash-matrix-h">GLB</div>';
+    d.coverage.forEach(function(row) {
+      covHtml += '<div class="dash-matrix-r">' + row.source + '</div>';
+      covHtml += '<div class="dash-matrix-cell ' + row.ukr + '">' + row.ukr.toUpperCase() + '</div>';
+      covHtml += '<div class="dash-matrix-cell ' + row.twn + '">' + row.twn.toUpperCase() + '</div>';
+      covHtml += '<div class="dash-matrix-cell ' + row.irn + '">' + row.irn.toUpperCase() + '</div>';
+      covHtml += '<div class="dash-matrix-cell ' + row.glb + '">' + row.glb.toUpperCase() + '</div>';
+    });
+    covHtml += '</div>';
+    var recentHtml = d.recent.map(function(r) {
+      return '<div class="dash-recent-row"><div class="dash-recent-t">' + r.t + '</div><div class="dash-recent-src">' + r.src + '</div><div class="dash-recent-body"><em>' + r.body + '</em></div></div>';
+    }).join('');
+    var healthHtml = d.health.map(function(h) {
+      return '<div class="dash-kv-row"><span class="dash-kv-k">' + h.k + '</span><span class="dash-kv-v ' + h.cls + '">' + h.v + '</span></div>';
+    }).join('');
+    shell.innerHTML =
+      '<div class="demo-banner">◇ DEMO ONLY -- NOT REAL DATA</div>' +
+      '<div class="dash-hdr-block"><div class="ctx-tag">KNOWLEDGE BASE · DASHBOARD</div><h1>System <em>state</em></h1></div>' +
+      '<div class="dash-grid">' +
+      '<div class="dash-tile"><div class="dash-tile-hdr"><div class="dash-tile-title">Corpus totals</div><div class="dash-tile-badge">LIVE</div></div><div class="dash-tile-body"><div class="dash-big-num">' + d.corpus.articles.toLocaleString() + '</div><div class="dash-big-num-sub">articles ingested</div><div class="dash-kv-row" style="margin-top:14px"><span class="dash-kv-k">Sources active</span><span class="dash-kv-v amber">' + d.corpus.sources + '</span></div><div class="dash-kv-row"><span class="dash-kv-k">Embedded</span><span class="dash-kv-v green">' + d.corpus.embedded.toLocaleString() + ' (' + d.corpus.embeddedPct + '%)</span></div><div class="dash-kv-row"><span class="dash-kv-k">Graph nodes</span><span class="dash-kv-v">' + d.corpus.graphNodes.toLocaleString() + '</span></div><div class="dash-kv-row"><span class="dash-kv-k">Graph arcs</span><span class="dash-kv-v">' + d.corpus.graphArcs.toLocaleString() + '</span></div></div></div>' +
+      '<div class="dash-tile"><div class="dash-tile-hdr"><div class="dash-tile-title">Ingestion cadence</div><div class="dash-tile-badge">LAST 15 DAYS</div></div><div class="dash-tile-body"><div class="dash-big-num">' + d.ingestionSpark[d.ingestionSpark.length-1] + '</div><div class="dash-big-num-sub">articles today</div><div class="dash-spark">' + sparkHtml + '</div></div></div>' +
+      '<div class="dash-tile"><div class="dash-tile-hdr"><div class="dash-tile-title">Coverage matrix</div><div class="dash-tile-badge">BY DOSSIER</div></div><div class="dash-tile-body">' + covHtml + '</div></div>' +
+      '<div class="dash-tile"><div class="dash-tile-hdr"><div class="dash-tile-title">Graph state</div><div class="dash-tile-badge">DERIVED</div></div><div class="dash-tile-body"><div class="dash-kv-row"><span class="dash-kv-k">Nodes</span><span class="dash-kv-v amber">' + d.corpus.graphNodes.toLocaleString() + '</span></div><div class="dash-kv-row"><span class="dash-kv-k">Arcs</span><span class="dash-kv-v">' + d.corpus.graphArcs.toLocaleString() + '</span></div><div class="dash-kv-row"><span class="dash-kv-k">Avg arc weight</span><span class="dash-kv-v">3.42</span></div><div class="dash-kv-row"><span class="dash-kv-k">Density</span><span class="dash-kv-v">0.011</span></div><div class="dash-kv-row"><span class="dash-kv-k">Last KG rebuild</span><span class="dash-kv-v">6h ago</span></div></div></div>' +
+      '<div class="dash-tile"><div class="dash-tile-hdr"><div class="dash-tile-title">Recent extractions</div><div class="dash-tile-badge">STREAM</div></div><div class="dash-tile-body">' + recentHtml + '</div></div>' +
+      '<div class="dash-tile"><div class="dash-tile-hdr"><div class="dash-tile-title">System health</div><div class="dash-tile-badge">METRICS</div></div><div class="dash-tile-body">' + healthHtml + '</div></div>' +
+      '</div>';
+  }
+
+  // ==========================================================================
+  // ADMIN
+  // ==========================================================================
+  function renderAdmin() {
+    var main = document.getElementById('admin-main');
+    document.querySelectorAll('.admin-nav-item').forEach(function(item) {
+      item.classList.toggle('active', item.getAttribute('data-admin') === STATE.admin.section);
+      item.addEventListener('click', function() {
+        STATE.admin.section = item.getAttribute('data-admin');
+        renderAdmin();
+      });
+    });
+    if (STATE.admin.section === 'sources') renderAdminSources(main);
+    else renderAdminStub(main, STATE.admin.section);
+  }
+
+  function renderAdminSources(main) {
+    var srcs = window.GEODATA.phase3.admin.sources;
+    var rowsHtml = srcs.map(function(s) {
+      return '<tr><td><span class="src-name">' + s.name + '</span></td><td>' + s.kind + '</td><td>' + s.region + '</td><td class="src-num">' + s.articles.toLocaleString() + '</td><td>' + s.lastSync + '</td><td><span class="src-status ' + s.status + '">' + s.status + '</span></td><td><button class="admin-btn">PAUSE</button> <button class="admin-btn">RE-INDEX</button></td></tr>';
+    }).join('');
+    main.innerHTML =
+      '<div class="demo-banner">◇ DEMO ONLY -- NOT REAL DATA</div>' +
+      '<div class="admin-hdr"><div><div class="ctx-tag red">ADMIN · SOURCES</div><h1><em>Sources</em> registry</h1></div><div class="admin-hdr-actions"><button class="admin-btn">EXPORT</button><button class="admin-btn primary">+ ADD SOURCE</button></div></div>' +
+      '<table class="sources-table"><thead><tr><th>Source</th><th>Kind</th><th>Region</th><th>Articles</th><th>Last sync</th><th>Status</th><th>Actions</th></tr></thead><tbody>' + rowsHtml + '</tbody></table>';
+  }
+
+  function renderAdminStub(main, section) {
+    var titles = {
+      users: 'Users & permissions', kg: 'KG type registry', pipelines: 'Ingestion pipelines',
+      alerts: 'Alerts & thresholds', logs: 'System logs'
+    };
+    main.innerHTML =
+      '<div class="demo-banner">◇ DEMO ONLY -- NOT REAL DATA</div>' +
+      '<div class="admin-hdr"><div><div class="ctx-tag red">ADMIN · ' + section.toUpperCase() + '</div><h1><em>' + titles[section] + '</em></h1></div></div>' +
+      '<div class="admin-stub"><div class="admin-stub-title">' + titles[section] + '</div><div class="admin-stub-body">This section is a placeholder in the current demo. Full functionality will be added in subsequent phases.</div></div>';
+  }
+
+  // ==========================================================================
+  // EXPLORE
+  // ==========================================================================
+  function renderExplore() {
+    document.querySelectorAll('.sub-tab').forEach(function(tab) {
+      tab.classList.toggle('active', tab.getAttribute('data-sub') === STATE.explore.sub);
+      tab.addEventListener('click', function() {
+        STATE.explore.sub = tab.getAttribute('data-sub');
+        STATE.explore.selected = null;
+        renderExplore();
+      });
+    });
+    var body = document.getElementById('explore-body');
+    var e = window.GEODATA.phase3.explore;
+    if (STATE.explore.sub === 'news')            renderExploreList(body, e.news, 'news');
+    else if (STATE.explore.sub === 'structured') renderExploreStructured(body, e.structured);
+    else if (STATE.explore.sub === 'primary')    renderExploreList(body, e.primary, 'primary');
+    else if (STATE.explore.sub === 'analyses')   renderExploreList(body, e.analyses, 'analyses');
+  }
+
+  function renderExploreList(body, items, kind) {
+    var filtersHtml = '<div class="filter-group"><div class="filter-label">DOSSIER</div><button class="filter-chip active">All</button><button class="filter-chip">Ukraine</button><button class="filter-chip">Taiwan</button><button class="filter-chip">Iran</button></div><div class="filter-group"><div class="filter-label">SOURCE</div><button class="filter-chip active">All sources</button><button class="filter-chip">ISPI</button><button class="filter-chip">ECFR</button><button class="filter-chip">CSIS</button><button class="filter-chip">MERICS</button><button class="filter-chip">Bruegel</button><button class="filter-chip">FP</button></div><div class="filter-group"><div class="filter-label">DATE RANGE</div><button class="filter-chip active">Last 7 days</button><button class="filter-chip">Last month</button><button class="filter-chip">Last 3 months</button></div>';
+    var listHtml = items.map(function(item) {
+      var isActive = STATE.explore.selected && STATE.explore.selected.id === item.id ? ' active' : '';
+      return '<div class="expl-item' + isActive + '" data-id="' + item.id + '"><div class="expl-item-hdr"><span class="expl-item-src">' + item.src + '</span><span>' + item.date + '</span>' + (item.dossier ? '<span>· ' + item.dossier + '</span>' : '') + '</div><div class="expl-item-title">' + item.title + '</div><div class="expl-item-snippet"><em>' + item.snippet + '</em></div></div>';
+    }).join('');
+    var sel = STATE.explore.selected;
+    var detailHtml = sel ? ('<div class="expl-detail-hdr"><div class="expl-detail-title">' + sel.title + '</div><div class="expl-detail-meta">' + sel.src + ' · ' + sel.date + (sel.dossier ? ' · ' + sel.dossier : '') + '</div></div><div class="expl-detail-body"><em>' + sel.snippet + '</em> This is a placeholder for the full item body, which in the production system would render the complete extracted text with citations, graph anchors, and related entities.</div><div class="expl-ask-widget"><div class="expl-ask-label">◉ ASK THIS ITEM</div><input class="expl-ask-input" placeholder="Ask a question about this item..."></div>') : '<div class="expl-empty">Select an item to see the detail</div>';
+    body.innerHTML = '<aside class="expl-filters">' + filtersHtml + '</aside><div class="expl-list">' + listHtml + '</div><aside class="expl-detail">' + detailHtml + '</aside>';
+    document.querySelectorAll('.expl-item').forEach(function(el) {
+      el.addEventListener('click', function() {
+        var id = el.getAttribute('data-id');
+        STATE.explore.selected = items.find(function(x) { return x.id === id; });
+        renderExplore();
+      });
+    });
+  }
+
+  function renderExploreStructured(body, items) {
+    var filtersHtml = '<div class="filter-group"><div class="filter-label">ACTOR TYPE</div><button class="filter-chip active">All</button><button class="filter-chip">State</button><button class="filter-chip">Institution</button><button class="filter-chip">Corporate</button></div><div class="filter-group"><div class="filter-label">MIN ARCS</div><button class="filter-chip active">Any</button><button class="filter-chip">10+</button><button class="filter-chip">20+</button><button class="filter-chip">30+</button></div>';
+    var listHtml = items.map(function(a) {
+      return '<div class="expl-actor-row" data-code="' + a.code + '"><span class="expl-actor-code">' + a.code + '</span><span class="expl-actor-name">' + a.name + '</span><span class="expl-actor-arcs">' + a.type + ' · ' + a.arcs + ' arcs</span></div>';
+    }).join('');
+    var sel = STATE.explore.selected;
+    var detailHtml = sel ? ('<div class="expl-detail-hdr"><div class="expl-detail-title">' + sel.name + ' <span style="color:#E8A93E">(' + sel.code + ')</span></div><div class="expl-detail-meta">' + sel.type + ' · ' + sel.arcs + ' outgoing arcs</div></div><div class="expl-detail-body">This actor participates in ' + sel.arcs + ' relationships across the knowledge graph. Full profile would include arc list, event timeline, source distribution, and centrality metrics.</div><div class="expl-ask-widget"><div class="expl-ask-label">◉ ASK ABOUT ' + sel.code + '</div><input class="expl-ask-input" placeholder="Ask about this actor..."></div>') : '<div class="expl-empty">Select an actor to see the detail</div>';
+    body.innerHTML = '<aside class="expl-filters">' + filtersHtml + '</aside><div class="expl-list">' + listHtml + '</div><aside class="expl-detail">' + detailHtml + '</aside>';
+    document.querySelectorAll('.expl-actor-row').forEach(function(el) {
+      el.addEventListener('click', function() {
+        var code = el.getAttribute('data-code');
+        STATE.explore.selected = items.find(function(x) { return x.code === code; });
+        renderExplore();
+      });
+    });
+  }
+
+  // ==========================================================================
+  // FLOW TRANSITIONS (unchanged from Phase 2)
+  // ==========================================================================
   function resetToLanding() {
     clearTimers();
     overlay.classList.remove('open');
@@ -693,6 +869,8 @@
     STATE.turns = [];
     STATE.dtProgress = 0;
     STATE.pendingScenarioId = null;
+    STATE.sphere.autoRotate = true;
+    STATE.sphere.lastInteract = 0;
     chatSubtitle.textContent = 'Session · new';
     chatSubtitle.className = 'panel-subtitle';
     chatInput.disabled = false;

@@ -89,9 +89,48 @@
       </div>
     </section>
 
-    <section class="view" data-view="explore"><div class="stub-view">KB · Explore -- Phase 3</div></section>
-    <section class="view" data-view="dashboard"><div class="stub-view">KB · Dashboard -- Phase 3</div></section>
-    <section class="view" data-view="admin"><div class="stub-view">Admin -- Phase 3</div></section>
+    <section class="view" data-view="explore">
+      <div class="explore-shell">
+        <div class="demo-banner">◇ DEMO ONLY -- NOT REAL DATA</div>
+        <div class="explore-hdr">
+          <div class="explore-title-block">
+            <div class="ctx-tag">KNOWLEDGE BASE · EXPLORE</div>
+            <h1 class="explore-title">Corpus <em>navigation</em></h1>
+          </div>
+          <nav class="explore-subnav" id="explore-subnav">
+            <button class="sub-tab active" data-sub="news">News</button>
+            <button class="sub-tab" data-sub="structured">Structured data</button>
+            <button class="sub-tab" data-sub="primary">Primary sources</button>
+            <button class="sub-tab" data-sub="analyses">Specialized analyses</button>
+          </nav>
+        </div>
+        <div class="explore-body" id="explore-body"></div>
+      </div>
+    </section>
+
+    <section class="view" data-view="dashboard">
+      <div class="dashboard-shell" id="dashboard-shell"></div>
+    </section>
+
+    <section class="view" data-view="admin">
+      <div class="admin-shell">
+        <aside class="admin-sidebar">
+          <div class="admin-side-hdr">
+            <div class="ctx-tag red">ADMIN · RESTRICTED</div>
+            <h2 class="admin-side-title">Configuration</h2>
+          </div>
+          <nav class="admin-nav" id="admin-nav">
+            <button class="admin-nav-item active" data-admin="sources">Sources</button>
+            <button class="admin-nav-item" data-admin="users">Users</button>
+            <button class="admin-nav-item" data-admin="kg">KG Registry</button>
+            <button class="admin-nav-item" data-admin="pipelines">Pipelines</button>
+            <button class="admin-nav-item" data-admin="alerts">Alerts</button>
+            <button class="admin-nav-item" data-admin="logs">Logs</button>
+          </nav>
+        </aside>
+        <div class="admin-main" id="admin-main"></div>
+      </div>
+    </section>
 
   </main>
 
