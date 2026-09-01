@@ -10,7 +10,13 @@
     sphere: { rotY: 0.35, rotX: 0.18, autoRotate: true, lastInteract: 0, dragging: false, selectedNode: null, animating: false },
     admin: { section: 'sources' },
     explore: { sub: 'news', selected: null, matrixDossier: 'all' },
-    portfolio: { sub: 'portfolio', horizon: '0-12', selectedScenario: null }
+    portfolio: {
+      horizon: '0-12',
+      seed: 'modal',
+      mode: 'scenario',
+      expanded: { 'root': true },
+      selectedNode: null
+    }
   };
 
   function clearTimers() {
