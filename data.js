@@ -1,4 +1,5 @@
-// CHESS Mockup - Phase 3 v2
+document.write('<div style="position:fixed;top:0;left:0;right:0;background:#f00;color:#fff;padding:10px;z-index:99999;font-family:monospace">DATA.JS PARSED OK</div>');
+
 
 window.GEODATA = {
 
