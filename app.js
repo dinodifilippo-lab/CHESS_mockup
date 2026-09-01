@@ -4,6 +4,15 @@ document.body.insertAdjacentHTML('afterbegin','<div style="position:fixed;top:0;
 
   'use strict';
 
+
+window.addEventListener('error', function(e) {
+  var d = document.createElement('div');
+  d.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#900;color:#fff;padding:10px;z-index:99999;font-family:monospace;font-size:11px';
+  d.textContent = 'ERR: ' + e.message + ' @ ' + e.filename + ':' + e.lineno;
+  document.body.appendChild(d);
+});
+
+
   try {
 
   var STATE = {
