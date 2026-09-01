@@ -9,7 +9,8 @@
     scenarioHistory: [], turns: [], dtProgress: 0, timers: [], pendingScenarioId: null,
     sphere: { rotY: 0.35, rotX: 0.18, autoRotate: true, lastInteract: 0, dragging: false, selectedNode: null, animating: false },
     admin: { section: 'sources' },
-    explore: { sub: 'news', selected: null, matrixDossier: 'all' }
+    explore: { sub: 'news', selected: null, matrixDossier: 'all' },
+    portfolio: { sub: 'portfolio', horizon: '0-12', selectedScenario: null, activeLever: null }
   };
 
   function clearTimers() {
@@ -32,6 +33,7 @@
       if (target === 'dashboard') renderDashboard();
       else if (target === 'admin') renderAdmin();
       else if (target === 'explore') renderExplore();
+      else if (target === 'portfolio') renderPortfolioImpact();
     });
   });
 
@@ -1230,6 +1232,393 @@
       });
     });
   }
+
+  // ========================================================================
+  // PORTFOLIO IMPACT (new tab)
+  // ========================================================================
+
+  var DOSSIER_MAIN_KEYS = [
+    'ukraine-main', 'taiwan-main', 'iran-main',
+    'eu-china-trade-main', 'us-debt-hyperscalers-main',
+    'us-china-tensions-main', 'eu-hybrid-main', 'eu-political-2027-main'
+  ];
+
+  function horizonMultiplier(scenarioKey, horizon) {
+    var mat = window.GEODATA.insurance.scenarioImpact[scenarioKey];
+    if (!mat) return 0;
+    var m = mat.maturationByHorizon[horizon];
+    if (!m) return 0;
+    if (horizon === '0-12') {
+      if (m === 'materialising' || m === 'active' || m === 'escalating' || m === 'ongoing' || m === 'building' || m === 'campaigns') return 1.0;
+      return 0.4;
+    } else if (horizon === '12-24') {
+      if (m === 'consolidated' || m === 'critical' || m === 'structural' || m === 'tension peak' || m === 'recalibration' || m === 'outcomes') return 1.15;
+      return 0.7;
+    } else {
+      if (m === 'stable' || m === 'new equilibrium' || m === 'consolidated' || m === 'structural' || m === 'post-cycle configuration' || m === 'resolution or break') return 0.85;
+      return 0.5;
+    }
+  }
+
+  function totalImpactFor(scenarioKey, horizon) {
+    var mat = window.GEODATA.insurance.scenarioImpact[scenarioKey];
+    if (!mat) return { invest: 0, pandc: 0, ops: 0, total: 0 };
+    var mult = horizonMultiplier(scenarioKey, horizon);
+    var inv = Math.round((mat.impact.investments.totalEur || 0) * mult);
+    var pc  = Math.round((mat.impact.pandc.totalEur       || 0) * mult);
+    var op  = Math.round((mat.impact.operations.totalEur  || 0) * mult);
+    return { invest: inv, pandc: pc, ops: op, total: inv + pc + op };
+  }
+
+  function applyLeverToImpact(baseImpact, leverId, scenarioKey) {
+    if (!leverId) return baseImpact;
+    var levers = window.GEODATA.insurance.q3Levers;
+    var lever = null;
+    for (var i = 0; i < levers.length; i++) if (levers[i].id === leverId) { lever = levers[i]; break; }
+    if (!lever) return baseImpact;
+    var delta = lever.deltaByScenario[scenarioKey];
+    if (!delta) return baseImpact;
+    return {
+      invest: baseImpact.invest + (delta.investEur || 0),
+      pandc:  baseImpact.pandc  + (delta.pandcEur  || 0),
+      ops:    baseImpact.ops    + (delta.opsEur    || 0),
+      total:  baseImpact.total  + (delta.investEur || 0) + (delta.pandcEur || 0) + (delta.opsEur || 0)
+    };
+  }
+
+  function renderPortfolioImpact() {
+    var profileLine = document.getElementById('portfolio-profile-line');
+    if (profileLine) {
+      var p = window.GEODATA.insurance.profile;
+      profileLine.innerHTML = '<em>' + p.name + '</em> &middot; AUM ' + p.aum + 'm EUR &middot; GWP ' + p.gwp + 'm EUR &middot; ' + p.description;
+    }
+    document.querySelectorAll('.p-sub-tab').forEach(function(tab) {
+      tab.classList.toggle('active', tab.getAttribute('data-psub') === STATE.portfolio.sub);
+      tab.addEventListener('click', function() {
+        STATE.portfolio.sub = tab.getAttribute('data-psub');
+        STATE.portfolio.selectedScenario = null;
+        renderPortfolioImpact();
+      });
+    });
+    document.querySelectorAll('.horizon-btn').forEach(function(btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-horizon') === STATE.portfolio.horizon);
+      btn.addEventListener('click', function() {
+        STATE.portfolio.horizon = btn.getAttribute('data-horizon');
+        renderPortfolioImpact();
+      });
+    });
+    var body = document.getElementById('portfolio-body');
+    if (!body) return;
+    if (STATE.portfolio.sub === 'portfolio')      renderPortfolioSetup(body);
+    else if (STATE.portfolio.sub === 'q1')        renderQ1Vulnerability(body);
+    else if (STATE.portfolio.sub === 'q2')        renderQ2LiveScenarios(body);
+    else if (STATE.portfolio.sub === 'q3')        renderQ3WhatIf(body);
+  }
+
+  function renderPortfolioSetup(body) {
+    var pf = window.GEODATA.insurance.portfolio;
+    var invByClass = {};
+    pf.investments.forEach(function(inv) {
+      if (!invByClass[inv.assetClass]) invByClass[inv.assetClass] = { total: 0, count: 0 };
+      invByClass[inv.assetClass].total += inv.mv;
+      invByClass[inv.assetClass].count += 1;
+    });
+    var invAllocHtml = Object.keys(invByClass).map(function(k) {
+      var totAum = window.GEODATA.insurance.profile.aum;
+      var pct = (invByClass[k].total / totAum * 100).toFixed(1);
+      return '<div class="pf-alloc-row"><span class="pf-alloc-k">' + k + '</span><div class="pf-alloc-bar-wrap"><div class="pf-alloc-bar" style="width:' + pct + '%"></div></div><span class="pf-alloc-v">' + invByClass[k].total + 'm (' + pct + '%)</span></div>';
+    }).join('');
+
+    var invRowsHtml = pf.investments.map(function(inv) {
+      var dur = inv.duration !== null ? inv.duration.toFixed(1) : '-';
+      var rat = inv.rating || '-';
+      return '<tr><td class="pf-code">' + inv.id + '</td><td>' + inv.assetClass + '</td><td class="pf-issuer">' + inv.issuer + '</td><td class="pf-country">' + inv.country + '</td><td>' + inv.sector + '</td><td class="pf-num">' + inv.mv + '</td><td class="pf-num">' + dur + '</td><td>' + rat + '</td><td>' + inv.ccy + '</td></tr>';
+    }).join('');
+
+    var pcByLob = {};
+    pf.pandc.forEach(function(p) {
+      if (!pcByLob[p.lob]) pcByLob[p.lob] = { sumInsured: 0, gwp: 0, count: 0 };
+      pcByLob[p.lob].sumInsured += p.sumInsured;
+      pcByLob[p.lob].gwp += p.gwpShare;
+      pcByLob[p.lob].count += 1;
+    });
+    var pcAllocHtml = Object.keys(pcByLob).map(function(k) {
+      var totGwp = window.GEODATA.insurance.profile.gwp;
+      var pct = (pcByLob[k].gwp / totGwp * 100).toFixed(1);
+      return '<div class="pf-alloc-row"><span class="pf-alloc-k">' + k + '</span><div class="pf-alloc-bar-wrap"><div class="pf-alloc-bar pandc" style="width:' + (pct * 2.5) + '%"></div></div><span class="pf-alloc-v">GWP ' + pcByLob[k].gwp + 'm (' + pct + '%)</span></div>';
+    }).join('');
+
+    var pcRowsHtml = pf.pandc.map(function(p) {
+      var excl = [];
+      if (p.wordingExclusions.war === true) excl.push('war');
+      else if (typeof p.wordingExclusions.war === 'string') excl.push('war: ' + p.wordingExclusions.war);
+      if (p.wordingExclusions.terrorism === true) excl.push('terr');
+      else if (typeof p.wordingExclusions.terrorism === 'string') excl.push('terr: ' + p.wordingExclusions.terrorism);
+      if (p.wordingExclusions.cyber === true) excl.push('cyber');
+      if (p.wordingExclusions.sanctions === true) excl.push('sanct');
+      var exclStr = excl.join(', ') || 'none';
+      return '<tr><td class="pf-code">' + p.id + '</td><td>' + p.lob + '</td><td class="pf-country">' + p.country + '</td><td class="pf-num">' + p.sumInsured + '</td><td class="pf-num">' + p.deductible + '</td><td class="pf-num">' + p.gwpShare + '</td><td class="pf-excl">' + exclStr + '</td></tr>';
+    }).join('');
+
+    var opRowsHtml = pf.operations.map(function(o) {
+      var riskCls = o.riskLevel === 'critical' ? 'risk-red' : (o.riskLevel === 'high' ? 'risk-amber' : (o.riskLevel === 'medium' ? 'risk-yellow' : 'risk-green'));
+      return '<tr><td class="pf-code">' + o.id + '</td><td>' + o.type + '</td><td class="pf-issuer">' + o.location + '</td><td class="pf-country">' + o.country + '</td><td class="pf-num">' + o.staff + '</td><td>' + o.criticality + '</td><td><span class="risk-badge ' + riskCls + '">' + o.riskLevel + '</span></td></tr>';
+    }).join('');
+
+    body.innerHTML =
+      '<div class="pf-section">' +
+        '<div class="pf-section-hdr">' +
+          '<h2 class="pf-section-title">Investments <span class="pf-count">' + pf.investments.length + ' positions</span></h2>' +
+          '<div class="pf-section-total">Total AUM <span class="pf-total-val">' + window.GEODATA.insurance.profile.aum + 'm EUR</span></div>' +
+        '</div>' +
+        '<div class="pf-alloc-block">' + invAllocHtml + '</div>' +
+        '<div class="pf-table-wrap"><table class="pf-table"><thead><tr><th>ID</th><th>Asset class</th><th>Issuer / Instrument</th><th>Country</th><th>Sector</th><th>MV (m)</th><th>Duration</th><th>Rating</th><th>CCY</th></tr></thead><tbody>' + invRowsHtml + '</tbody></table></div>' +
+      '</div>' +
+      '<div class="pf-section">' +
+        '<div class="pf-section-hdr">' +
+          '<h2 class="pf-section-title">P&amp;C book <span class="pf-count">' + pf.pandc.length + ' policies</span></h2>' +
+          '<div class="pf-section-total">Total GWP <span class="pf-total-val">' + window.GEODATA.insurance.profile.gwp + 'm EUR</span></div>' +
+        '</div>' +
+        '<div class="pf-alloc-block">' + pcAllocHtml + '</div>' +
+        '<div class="pf-table-wrap"><table class="pf-table"><thead><tr><th>ID</th><th>Line of Business</th><th>Country / Route</th><th>Sum insured (m)</th><th>Deductible</th><th>GWP share (m)</th><th>Wording exclusions</th></tr></thead><tbody>' + pcRowsHtml + '</tbody></table></div>' +
+      '</div>' +
+      '<div class="pf-section">' +
+        '<div class="pf-section-hdr">' +
+          '<h2 class="pf-section-title">Operations footprint <span class="pf-count">' + pf.operations.length + ' sites</span></h2>' +
+        '</div>' +
+        '<div class="pf-table-wrap"><table class="pf-table"><thead><tr><th>ID</th><th>Type</th><th>Location</th><th>Country</th><th>Staff</th><th>Criticality</th><th>Risk level</th></tr></thead><tbody>' + opRowsHtml + '</tbody></table></div>' +
+      '</div>';
+  }
+
+  function scenarioCardHtml(scenarioKey, options) {
+    options = options || {};
+    var scen = window.GEODATA.scenarios[scenarioKey];
+    var mapping = window.GEODATA.insurance.scenarioImpact[scenarioKey];
+    if (!scen || !mapping) return '';
+    var impact = totalImpactFor(scenarioKey, STATE.portfolio.horizon);
+    if (options.applyLever) impact = applyLeverToImpact(impact, options.applyLever, scenarioKey);
+    var dt = scen.dtReport;
+    var modalScen = null;
+    if (dt && dt.scenarios) {
+      for (var i = 0; i < dt.scenarios.length; i++) if (dt.scenarios[i].tag === 'MODAL') { modalScen = dt.scenarios[i]; break; }
+      if (!modalScen) modalScen = dt.scenarios[1] || dt.scenarios[0];
+    }
+    var modalPct = modalScen ? modalScen.pct : 0;
+    var modalBody = modalScen ? modalScen.body : '';
+
+    var mult = horizonMultiplier(scenarioKey, STATE.portfolio.horizon);
+    var maturityLabel = mapping.maturationByHorizon[STATE.portfolio.horizon] || 'not material';
+    var multLabel = mult > 0.9 ? 'full' : (mult > 0.6 ? 'partial' : (mult > 0.3 ? 'limited' : 'residual'));
+
+    var redFlagCount = { red: 0, amber: 0, green: 0 };
+    (mapping.redFlags || []).forEach(function(rf) { redFlagCount[rf.status]++; });
+
+    var redFlagsHtml = (mapping.redFlags || []).map(function(rf) {
+      return '<div class="rf-row"><span class="rf-status rf-' + rf.status + '"></span><div class="rf-body"><div class="rf-label">' + rf.label + '</div><div class="rf-meta">Threshold: ' + rf.threshold + ' &middot; Current: <em>' + rf.currentValue + '</em></div></div></div>';
+    }).join('');
+
+    var driverListInv = (mapping.impact.investments.drivers || []).map(function(d) {
+      var adjusted = Math.round(d.deltaEur * mult);
+      var cls = adjusted < 0 ? 'neg' : (adjusted > 0 ? 'pos' : 'zero');
+      return '<div class="drv-row"><span class="drv-pos">' + d.positionId + '</span><span class="drv-val ' + cls + '">' + (adjusted > 0 ? '+' : '') + adjusted + 'm</span><span class="drv-rat"><em>' + d.rationale + '</em></span></div>';
+    }).join('');
+    var driverListPC = (mapping.impact.pandc.drivers || []).map(function(d) {
+      var adjusted = Math.round(d.deltaEur * mult);
+      var cls = adjusted < 0 ? 'neg' : (adjusted > 0 ? 'pos' : 'zero');
+      return '<div class="drv-row"><span class="drv-pos">' + d.policyId + '</span><span class="drv-val ' + cls + '">' + (adjusted > 0 ? '+' : '') + adjusted + 'm</span><span class="drv-rat"><em>' + d.rationale + '</em></span></div>';
+    }).join('');
+    var driverListOps = (mapping.impact.operations.drivers || []).map(function(d) {
+      var adjusted = Math.round(d.deltaEur * mult);
+      var cls = adjusted < 0 ? 'neg' : (adjusted > 0 ? 'pos' : 'zero');
+      return '<div class="drv-row"><span class="drv-pos">' + d.opId + '</span><span class="drv-val ' + cls + '">' + (adjusted > 0 ? '+' : '') + adjusted + 'm</span><span class="drv-rat"><em>' + d.rationale + '</em></span></div>';
+    }).join('');
+
+    var openClass = (STATE.portfolio.selectedScenario === scenarioKey) ? ' open' : '';
+
+    var leverBanner = '';
+    if (options.applyLever) {
+      var lev = null;
+      for (var j = 0; j < window.GEODATA.insurance.q3Levers.length; j++) if (window.GEODATA.insurance.q3Levers[j].id === options.applyLever) { lev = window.GEODATA.insurance.q3Levers[j]; break; }
+      var delta = lev && lev.deltaByScenario[scenarioKey];
+      if (delta) {
+        leverBanner = '<div class="lever-banner"><span class="lever-tag">LEVER APPLIED</span> ' + lev.label + ' &rarr; <em>' + (delta.comment || 'affects this scenario') + '</em></div>';
+      } else {
+        leverBanner = '<div class="lever-banner neutral"><span class="lever-tag">LEVER APPLIED</span> ' + lev.label + ' &rarr; <em>no material effect on this scenario</em></div>';
+      }
+    }
+
+    return '<div class="scen-card' + openClass + '" data-scenario="' + scenarioKey + '">' +
+      '<div class="scen-hdr">' +
+        '<div class="scen-hdr-left">' +
+          '<div class="scen-dossier-tag">' + scen.dossier + '</div>' +
+          '<div class="scen-title">' + (modalScen ? modalScen.body.replace(/<em>/g, '').replace(/<\/em>/g, '').split('.')[0] + '.' : 'Modal scenario') + '</div>' +
+          '<div class="scen-meta">Modal ' + modalPct + '% &middot; Horizon match: <em>' + maturityLabel + '</em> (' + multLabel + ' impact)</div>' +
+        '</div>' +
+        '<div class="scen-hdr-right">' +
+          '<div class="scen-impact-tot"><span class="tot-lbl">TOTAL IMPACT</span><span class="tot-val ' + (impact.total < 0 ? 'neg' : 'pos') + '">' + (impact.total > 0 ? '+' : '') + impact.total + 'm EUR</span></div>' +
+          '<div class="scen-rf-strip"><span class="rf-count rf-red">' + redFlagCount.red + '</span><span class="rf-count rf-amber">' + redFlagCount.amber + '</span><span class="rf-count rf-green">' + redFlagCount.green + '</span></div>' +
+        '</div>' +
+      '</div>' +
+      leverBanner +
+      '<div class="scen-channels">' +
+        '<div class="ch-cell"><span class="ch-lbl">INVESTMENTS</span><span class="ch-val ' + (impact.invest < 0 ? 'neg' : (impact.invest > 0 ? 'pos' : 'zero')) + '">' + (impact.invest > 0 ? '+' : '') + impact.invest + 'm</span></div>' +
+        '<div class="ch-cell"><span class="ch-lbl">P&amp;C</span><span class="ch-val ' + (impact.pandc < 0 ? 'neg' : (impact.pandc > 0 ? 'pos' : 'zero')) + '">' + (impact.pandc > 0 ? '+' : '') + impact.pandc + 'm</span></div>' +
+        '<div class="ch-cell"><span class="ch-lbl">OPERATIONS</span><span class="ch-val ' + (impact.ops < 0 ? 'neg' : (impact.ops > 0 ? 'pos' : 'zero')) + '">' + (impact.ops > 0 ? '+' : '') + impact.ops + 'm</span></div>' +
+      '</div>' +
+      '<div class="scen-expand-btn" data-toggle="' + scenarioKey + '">' + (openClass ? '&minus; Hide breakdown &amp; precursors' : '+ Show breakdown &amp; precursors') + '</div>' +
+      (openClass ?
+        '<div class="scen-expanded">' +
+          '<div class="scen-drv-block">' +
+            '<div class="scen-drv-hdr">INVESTMENTS &middot; drivers</div>' + (driverListInv || '<div class="drv-empty">No investment drivers for this scenario.</div>') +
+          '</div>' +
+          '<div class="scen-drv-block">' +
+            '<div class="scen-drv-hdr">P&amp;C &middot; drivers</div>' + (driverListPC || '<div class="drv-empty">No P&C drivers for this scenario.</div>') +
+          '</div>' +
+          '<div class="scen-drv-block">' +
+            '<div class="scen-drv-hdr">OPERATIONS &middot; drivers</div>' + (driverListOps || '<div class="drv-empty">No operations drivers for this scenario.</div>') +
+          '</div>' +
+          '<div class="scen-drv-block">' +
+            '<div class="scen-drv-hdr">PRECURSORS TO MONITOR</div>' + (redFlagsHtml || '<div class="drv-empty">No red flags defined.</div>') +
+          '</div>' +
+          '<div class="scen-modal-note"><strong>Modal scenario body:</strong> ' + modalBody + '</div>' +
+        '</div>'
+      : '') +
+      '</div>';
+  }
+
+  function attachScenarioCardHandlers() {
+    document.querySelectorAll('.scen-expand-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var key = btn.getAttribute('data-toggle');
+        STATE.portfolio.selectedScenario = (STATE.portfolio.selectedScenario === key) ? null : key;
+        renderPortfolioImpact();
+      });
+    });
+  }
+
+  function precursorsWidgetHtml() {
+    var total = { red: 0, amber: 0, green: 0 };
+    var byScenario = [];
+    DOSSIER_MAIN_KEYS.forEach(function(key) {
+      var mat = window.GEODATA.insurance.scenarioImpact[key];
+      if (!mat) return;
+      var c = { red: 0, amber: 0, green: 0 };
+      (mat.redFlags || []).forEach(function(rf) { c[rf.status]++; total[rf.status]++; });
+      byScenario.push({ key: key, label: mat.scenarioLabel, counts: c, impact: totalImpactFor(key, STATE.portfolio.horizon).total });
+    });
+    byScenario.sort(function(a, b) { return a.impact - b.impact; });
+    var itemsHtml = byScenario.slice(0, 6).map(function(s) {
+      return '<div class="pcw-item"><div class="pcw-item-label">' + s.label + '</div><div class="pcw-item-counts"><span class="rf-count rf-red">' + s.counts.red + '</span><span class="rf-count rf-amber">' + s.counts.amber + '</span><span class="rf-count rf-green">' + s.counts.green + '</span></div><div class="pcw-item-impact ' + (s.impact < 0 ? 'neg' : 'pos') + '">' + s.impact + 'm</div></div>';
+    }).join('');
+    return '<div class="precursors-widget">' +
+      '<div class="pcw-hdr"><span class="pcw-title">PRECURSORS DASHBOARD</span><div class="pcw-totals"><span class="rf-count rf-red">' + total.red + '</span><span class="rf-count rf-amber">' + total.amber + '</span><span class="rf-count rf-green">' + total.green + '</span><span class="pcw-tot-lbl">total across scenarios</span></div></div>' +
+      '<div class="pcw-body">' + itemsHtml + '</div>' +
+      '<div class="pcw-note"><em>Sorted by portfolio impact at selected horizon. Click any scenario card below for detailed precursors.</em></div>' +
+      '</div>';
+  }
+
+  function renderQ1Vulnerability(body) {
+    var ranked = DOSSIER_MAIN_KEYS.map(function(k) {
+      return { key: k, impact: totalImpactFor(k, STATE.portfolio.horizon) };
+    }).sort(function(a, b) { return a.impact.total - b.impact.total; });
+
+    var topFive = ranked.slice(0, 5);
+    var cardsHtml = topFive.map(function(r) { return scenarioCardHtml(r.key); }).join('');
+
+    var totalPortfolioAtRisk = topFive.reduce(function(sum, r) { return sum + r.impact.total; }, 0);
+
+    body.innerHTML =
+      '<div class="pf-q-hdr">' +
+        '<h2 class="pf-q-title">Q1 &middot; <em>Vulnerability</em></h2>' +
+        '<div class="pf-q-sub">Given your portfolio, these are the scenarios that would hurt you most within the <em>' + STATE.portfolio.horizon + ' months</em> horizon. Ranked by total impact across Investments + P&amp;C + Operations.</div>' +
+      '</div>' +
+      precursorsWidgetHtml() +
+      '<div class="pf-q1-summary"><span class="q1-sum-lbl">Cumulative impact of top-5 worst-case scenarios (assuming full independent materialisation):</span><span class="q1-sum-val neg">' + totalPortfolioAtRisk + 'm EUR</span></div>' +
+      '<div class="scen-list">' + cardsHtml + '</div>';
+    attachScenarioCardHandlers();
+  }
+
+  function renderQ2LiveScenarios(body) {
+    var live = DOSSIER_MAIN_KEYS.map(function(k) {
+      var scen = window.GEODATA.scenarios[k];
+      var dt = scen && scen.dtReport;
+      var modalPct = 0;
+      if (dt && dt.scenarios) for (var i = 0; i < dt.scenarios.length; i++) if (dt.scenarios[i].tag === 'MODAL') { modalPct = dt.scenarios[i].pct; break; }
+      return { key: k, modalPct: modalPct, impact: totalImpactFor(k, STATE.portfolio.horizon) };
+    });
+    live.sort(function(a, b) { return b.modalPct - a.modalPct; });
+
+    var cardsHtml = live.map(function(r) { return scenarioCardHtml(r.key); }).join('');
+
+    body.innerHTML =
+      '<div class="pf-q-hdr">' +
+        '<h2 class="pf-q-title">Q2 &middot; <em>Live Scenarios</em></h2>' +
+        '<div class="pf-q-sub">Scenarios CHESS considers <em>active today</em> based on graph state, ranked by modal probability. Impact computed on your portfolio at the <em>' + STATE.portfolio.horizon + ' months</em> horizon.</div>' +
+      '</div>' +
+      precursorsWidgetHtml() +
+      '<div class="pf-q2-caveat"><strong>Caveat:</strong> scenarios drawn from 8 monitored dossiers, not exhaustive. Low-relevance branches pruned. Long-tail black-swan not systematically covered.</div>' +
+      '<div class="scen-list">' + cardsHtml + '</div>';
+    attachScenarioCardHandlers();
+  }
+
+  function renderQ3WhatIf(body) {
+    var levers = window.GEODATA.insurance.q3Levers;
+    var leverChipsHtml = levers.map(function(l) {
+      var cls = (STATE.portfolio.activeLever === l.id) ? ' active' : '';
+      return '<button class="lever-chip' + cls + '" data-lever="' + l.id + '">' + l.label + '</button>';
+    }).join('');
+    var resetHtml = STATE.portfolio.activeLever ? '<button class="lever-chip reset" data-lever="">RESET (no lever)</button>' : '';
+
+    var summaryHtml = '';
+    if (STATE.portfolio.activeLever) {
+      var lev = null;
+      for (var i = 0; i < levers.length; i++) if (levers[i].id === STATE.portfolio.activeLever) { lev = levers[i]; break; }
+      var affectedScenarios = Object.keys(lev.deltaByScenario);
+      var summaryRows = affectedScenarios.map(function(sk) {
+        var base = totalImpactFor(sk, STATE.portfolio.horizon);
+        var post = applyLeverToImpact(base, STATE.portfolio.activeLever, sk);
+        var d = lev.deltaByScenario[sk];
+        var deltaTot = (d.investEur || 0) + (d.pandcEur || 0) + (d.opsEur || 0);
+        var scenLabel = window.GEODATA.insurance.scenarioImpact[sk] ? window.GEODATA.insurance.scenarioImpact[sk].scenarioLabel : sk;
+        return '<div class="lever-effect-row"><span class="lef-scen">' + scenLabel + '</span><span class="lef-before">Before: <em>' + base.total + 'm</em></span><span class="lef-arrow">&rarr;</span><span class="lef-after">After: <em>' + post.total + 'm</em></span><span class="lef-delta pos">' + (deltaTot > 0 ? '+' : '') + deltaTot + 'm</span></div>';
+      }).join('');
+      summaryHtml = '<div class="lever-summary"><div class="lever-summary-hdr">Effect of "<em>' + lev.label + '</em>" across affected scenarios:</div>' + summaryRows + '<div class="lever-desc"><strong>Description:</strong> ' + lev.description + '</div></div>';
+    }
+
+    var q1Ranked = DOSSIER_MAIN_KEYS.map(function(k) {
+      var base = totalImpactFor(k, STATE.portfolio.horizon);
+      var post = STATE.portfolio.activeLever ? applyLeverToImpact(base, STATE.portfolio.activeLever, k) : base;
+      return { key: k, impact: post };
+    }).sort(function(a, b) { return a.impact.total - b.impact.total; }).slice(0, 5);
+
+    var cardsHtml = q1Ranked.map(function(r) { return scenarioCardHtml(r.key, { applyLever: STATE.portfolio.activeLever }); }).join('');
+
+    body.innerHTML =
+      '<div class="pf-q-hdr">' +
+        '<h2 class="pf-q-title">Q3 &middot; <em>What-if</em></h2>' +
+        '<div class="pf-q-sub">Select a lever below to see how it modifies the vulnerability ranking and impact numbers. Applied to Q1 top-5 worst-case at <em>' + STATE.portfolio.horizon + ' months</em> horizon.</div>' +
+      '</div>' +
+      '<div class="lever-panel">' +
+        '<div class="lever-panel-hdr">AVAILABLE LEVERS</div>' +
+        '<div class="lever-chips">' + leverChipsHtml + ' ' + resetHtml + '</div>' +
+      '</div>' +
+      summaryHtml +
+      '<div class="scen-list">' + cardsHtml + '</div>';
+
+    document.querySelectorAll('.lever-chip').forEach(function(chip) {
+      chip.addEventListener('click', function() {
+        var lv = chip.getAttribute('data-lever');
+        STATE.portfolio.activeLever = lv || null;
+        STATE.portfolio.selectedScenario = null;
+        renderPortfolioImpact();
+      });
+    });
+    attachScenarioCardHandlers();
+  }
+
+  // ========================================================================
+  // END PORTFOLIO IMPACT
+  // ========================================================================
 
   function resetToLanding() {
     clearTimers();
