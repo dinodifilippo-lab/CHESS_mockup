@@ -843,8 +843,856 @@ window.GEODATA = {
         cost: "$0.02", composedAt: "10:38"
       },
       dtReport: null
-    }
+    },
 
-  }
+    "eu-china-trade-main": {
+      question: "How could an EU-China trade escalation evolve over the next 12-24 months?",
+      dossier: "EU-China trade friction", dossierId: "eu-china-trade", parent: null,
+      subgraph: {
+        focus: ["EU", "PRC", "DEU", "FRA", "ITA"], peripheral: ["USA", "NLD", "POL", "ESP"],
+        arcs: [
+          { s: "EU",  t: "PRC", w: 4.4, vol: "H", pol: "complex" },
+          { s: "PRC", t: "DEU", w: 4.1, vol: "H", pol: "complex" },
+          { s: "PRC", t: "FRA", w: 3.8, vol: "M", pol: "complex" },
+          { s: "PRC", t: "ITA", w: 3.6, vol: "M", pol: "complex" },
+          { s: "USA", t: "EU",  w: 4.0, vol: "M", pol: "complex" },
+          { s: "EU",  t: "NLD", w: 4.4, vol: "L", pol: "aligned" }
+        ],
+        actorCount: 9, arcCount: 6, passageCount: 44, sourceCount: 5
+      },
+      evidenceStrength: 3.8, evidenceCaption: "HIGH",
+      thinkingSteps: ["Subgraph resolved: 9 actors, 6 arcs","Corpus retrieval: 44 passages, 5 sources","Composing positioned answer","Validation on critical arcs"],
+      l1Report: {
+        title: "EU-China friction is drifting toward tariff-and-countermeasure equilibrium, not toward decoupling.",
+        subtitle: "A positioned reading of the EU-China trade dynamic over a 12-24 month horizon.",
+        thesis: "The EU-China trade relationship in 2026 sits in a phase of managed friction rather than decoupling. Brussels has completed the EV tariff investigation with duties in place, opened parallel investigations on medical devices, wind turbines and biodiesel, and activated the Anti-Coercion Instrument as a standing capability. Beijing has responded with targeted retaliation on French cognac, European pork and rare earth export licensing rather than with generalised measures, reflecting a calibrated approach that preserves the aggregate trade relationship while raising costs on specific member states. The German position remains the pivotal variable. Berlin has consistently signalled preference for negotiated de-escalation given the exposure of the German automotive and machinery sectors, and this preference is embedded in the Commission's tactical choices even as the declaratory line has hardened. France, Italy and Spain have supported firmer positions but require German coordination for meaningful escalation. The result is a system that ratchets tariffs upward through discrete rounds while both sides preserve dialogue channels and avoid the WTO-shattering moves that would characterise genuine decoupling. Over the horizon, the modal path is continued incremental escalation with periodic negotiated pauses, generating cumulative disruption to specific sectors without transitioning to a fundamentally different trade architecture.",
+        implication: "The persistence of managed friction produces effects across the European economy that reshape corporate strategy independently of the underlying diplomatic trajectory. First, supply chain reconfiguration continues at the pace set by regulatory pressure and reputational risk rather than by tariff economics alone. European corporates in automotive, semiconductor equipment, chemicals and consumer electronics maintain China+1 strategies, with Southeast Asia and India absorbing the marginal reallocation. Second, Chinese direct investment into European automotive plants accelerates as a hedge against future tariff escalation, generating a Chinese industrial footprint in Hungary, Spain, France and Italy that complicates the political economy of future measures. Third, the German coalition arithmetic becomes structurally tied to trade outcomes, with SPD-CDU divergence on China policy visible in every major decision cycle. Fourth, European semiconductor equipment producers face sustained Chinese pressure through both procurement diversification and licensing constraints, generating margin pressure on ASML, ASM International and Zeiss SMT that persists regardless of tariff outcomes.",
+        evidence: [
+          { n: "01", body: "The EV tariff regime remains in force with duties at levels calibrated to allow continued Chinese exports at compressed margins. Chinese OEMs are absorbing rather than passing through, indicating strategic willingness to preserve market share at the cost of profitability.", citations: [{ src: "Bruegel", date: "Jun 2026", emphasis: true }, { src: "MERICS", date: "Jul 2026" }] },
+          { n: "02", body: "Beijing's response pattern has been targeted retaliation rather than generalised measures. French cognac, European pork, rare earth licensing all fit a template of specific pressure on member states most likely to advocate escalation. Broader Chinese trade relationship preserved.", citations: [{ src: "ECFR", date: "Aug 2026" }, { src: "CSIS", date: "Jul 2026" }] },
+          { n: "03", body: "German position remains pivotal. Berlin preference for negotiated de-escalation, driven by automotive and machinery exposure, embedded in Commission tactical choices. Any material shift in German posture would restructure EU coordination.", citations: [{ src: "Bruegel", date: "Aug 2026" }] }
+        ],
+        divergence: "Bruegel sees managed friction as stable equilibrium; ECFR reads it as pre-escalation phase.",
+        sources: [ {name:"Bruegel",passages:12},{name:"ECFR",passages:10},{name:"MERICS",passages:9},{name:"CSIS",passages:8},{name:"FP",passages:5} ],
+        topArcs: [
+          { pair: "EU - PRC",  pol: "complex", w: 4.4, vol: "H" },
+          { pair: "PRC - DEU", pol: "complex", w: 4.1, vol: "H" },
+          { pair: "USA - EU",  pol: "complex", w: 4.0, vol: "M" },
+          { pair: "PRC - FRA", pol: "complex", w: 3.8, vol: "M" }
+        ],
+        cost: "$0.02", composedAt: "10:26"
+      },
+      dtReport: {
+        title: "Modal path is managed friction with periodic flare-ups; tail toward broader retaliation exists but requires trigger.",
+        subtitle: "A 12-24 month projection of EU-China trade dynamic across 4 scenarios.",
+        thesis: "Four trajectories over 12-24 month horizon.\n\nModal (48%): incremental tariff escalation on defined sectors (EVs, medical devices, wind, biodiesel) with matched Chinese retaliation on specific member states. Aggregate trade preserved. Managed friction becomes structural.\n\nRight-tail (24%): a specific incident (Chinese acquisition blocked politically, EU investigation with punitive damages, rare earth export halt) triggers proportional retaliation cycle that escalates beyond calibrated pattern. Reaches new equilibrium at higher friction level.\n\nLeft-tail (16%): US-China detente under Trump II reduces European hedging incentive; EU-China negotiated framework emerges covering critical minerals, market access, subsidy discipline. Managed dialogue phase.\n\nUnstable (12%): German coalition collapse or French political realignment removes the pivotal member state's moderating role; escalation accelerates toward genuine decoupling architecture.",
+        implication: "The consolidation of managed friction generates second-order effects across European corporate strategy and financial markets. First, European exporters to China face progressive margin compression that reshapes sector fundamentals across automotive, luxury goods, industrial machinery and chemicals, with visible impact on corporate bond spreads and equity valuations. Second, capital reallocation away from China-exposed European names accelerates in institutional portfolios, generating persistent underperformance for the most exposed segments. Third, the political economy of European industrial policy shifts toward explicit support for import substitution and reshoring, generating fiscal implications that transmit into sovereign bond markets particularly for Germany and France. Fourth, insurance underwriters revise geopolitical exclusions and sublimits on trade credit, marine cargo and political risk cover, generating premium increases and reduced capacity across affected corridors.",
+        scenarios: [
+          { code: "S1", tag: "LEFT TAIL",  label: "S1", pct: 16, ci: "12-20%", pol: "blue",      body: "<em>US-China detente reduces EU hedging.</em> Trump II reaches modus vivendi with Beijing on tariffs and tech; European escalation loses political rationale. EU-China negotiated framework covers critical minerals, market access, subsidy discipline." },
+          { code: "S2", tag: "MODAL",      label: "S2", pct: 48, ci: "42-54%", pol: "amber",     body: "<em>Managed friction structural.</em> Incremental tariff escalation on defined sectors with matched targeted retaliation. Aggregate trade preserved. Supply chain reconfiguration proceeds at regulatory pace. German position pivotal but stable." },
+          { code: "S3", tag: "RIGHT TAIL", label: "S3", pct: 24, ci: "19-30%", pol: "red",       body: "<em>Trigger event escalates cycle.</em> Chinese acquisition blocked, EU investigation with punitive damages, or rare earth export halt triggers proportional retaliation. Reaches new equilibrium at higher friction level. Specific sectors deeply affected." },
+          { code: "S4", tag: "UNSTABLE",   label: "S4", pct: 12, ci: "8-16%",  pol: "dim-amber", body: "<em>German pivot lost.</em> Coalition collapse or French realignment removes moderating role. Escalation accelerates toward genuine decoupling architecture. WTO-shattering measures become plausible." }
+        ],
+        latticeCaption: "Each terminal is a EU-China trade configuration at 24-month horizon; modal band (managed friction) concentrates most weight. Right tail becomes thicker if German coalition weakens.",
+        sensitivity: "Most sensitive to <em>German coalition stability</em>: instability moves S3+S4 collectively from 36% to 52%. Second: <em>US-China direction under Trump II</em>: detente moves S1 to 26%. Third: <em>specific trigger event probability</em>: any high-profile incident moves S3 up sharply.",
+        robustness: 3.4, robustnessCaption: "MEDIUM-HIGH",
+        robustnessNote: "Distribution stable across 4 restart seeds (max delta 6pp). Tail probabilities sensitive to German political trajectory.",
+        drivingArcs: [
+          { pair: "EU - PRC",  desc: "Frame: friction dynamic",       pol: "amber" },
+          { pair: "PRC - DEU", desc: "Pivot: German position",        pol: "amber" },
+          { pair: "USA - EU",  desc: "Meta: US direction",            pol: "amber" },
+          { pair: "PRC - FRA", desc: "Retaliation: targeted pressure",pol: "red" }
+        ],
+        assumptions: [
+          "A1: WTO framework remains formally intact.",
+          "A2: German coalition survives through H1 2027 budget.",
+          "A3: Chinese retaliation stays targeted, not generalised.",
+          "A4: No major security incident spillover onto trade.",
+          "A5: Trump II tariff policy stabilises by mid-2027."
+        ],
+        stats: { tier: "Standard", iterations: 182, nodes: 1204, time: "3m 08s", cost: "$0.29" },
+        fullReport: {
+          narrative: "The modal trajectory unfolds through progressive tariff escalation on defined sectors, with matched Chinese retaliation calibrated to member states most advocating firmer positions. Aggregate bilateral trade is preserved; specific corridors deeply reshaped. Chinese OEMs continue investment into European plants in Hungary, Spain, France and Italy, generating footprint that complicates future measures. European semiconductor equipment sector faces sustained pressure on both procurement and licensing. By 2028 the friction architecture is structural, with corporate strategies fully adjusted to the higher-tariff environment.",
+          keyMoves: [
+            "Q4 2026: EU medical devices investigation moves to duties phase.",
+            "Q1 2027: Chinese rare earth export licensing tightens further.",
+            "Q2 2027: German 2028 budget locks defence spending; automotive lobbying intensifies.",
+            "Q3 2027: EU wind turbine investigation reaches determination.",
+            "Q4 2027: New tariff equilibrium consolidates; corporate strategies stabilise."
+          ]
+        }
+      }
+    },
+
+    "us-debt-hyperscalers-main": {
+      question: "How could the US debt trajectory and hyperscaler capex cycle evolve, and what are the systemic risks?",
+      dossier: "US debt & hyperscaler capex", dossierId: "us-debt-hyperscalers", parent: null,
+      subgraph: {
+        focus: ["USA", "PRC", "EU", "JPN"], peripheral: ["IND", "KOR", "TWN", "GBR"],
+        arcs: [
+          { s: "USA", t: "PRC", w: 4.5, vol: "H", pol: "complex" },
+          { s: "USA", t: "JPN", w: 4.7, vol: "M", pol: "aligned" },
+          { s: "USA", t: "EU",  w: 4.0, vol: "M", pol: "complex" },
+          { s: "USA", t: "TWN", w: 4.5, vol: "M", pol: "aligned" },
+          { s: "USA", t: "KOR", w: 4.4, vol: "L", pol: "aligned" }
+        ],
+        actorCount: 8, arcCount: 5, passageCount: 41, sourceCount: 5
+      },
+      evidenceStrength: 3.7, evidenceCaption: "MEDIUM-HIGH",
+      thinkingSteps: ["Subgraph resolved: 8 actors, 5 arcs","Corpus retrieval: 41 passages, 5 sources","Composing positioned answer","Validation on critical arcs"],
+      l1Report: {
+        title: "US debt path and hyperscaler capex concentration are converging into a coupled fragility.",
+        subtitle: "A positioned reading of the twin dynamics over an 18-24 month horizon.",
+        thesis: "Two dynamics that traditionally operate in separate analytical frames are becoming coupled. The first is the US federal debt trajectory, projected to reach 120% of GDP by 2028 under current CBO baseline with primary deficits stable in the 5-6% of GDP range. Interest expense is now the second-largest budget category and rising. The second is the hyperscaler capex cycle, with Microsoft, Google, Meta, Amazon and Oracle committing an aggregated 350-400 billion USD to AI infrastructure in 2026 alone, financed increasingly through debt issuance rather than internal cash flow. The coupling emerges through two channels. First, hyperscaler debt issuance competes with Treasury supply for the same yield-sensitive institutional buyer base, contributing to term premium expansion. Second, hyperscaler capex is disproportionately concentrated in US data centre construction, chips procurement from TSMC and Samsung, and power grid interconnection, generating a demand shock that interacts with fiscal impulse in ways that complicate Fed policy calibration. The systemic risk is not the failure of any single actor but the correlated repricing that would follow a rate shock, a hyperscaler capex retrenchment or a Treasury auction failure. Any of these would transmit rapidly across the other two channels given the tight interconnection.",
+        implication: "The coupling of US debt and hyperscaler capex generates second-order effects that reshape global capital flows and financial market structure. First, dollar-denominated corporate bond issuance from hyperscalers competes with Treasury issuance for the same buyer base, particularly Japanese and European institutional investors, generating spread compression between AAA corporates and sovereign that inverts historical patterns. Second, sustained hyperscaler demand for TSMC leading-node capacity generates concentration risk that Taiwan geopolitics amplifies, with any disruption transmitting immediately into hyperscaler earnings and equity valuations. Third, European institutional investors face a strategic choice between chasing US corporate yield with associated FX risk versus accepting compressed European sovereign yields, generating persistent European insurer duration mismatches. Fourth, any material Fed pivot on rate path generates coupled repricing across sovereign, AAA corporate and AI equity segments that could trigger portfolio-level margin calls in leveraged strategies.",
+        evidence: [
+          { n: "01", body: "US federal debt trajectory reaches 120 percent of GDP by 2028 under CBO baseline. Interest expense now second-largest budget category. Primary deficits stable at 5-6 percent of GDP with no political mechanism for reduction on horizon.", citations: [{ src: "CBO", date: "Jul 2026", emphasis: true }, { src: "PIIE", date: "Aug 2026" }] },
+          { n: "02", body: "Hyperscaler aggregated AI capex 350-400 billion USD in 2026, financed increasingly through debt issuance. Microsoft, Google, Meta, Amazon, Oracle all raising bond volumes at record pace. Competes with Treasury supply for same institutional buyer base.", citations: [{ src: "FT", date: "Aug 2026" }, { src: "CSIS", date: "Jul 2026" }] },
+          { n: "03", body: "TSMC leading-node capacity concentration means hyperscaler demand shock transmits to Taiwan risk. Any Strait disruption reprices hyperscaler equity via chip supply expectations, generating correlated shock across seemingly unrelated portfolio positions.", citations: [{ src: "CSIS", date: "Jul 2026" }, { src: "Bruegel", date: "Aug 2026" }] },
+          { n: "04", body: "Fed policy calibration complicated by dual pressure. Fiscal impulse from persistent deficits combined with private-sector capex boom generates inflation pressure that constrains rate cuts even as debt service costs rise.", citations: [{ src: "PIIE", date: "Aug 2026" }] }
+        ],
+        divergence: "PIIE reads debt path as sustainable given growth; CBO stress scenarios show breach thresholds by 2029.",
+        sources: [ {name:"CBO",passages:11},{name:"PIIE",passages:10},{name:"CSIS",passages:9},{name:"FT",passages:6},{name:"Bruegel",passages:5} ],
+        topArcs: [
+          { pair: "USA - JPN", pol: "aligned", w: 4.7, vol: "M" },
+          { pair: "USA - PRC", pol: "complex", w: 4.5, vol: "H" },
+          { pair: "USA - TWN", pol: "aligned", w: 4.5, vol: "M" },
+          { pair: "USA - KOR", pol: "aligned", w: 4.4, vol: "L" }
+        ],
+        cost: "$0.02", composedAt: "10:26"
+      },
+      dtReport: {
+        title: "Modal path is coupled tension without break; tail toward disorderly repricing is thicker than markets currently price.",
+        subtitle: "18-24 month projection of the US debt + hyperscaler capex dynamic across 4 scenarios.",
+        thesis: "Four trajectories over 18-24 month horizon.\n\nModal (42%): coupled tension persists. Debt path grinds higher, hyperscaler capex sustained, term premium gradually rises, Fed maintains restrictive stance. No breaking point but cumulative pressure on credit spreads and equity multiples.\n\nRight-tail (26%): disorderly repricing. Failed Treasury auction or hyperscaler capex retrenchment triggers correlated selling across sovereign, corporate and AI equity. Fed intervention required. Regime change in market structure.\n\nLeft-tail (17%): productivity boom validates capex. AI investment generates measurable productivity gains that justify capex intensity, absorbing debt through growth. Soft landing scenario.\n\nUnstable (15%): geopolitical trigger hits Taiwan supply chain during peak capex commitments. Hyperscaler earnings shock combines with debt refinancing stress. Compound crisis.",
+        implication: "The consolidation of the modal coupled-tension equilibrium generates effects across global financial architecture. First, European insurers face structural challenge in matching liabilities as US corporate yields exceed European sovereign yields materially, generating pressure to expand USD allocations with associated FX hedging costs. Second, the term premium expansion trajectory persistently underprices tail risk relative to underlying fundamentals, creating conditions for episodic volatility spikes that transmit to European risk assets. Third, the correlation structure between US Treasury, hyperscaler credit and AI equity tightens beyond historical norms, invalidating traditional diversification approaches and requiring active risk management of coupled exposures. Fourth, the Taiwan supply chain becomes the primary channel through which geopolitical events transmit to global financial markets, elevating Strait dossier from regional concern to systemic financial variable.",
+        scenarios: [
+          { code: "S1", tag: "LEFT TAIL",  label: "S1", pct: 17, ci: "12-22%", pol: "blue",      body: "<em>Productivity absorbs capex.</em> AI investment generates measurable productivity gains that justify intensity. Debt-to-GDP stabilises through growth denominator. Soft landing." },
+          { code: "S2", tag: "MODAL",      label: "S2", pct: 42, ci: "36-49%", pol: "amber",     body: "<em>Coupled tension persists.</em> Debt path grinds higher, hyperscaler capex sustained, term premium gradually rises. No break but cumulative pressure on credit spreads and equity multiples. Modal for horizon." },
+          { code: "S3", tag: "RIGHT TAIL", label: "S3", pct: 26, ci: "20-32%", pol: "red",       body: "<em>Disorderly repricing.</em> Failed Treasury auction or hyperscaler capex retrenchment triggers correlated selling across sovereign, corporate and AI equity. Fed intervention required. Regime change." },
+          { code: "S4", tag: "UNSTABLE",   label: "S4", pct: 15, ci: "10-20%", pol: "dim-amber", body: "<em>Compound crisis via Taiwan.</em> Strait event hits chip supply during peak capex commitments. Hyperscaler earnings shock combines with debt refinancing stress. Full financial crisis dynamics." }
+        ],
+        latticeCaption: "Each terminal is a coupled US debt + hyperscaler configuration at 24-month horizon; modal band concentrates most weight. Compound crisis tail thicker than markets price.",
+        sensitivity: "Most sensitive to <em>Taiwan supply chain event probability</em>: increase moves S4 from 15% to 24%. Second: <em>AI productivity measurable in horizon</em>: strong evidence moves S1 to 28%. Third: <em>Fed communication on debt monetisation</em>: any pivot moves S3 upward.",
+        robustness: 3.2, robustnessCaption: "MEDIUM",
+        robustnessNote: "Distribution moderately stable across 4 seeds (max delta 8pp). Coupling of two independent trajectories generates higher variance than single-variable scenarios.",
+        drivingArcs: [
+          { pair: "USA - TWN", desc: "Coupling channel: chip supply", pol: "amber" },
+          { pair: "USA - JPN", desc: "Buyer base: Treasury demand",   pol: "green" },
+          { pair: "USA - EU",  desc: "Buyer base: European flows",    pol: "amber" },
+          { pair: "USA - PRC", desc: "Meta: rivalry drives capex",    pol: "red" }
+        ],
+        assumptions: [
+          "A1: No formal Fed shift on inflation target.",
+          "A2: Hyperscaler capex not curtailed by antitrust action.",
+          "A3: TSMC operational continuity absent Taiwan event.",
+          "A4: US political ability to raise debt ceiling maintained.",
+          "A5: No sovereign downgrade shock in horizon."
+        ],
+        stats: { tier: "Standard", iterations: 178, nodes: 1189, time: "3m 06s", cost: "$0.28" },
+        fullReport: {
+          narrative: "The modal trajectory unfolds through progressive term premium expansion as Treasury supply meets hyperscaler bond issuance in a compressed buyer pool. Debt-to-GDP grinds higher toward 120% by 2028. Hyperscaler capex is sustained at $350-400bn annually. AI productivity gains materialise partially, insufficient to close the growth-required gap. Fed maintains restrictive stance longer than markets price, generating episodic risk-off phases without triggering full repricing. By H2 2027 the coupled system is at maximum tension without break, with financial market volatility structurally elevated but crisis avoided.",
+          keyMoves: [
+            "Q4 2026: Hyperscaler bond issuance sets quarterly record.",
+            "Q1 2027: 10Y Treasury yield tests 5% amid supply pressure.",
+            "Q2 2027: First measurable productivity gains from AI deployment surface.",
+            "Q3 2027: Fed signals patience on cuts; term premium expands further.",
+            "Q4 2027: Coupled tension persistent, no break but no relief."
+          ]
+        }
+      }
+    },
+
+    "us-china-tensions-main": {
+      question: "How could US-China strategic tensions on tech and alliances evolve beyond Taiwan over the next 24 months?",
+      dossier: "US-China strategic tensions", dossierId: "us-china-tensions", parent: null,
+      subgraph: {
+        focus: ["USA", "PRC", "NLD", "JPN", "KOR"], peripheral: ["PHL", "AUS", "IND", "TWN"],
+        arcs: [
+          { s: "USA", t: "PRC", w: 4.9, vol: "H", pol: "complex" },
+          { s: "USA", t: "NLD", w: 4.3, vol: "M", pol: "aligned" },
+          { s: "USA", t: "JPN", w: 4.8, vol: "M", pol: "aligned" },
+          { s: "USA", t: "KOR", w: 4.6, vol: "L", pol: "aligned" },
+          { s: "USA", t: "PHL", w: 4.4, vol: "M", pol: "aligned" },
+          { s: "USA", t: "AUS", w: 4.7, vol: "L", pol: "aligned" }
+        ],
+        actorCount: 9, arcCount: 6, passageCount: 46, sourceCount: 5
+      },
+      evidenceStrength: 4.0, evidenceCaption: "HIGH",
+      thinkingSteps: ["Subgraph resolved: 9 actors, 6 arcs","Corpus retrieval: 46 passages, 5 sources","Composing positioned answer","Validation on critical arcs"],
+      l1Report: {
+        title: "US-China tensions have shifted from Taiwan-centric to broad structural competition across tech and alliances.",
+        subtitle: "A positioned reading of the strategic rivalry beyond the Strait, over a 24-month horizon.",
+        thesis: "The US-China rivalry has evolved from a Taiwan-anchored concern into a diffuse structural competition operating across multiple domains simultaneously. Technology export controls have expanded from advanced semiconductor equipment to include quantum, biotech, additive manufacturing and specific materials. The trilateral coordination with the Netherlands and Japan on ASML and semiconductor equipment holds and is being extended to non-lithography tools. Data flow restrictions target Chinese apps with US user bases, generating incremental decoupling of consumer internet architectures. Alliance-building in the Indo-Pacific proceeds through AUKUS expansion, QUAD-plus configurations, US-Philippines EDCA expansion and Korean posture normalisation. Chinese responses combine domestic industrial policy acceleration through Big Fund cycles, dual-use technology diplomacy with the Global South, and calibrated economic pressure on individual allies. The rivalry has generated a stable pattern of competition below the threshold of direct confrontation, with both sides investing in long-term structural positioning rather than pursuing near-term confrontation. Over the horizon, the modal path is intensified structural competition with periodic tactical de-escalations, generating persistent friction across trade, technology and alliance domains without transitioning to open confrontation.",
+        implication: "The consolidation of structural competition generates effects that reshape global technology, capital and alliance architectures. First, semiconductor supply chains reorganise into US-aligned and China-aligned clusters, with corporate strategies bifurcating along lines that persist regardless of specific tariff outcomes. Second, capital flows into US-aligned Indo-Pacific defence industrial base accelerate, generating sustained order flow for Korean, Japanese, Australian and Indian defence contractors. Third, European technology firms face progressive pressure to align with US export controls, generating conflict between commercial interests in Chinese markets and strategic requirements from US customer base. Fourth, Chinese domestic technology investment absorbs progressively larger fiscal capacity, generating trade and macro implications that transmit into currency, commodity and rate markets. Fifth, the alliance architecture in the Indo-Pacific consolidates into a de facto containment structure that constrains Chinese regional options across security, economic and diplomatic dimensions.",
+        evidence: [
+          { n: "01", body: "Technology export controls have expanded beyond advanced semiconductors to quantum, biotech, additive manufacturing, specific materials. Trilateral US-NLD-JPN coordination holds and extends to non-lithography tools. Structural rather than tactical.", citations: [{ src: "CSIS", date: "Jul 2026", emphasis: true }, { src: "MERICS", date: "Aug 2026" }] },
+          { n: "02", body: "Alliance-building proceeds through AUKUS expansion, QUAD-plus configurations, US-Philippines EDCA expansion, Korean posture normalisation. Multiple simultaneous strands rather than single major move. Cumulative effect substantial.", citations: [{ src: "CSIS", date: "Aug 2026" }, { src: "ISPI", date: "Jul 2026" }] },
+          { n: "03", body: "Chinese response combines domestic industrial policy acceleration (Big Fund III+IV), dual-use technology diplomacy with Global South, calibrated economic pressure on individual allies. Consistent pattern below direct confrontation threshold.", citations: [{ src: "MERICS", date: "Aug 2026" }, { src: "Bruegel", date: "Jul 2026" }] },
+          { n: "04", body: "Neither side pursuing near-term confrontation. Both investing in long-term structural positioning. Modal path is intensified competition with tactical de-escalations, not escalation to open confrontation.", citations: [{ src: "CSIS", date: "Aug 2026" }] }
+        ],
+        divergence: "CSIS emphasises alliance-building as decisive; MERICS emphasises Chinese domestic capacity as under-appreciated.",
+        sources: [ {name:"CSIS",passages:14},{name:"MERICS",passages:10},{name:"ISPI",passages:8},{name:"Bruegel",passages:8},{name:"FP",passages:6} ],
+        topArcs: [
+          { pair: "USA - PRC", pol: "complex", w: 4.9, vol: "H" },
+          { pair: "USA - JPN", pol: "aligned", w: 4.8, vol: "M" },
+          { pair: "USA - AUS", pol: "aligned", w: 4.7, vol: "L" },
+          { pair: "USA - KOR", pol: "aligned", w: 4.6, vol: "L" }
+        ],
+        cost: "$0.02", composedAt: "10:26"
+      },
+      dtReport: {
+        title: "Modal is structural competition with tactical de-escalations; genuine detente unlikely, hot conflict outside Taiwan also unlikely.",
+        subtitle: "24-month projection of US-China strategic tensions beyond Taiwan across 4 scenarios.",
+        thesis: "Four trajectories over 24-month horizon.\n\nModal (49%): structural competition intensifies across tech, alliances, trade with periodic tactical de-escalations preserving working relationship. No breakthrough deals, no direct confrontation. Cumulative effect substantial.\n\nRight-tail (22%): specific escalation event (major sanctions round, alliance treaty crossing threshold, Chinese economic coercion on Western firm) triggers cycle beyond calibrated pattern. Higher friction equilibrium.\n\nLeft-tail (15%): transactional Trump II deal reaches partial detente on select issues (tariffs, TikTok, specific export controls) in exchange for Chinese concessions. Structural competition slowed but not reversed.\n\nUnstable (14%): domestic political trigger in either capital forces posture shift. Chinese economic distress or US election cycle produces discontinuous change in trajectory.",
+        implication: "The consolidation of the modal structural-competition equilibrium generates effects that reshape global technology, capital and security architectures over the horizon. First, corporate strategies across technology, defence and adjacent sectors calibrate to a structurally bifurcated global market, with margin implications that persist regardless of specific policy cycles. Second, the buildup of Indo-Pacific defence capabilities generates sustained order flow into a specific set of contractors and countries, reshaping capital allocation flows across the region. Third, European firms and governments face progressive pressure to choose alignment across an expanding list of technology and trade domains, generating cumulative EU-US friction on autonomous strategic capacity. Fourth, Chinese domestic technology investment absorbs progressively larger fiscal and human capital, generating internal economic implications that transmit externally through trade balances and currency flows. Fifth, the alliance architecture consolidates to the point where any subsequent US political shift toward reduction would generate acute crises across multiple regional relationships simultaneously.",
+        scenarios: [
+          { code: "S1", tag: "LEFT TAIL",  label: "S1", pct: 15, ci: "11-19%", pol: "blue",      body: "<em>Transactional detente.</em> Trump II deal on select issues (tariffs, TikTok, specific export controls) in exchange for Chinese concessions. Structural competition slowed but not reversed. Partial pattern." },
+          { code: "S2", tag: "MODAL",      label: "S2", pct: 49, ci: "43-56%", pol: "amber",     body: "<em>Structural competition intensifies.</em> Tech export controls expand, alliance-building continues, trade friction sustained. Tactical de-escalations preserve working relationship. Modal for horizon." },
+          { code: "S3", tag: "RIGHT TAIL", label: "S3", pct: 22, ci: "17-28%", pol: "red",       body: "<em>Trigger event escalates.</em> Major sanctions round, alliance treaty crossing threshold, or Chinese coercion on Western firm triggers cycle. Higher friction equilibrium." },
+          { code: "S4", tag: "UNSTABLE",   label: "S4", pct: 14, ci: "9-19%",  pol: "dim-amber", body: "<em>Domestic political trigger.</em> Chinese economic distress or US election cycle produces discontinuous shift. Direction depends on specific trigger; uncertainty high." }
+        ],
+        latticeCaption: "Each terminal is a US-China strategic configuration at 24-month horizon; modal band (structural competition) concentrates most weight. Tail probabilities depend on domestic politics in both capitals.",
+        sensitivity: "Most sensitive to <em>Trump II China policy consistency</em>: erratic pattern moves S4 from 14% to 23%. Second: <em>Chinese economic trajectory</em>: sharp slowdown moves S3+S4 collectively higher. Third: <em>alliance coordination events</em>: any high-visibility summit moves S2 higher.",
+        robustness: 3.5, robustnessCaption: "MEDIUM-HIGH",
+        robustnessNote: "Distribution stable across 5 seeds (max delta 6pp). Modal path robust to variation; tails sensitive to political inputs in both capitals.",
+        drivingArcs: [
+          { pair: "USA - PRC", desc: "Frame: rivalry structure",         pol: "amber" },
+          { pair: "USA - JPN", desc: "Anchor: alliance coordination",    pol: "green" },
+          { pair: "USA - NLD", desc: "Instrument: export control regime",pol: "green" },
+          { pair: "USA - AUS", desc: "Extension: AUKUS commitments",     pol: "green" }
+        ],
+        assumptions: [
+          "A1: Trump II maintains transactional pattern on China.",
+          "A2: Trilateral export control regime holds.",
+          "A3: No hot conflict in Taiwan Strait in horizon.",
+          "A4: Chinese domestic stability maintained.",
+          "A5: European alignment with US pressure on China intensifies."
+        ],
+        stats: { tier: "Standard", iterations: 191, nodes: 1287, time: "3m 15s", cost: "$0.30" },
+        fullReport: {
+          narrative: "The modal trajectory unfolds through progressive intensification of structural competition across technology, alliance and trade domains. Export controls expand to cover new categories on a roughly quarterly cadence. Alliance-building proceeds through multiple simultaneous strands: AUKUS Pillar Two expansion, US-Philippines EDCA site additions, Korean-Japanese-US trilateral consolidation, QUAD-plus configurations with Vietnam and Indonesia. Chinese responses are calibrated: Big Fund cycles accelerate, Global South technology diplomacy expands, economic pressure applies to specific Western firms without generalised escalation. Tactical de-escalations preserve working channels: episodic high-level meetings, targeted deals on narrow issues, cooperative moves on climate. By H2 2028 the strategic architecture has consolidated into a structurally bifurcated system with cumulative effects on corporate strategy, capital flows and regional security that persist regardless of specific political cycles.",
+          keyMoves: [
+            "Q4 2026: Export control expansion covers quantum and additive manufacturing.",
+            "Q1 2027: AUKUS Pillar Two reaches operational milestones.",
+            "Q2 2027: Chinese Big Fund IV announced with expanded scope.",
+            "Q3 2027: US-Philippines EDCA site additions completed.",
+            "Q4 2027: Alliance architecture consolidates; competition structure locked in."
+          ]
+        }
+      }
+    },
+
+    "eu-hybrid-main": {
+      question: "How is Russian hybrid pressure on the EU evolving, and can Europe coordinate a response?",
+      dossier: "EU hybrid pressure", dossierId: "eu-hybrid", parent: null,
+      subgraph: {
+        focus: ["RUS", "EU", "DEU", "POL", "GBR"], peripheral: ["FIN", "EST", "FRA", "NLD"],
+        arcs: [
+          { s: "RUS", t: "EU",  w: 4.3, vol: "H", pol: "hostile" },
+          { s: "RUS", t: "DEU", w: 3.9, vol: "H", pol: "hostile" },
+          { s: "RUS", t: "POL", w: 4.0, vol: "H", pol: "hostile" },
+          { s: "RUS", t: "FIN", w: 3.8, vol: "H", pol: "hostile" },
+          { s: "RUS", t: "EST", w: 3.9, vol: "H", pol: "hostile" },
+          { s: "EU",  t: "DEU", w: 4.5, vol: "M", pol: "aligned" }
+        ],
+        actorCount: 9, arcCount: 6, passageCount: 44, sourceCount: 5
+      },
+      evidenceStrength: 3.7, evidenceCaption: "MEDIUM-HIGH",
+      thinkingSteps: ["Subgraph resolved: 9 actors, 6 arcs","Corpus retrieval: 44 passages, 5 sources","Composing positioned answer","Validation on critical arcs"],
+      l1Report: {
+        title: "Hybrid pressure has scaled beyond European coordination capacity; the gap is now the story.",
+        subtitle: "A positioned reading of Russian hybrid campaign against EU and coordination deficit, 12-24 month horizon.",
+        thesis: "The Russian hybrid campaign against European Union member states has scaled through 2025-2026 from episodic incidents to a sustained multi-domain programme. Baltic submarine cable and pipeline incidents continue with consistent attribution to Russian shadow fleet and state proxies. Airspace incursions by drones over sensitive infrastructure in Germany, Poland, Baltic states have normalised from probing to routine. Disinformation operations focus on defence-industrial policy debates (armament budgets, conscription, NATO tripwire posture) with coordinated inauthentic behaviour across Telegram, X, TikTok. Arson attacks on logistics chains supporting Ukraine documented in multiple member states. GPS jamming and spoofing persistent across Baltic and North Sea. The European response remains fragmented along national lines. Attribution is technically feasible but politically constrained: member states resist collective attribution because it would require collective response, and collective response mechanisms do not exist at treaty level. The coordination deficit is structural rather than tactical: EU treaties assign primary competence on internal security and intelligence sharing to member states. Institutional architectures built to support hybrid response have produced analysis but not enforcement authority. Moscow is exploiting the asymmetry deliberately, generating continuous strategic cost on European decision-making without ever reaching the threshold that would force coordinated response.",
+        implication: "The persistence of the coordination gap generates second-order effects across European security and political architecture. First, frontline states develop bilateral and minilateral response mechanisms that bypass EU institutional architecture, producing effective regional capability but weakening the Union as primary framework and transferring political weight to Nordic-Baltic Eight, Weimar Triangle and ad hoc coalitions. Second, grey-zone activity normalises as permanent feature of European security: incident recurrence without escalation moves them from crisis to baseline, eroding deterrent value of European response postures. Third, sustained exposure to Russian hybrid pressure in the information domain generates polarisation around defence and security questions that maps onto pre-existing political cleavages, strengthening nationalist and Eurosceptic parties. Fourth, American assessments of European willingness to bear security costs are shaped by visible European response to hybrid pressure; fragmented response reinforces Washington's argument for further disengagement.",
+        evidence: [
+          { n: "01", body: "Baltic submarine cable and pipeline incident pattern continues through 2026 with consistent attribution to Russian shadow fleet and state proxies. Response national and slow. No EU-level joint attribution mechanism materialised despite repeated proposals.", citations: [{ src: "ECFR", date: "Jul 2026", emphasis: true }, { src: "IISS", date: "Aug 2026" }] },
+          { n: "02", body: "Airspace incursions by drones over sensitive infrastructure normalised from probing to routine. National responses vary from restrained to aggressive. Lack of unified escalation ladder is itself a signal: seams exploitable.", citations: [{ src: "CSIS", date: "Aug 2026" }, { src: "ISPI", date: "Aug 2026" }] },
+          { n: "03", body: "Disinformation operations targeting European elections adapted after platform enforcement improvements. Current campaigns focus on defence-industrial policy debates with coordinated inauthentic behaviour. Attribution technically feasible but politically constrained.", citations: [{ src: "ECFR", date: "Jun 2026" }, { src: "FP", date: "Aug 2026" }] },
+          { n: "04", body: "Coordination deficit structural. EU treaties assign primary competence on internal security to member states. Hybrid CoE Helsinki and EEAS StratCom units produce analysis but not enforcement authority. Without treaty change or crisis trigger, deficit persists.", citations: [{ src: "Bruegel", date: "Jul 2026" }] }
+        ],
+        divergence: "ECFR reads coordination deficit as improvable within existing treaties; IISS sees it as requiring crisis trigger to move.",
+        sources: [ {name:"ECFR",passages:13},{name:"IISS",passages:11},{name:"CSIS",passages:9},{name:"ISPI",passages:7},{name:"Bruegel",passages:4} ],
+        topArcs: [
+          { pair: "EU - DEU",  pol: "aligned", w: 4.5, vol: "M" },
+          { pair: "RUS - EU",  pol: "hostile", w: 4.3, vol: "H" },
+          { pair: "RUS - POL", pol: "hostile", w: 4.0, vol: "H" },
+          { pair: "RUS - EST", pol: "hostile", w: 3.9, vol: "H" },
+          { pair: "RUS - DEU", pol: "hostile", w: 3.9, vol: "H" }
+        ],
+        cost: "$0.02", composedAt: "10:26"
+      },
+      dtReport: {
+        title: "Modal is sustained hybrid pressure with fragmented European response; kinetic escalation unlikely but coordination gap self-reinforcing.",
+        subtitle: "12-24 month projection of EU hybrid dynamic across 4 scenarios.",
+        thesis: "Four trajectories over 12-24 month horizon.\n\nModal (46%): sustained hybrid pressure with fragmented European response. Cable incidents, airspace incursions, disinformation continue at established tempo. National responses remain uncoordinated. Nordic-Baltic minilateral mechanisms strengthen but don't consolidate at EU level.\n\nRight-tail (24%): specific incident forces coordination. Major cable event affecting multiple states simultaneously, or disinformation event with attributable electoral impact, generates political pressure for treaty-level response. Coordination architecture emerges in crisis mode.\n\nLeft-tail (16%): Russian moderation post-Ukraine settlement or leadership transition reduces pressure intensity. European coordination remains fragmented but tempo of incidents drops.\n\nUnstable (14%): escalation to kinetic proxy attack (physical attack on infrastructure attributed to Russian direction). Forces NATO Article 5 consultation. Discontinuous change.",
+        implication: "The consolidation of the modal fragmented-response equilibrium generates effects that extend beyond the immediate hybrid domain. First, the bifurcation of European security response into national and minilateral tracks becomes institutional, generating durable capabilities at regional level while weakening EU as strategic actor. Second, the normalisation of grey-zone activity as permanent feature reshapes European political discourse on defence and security, generating persistent electoral effects across member states. Third, the coordination gap becomes exploitable by actors other than Russia, generating precedent for Chinese and other state actors to apply similar techniques. Fourth, American assessments of European autonomous defence capacity are shaped negatively by fragmented response, accelerating US disengagement trajectory. Fifth, corporate operations of European insurers, banks, energy companies and telecommunications firms in exposed geographies face rising operational risk from cumulative hybrid pressure, generating premium and capacity adjustments across affected corridors.",
+        scenarios: [
+          { code: "S1", tag: "LEFT TAIL",  label: "S1", pct: 16, ci: "11-21%", pol: "blue",      body: "<em>Russian moderation.</em> Ukraine settlement or leadership transition reduces pressure intensity. European coordination remains fragmented but tempo of incidents drops. Not resolution, but relief." },
+          { code: "S2", tag: "MODAL",      label: "S2", pct: 46, ci: "40-53%", pol: "amber",     body: "<em>Sustained hybrid with fragmented response.</em> Cable incidents, airspace incursions, disinformation continue at established tempo. Nordic-Baltic minilateral mechanisms strengthen. EU-level coordination remains structural gap." },
+          { code: "S3", tag: "RIGHT TAIL", label: "S3", pct: 24, ci: "19-30%", pol: "red",       body: "<em>Incident forces coordination.</em> Major cable event affecting multiple states, or disinformation event with attributable electoral impact, generates political pressure for treaty-level response. Coordination architecture emerges in crisis mode." },
+          { code: "S4", tag: "UNSTABLE",   label: "S4", pct: 14, ci: "9-19%",  pol: "dim-amber", body: "<em>Kinetic proxy attack.</em> Physical attack on infrastructure attributed to Russian direction. Forces NATO Article 5 consultation. Discontinuous change in European security posture. Full mobilisation dynamics." }
+        ],
+        latticeCaption: "Each terminal is EU hybrid-response configuration at 24-month horizon; modal band (sustained pressure, fragmented response) concentrates most weight.",
+        sensitivity: "Most sensitive to <em>Ukraine trajectory</em>: settlement or freeze reduces S2-S4 collectively. Second: <em>single high-visibility incident probability</em>: increase moves S3 upward. Third: <em>European Council response capacity to trigger events</em>.",
+        robustness: 3.4, robustnessCaption: "MEDIUM-HIGH",
+        robustnessNote: "Distribution stable across 4 seeds (max delta 7pp). Modal robust; tails sensitive to specific event realisation.",
+        drivingArcs: [
+          { pair: "RUS - EU",  desc: "Frame: sustained pressure",       pol: "red" },
+          { pair: "EU - DEU",  desc: "Coordination: pivot state",       pol: "amber" },
+          { pair: "RUS - POL", desc: "Front line: incident probability",pol: "red" },
+          { pair: "RUS - EST", desc: "Front line: incident probability",pol: "red" }
+        ],
+        assumptions: [
+          "A1: EU treaty framework on security competence unchanged in horizon.",
+          "A2: Russian shadow fleet operational capacity preserved.",
+          "A3: No NATO Article 5 invocation in horizon.",
+          "A4: Nordic-Baltic minilateral mechanisms strengthen but don't formalise at EU level.",
+          "A5: Trump II European posture consistent with disengagement trajectory."
+        ],
+        stats: { tier: "Standard", iterations: 175, nodes: 1156, time: "3m 03s", cost: "$0.27" },
+        fullReport: {
+          narrative: "The modal trajectory unfolds through sustained hybrid pressure at established tempo. Baltic cable and pipeline incidents continue at 2-3 per quarter with consistent attribution but fragmented response. Airspace incursions normalise fully; national responses diverge from restrained to aggressive. Disinformation operations target 2027 electoral cycles in Germany, France, Netherlands, Czech Republic. Nordic-Baltic Eight consolidates joint capabilities on maritime domain awareness, cyber defence, strategic communications. Weimar Triangle strengthens defence coordination. EU-level responses remain analytical and coordination-focused rather than enforcement-capable. By H2 2027 the fragmented-response equilibrium is institutional, with capabilities and gaps both structural.",
+          keyMoves: [
+            "Q4 2026: Two cable incidents in Baltic within same month.",
+            "Q1 2027: German electoral cycle sees documented Russian information operation.",
+            "Q2 2027: Nordic-Baltic Eight announces joint maritime domain awareness architecture.",
+            "Q3 2027: French electoral cycle sees documented Russian information operation.",
+            "Q4 2027: EU-level coordination architecture proposals stall in Council; fragmented equilibrium consolidates."
+          ]
+        }
+      }
+    },
+
+    "eu-political-2027-main": {
+      question: "How could European political evolution through the 2027-2028 electoral cycle reshape the EU?",
+      dossier: "EU political evolution 2027", dossierId: "eu-political-2027", parent: null,
+      subgraph: {
+        focus: ["DEU", "FRA", "ITA", "EU", "POL"], peripheral: ["ESP", "NLD", "HUN", "CZE"],
+        arcs: [
+          { s: "DEU", t: "EU",  w: 4.6, vol: "H", pol: "aligned" },
+          { s: "FRA", t: "EU",  w: 4.4, vol: "H", pol: "aligned" },
+          { s: "ITA", t: "EU",  w: 4.0, vol: "M", pol: "complex" },
+          { s: "POL", t: "EU",  w: 3.9, vol: "M", pol: "aligned" },
+          { s: "DEU", t: "FRA", w: 4.7, vol: "M", pol: "aligned" },
+          { s: "HUN", t: "EU",  w: 3.2, vol: "M", pol: "complex" }
+        ],
+        actorCount: 9, arcCount: 6, passageCount: 42, sourceCount: 5
+      },
+      evidenceStrength: 3.6, evidenceCaption: "MEDIUM-HIGH",
+      thinkingSteps: ["Subgraph resolved: 9 actors, 6 arcs","Corpus retrieval: 42 passages, 5 sources","Composing positioned answer","Validation on critical arcs"],
+      l1Report: {
+        title: "The 2027-2028 electoral cycle in Europe is the single largest source of political discontinuity risk on the horizon.",
+        subtitle: "A positioned reading of the compressed European electoral calendar and its implications.",
+        thesis: "The 2027-2028 window concentrates electoral cycles across a set of European member states whose combined political trajectory determines the direction of EU strategic capacity for the subsequent decade. Germany faces federal elections with the current coalition under sustained fiscal and immigration pressure, with AfD polling at historic highs in eastern Lander and CDU-CSU leadership positioning for return to Chancellery. France faces the 2027 presidential election with Macron term-limited, generating open contest between Rassemblement National consolidation, Melenchon left mobilisation and centre-right restructuring. Italy has legislative elections with Meloni-led coalition seeking renewal against fragmented opposition. Poland faces presidential and potential parliamentary cycles with Tusk-led coalition contested by PiS resurgence. Netherlands, Czech Republic and Austria have parallel cycles that could reinforce or moderate the broader European trajectory. The compressed calendar generates a coordination challenge: no single election is decisive, but the aggregate direction across the set determines EU capacity on defence coordination, fiscal integration, migration policy, climate transition and China policy. The modal outcome is heterogeneous drift with individual member state trajectories cancelling at aggregate EU level, producing continued Commission-led incrementalism without decisive strategic direction. The tail scenarios include coordinated shift toward nationalist governance and coordinated shift toward federalist consolidation, both requiring alignment across at least three of the pivotal cycles.",
+        implication: "The concentration of electoral risk in the 2027-2028 window generates second-order effects that extend beyond the immediate political outcomes and reshape European strategic and financial architecture. First, sovereign spreads across the Eurozone become progressively sensitive to individual electoral cycles, with pricing anticipating rather than reacting to outcomes. This generates volatility in Italian, French and Belgian sovereign markets that transmits directly to European insurer balance sheets and duration matching. Second, defence procurement decisions face delay or acceleration depending on individual electoral outcomes, generating uncertainty for European defence contractors and complicating sustained industrial policy coordination. Third, the EU regulatory pipeline (AI Act implementation, Green Deal delivery, capital markets union) faces execution risk across multiple simultaneous member state political transitions, generating uncertainty for corporate strategy across sectors. Fourth, the transatlantic relationship becomes more difficult to manage as European counterpart identity shifts across the cycle, requiring US administrations to navigate multiple simultaneous political transitions rather than a stable European interlocutor.",
+        evidence: [
+          { n: "01", body: "German federal election in 2025 was contested; next scheduled 2029 but coalition stability under sustained pressure. AfD polling at historic highs in eastern Lander. Fiscal pressure from defence spending and pension reform. Coalition arithmetic fragile.", citations: [{ src: "Bruegel", date: "Aug 2026", emphasis: true }, { src: "ECFR", date: "Jul 2026" }] },
+          { n: "02", body: "France 2027 presidential election with Macron term-limited. Rassemblement National positioning for consolidation. Left mobilisation via Melenchon. Centre-right restructuring. Outcome open with three-way pattern possible.", citations: [{ src: "ECFR", date: "Aug 2026" }, { src: "ISPI", date: "Aug 2026" }] },
+          { n: "03", body: "Italy legislative cycle with Meloni-led coalition seeking renewal. Fragmented opposition (PD, M5S, Terzo Polo) faces coordination challenge. Meloni pattern of European moderation combined with domestic nationalism holds.", citations: [{ src: "ISPI", date: "Jul 2026" }] },
+          { n: "04", body: "Poland presidential and potential parliamentary cycles. Tusk-led coalition contested by PiS resurgence. Judicial reforms and PiS-era institutional legacies contested at Constitutional Tribunal level.", citations: [{ src: "ECFR", date: "Jul 2026" }] }
+        ],
+        divergence: "Bruegel weights German coalition stability as most consequential single variable; ECFR emphasises French cycle.",
+        sources: [ {name:"Bruegel",passages:11},{name:"ECFR",passages:10},{name:"ISPI",passages:9},{name:"CSIS",passages:7},{name:"FP",passages:5} ],
+        topArcs: [
+          { pair: "DEU - FRA", pol: "aligned", w: 4.7, vol: "M" },
+          { pair: "DEU - EU",  pol: "aligned", w: 4.6, vol: "H" },
+          { pair: "FRA - EU",  pol: "aligned", w: 4.4, vol: "H" },
+          { pair: "ITA - EU",  pol: "complex", w: 4.0, vol: "M" }
+        ],
+        cost: "$0.02", composedAt: "10:26"
+      },
+      dtReport: {
+        title: "Modal path is heterogeneous drift with cycles cancelling at EU level; tails require coordinated shift across at least three pivotal cycles.",
+        subtitle: "18-24 month projection of European political evolution across 4 scenarios.",
+        thesis: "Four trajectories over 18-24 month horizon.\n\nModal (44%): heterogeneous drift. Individual member state cycles produce mixed outcomes that cancel at aggregate EU level. Continued Commission-led incrementalism without decisive strategic direction. Franco-German axis under stress but functional.\n\nRight-tail (25%): coordinated nationalist shift. RN victory in France combined with German coalition collapse and PiS return in Poland shifts EU toward intergovernmentalism, defence spending under pressure, migration hardening, climate delivery slowed.\n\nLeft-tail (17%): federalist consolidation. Stable German coalition + centrist French outcome + Tusk consolidation in Poland generates window for treaty amendment discussions, defence integration, fiscal capacity expansion.\n\nUnstable (14%): asymmetric shock in one pivotal cycle. Single major shift (e.g. RN victory) without corresponding movements elsewhere generates acute EU-level crisis without stable new equilibrium.",
+        implication: "The consolidation of the modal heterogeneous-drift equilibrium generates effects that extend beyond the immediate political outcomes and reshape European strategic architecture over the horizon. First, the sovereign spread structure across the Eurozone reflects progressive election-cycle risk pricing, with volatility persistent even under stable modal outcomes. Second, European defence and industrial policy continues under Commission leadership but without member state strategic backing, generating execution challenges that undermine cumulative capability building. Third, the political capacity for major EU-level decisions on treaty amendment, fiscal capacity expansion or defence integration is postponed to post-cycle period, generating a two-year period of strategic drift. Fourth, corporate strategy across European multinationals prices political discontinuity risk into location decisions, with observable effects on capex allocation across member states. Fifth, non-European actors, particularly the US, UK, China and Russia, calibrate their European engagement to expected post-cycle configurations, generating strategic behaviour that itself shapes the cycle outcomes.",
+        scenarios: [
+          { code: "S1", tag: "LEFT TAIL",  label: "S1", pct: 17, ci: "12-22%", pol: "blue",      body: "<em>Federalist consolidation window.</em> Stable German coalition + centrist French + Tusk consolidation generates window for treaty amendment discussions, defence integration, fiscal capacity expansion. Requires alignment across three pivotal cycles." },
+          { code: "S2", tag: "MODAL",      label: "S2", pct: 44, ci: "38-51%", pol: "amber",     body: "<em>Heterogeneous drift.</em> Individual member state cycles produce mixed outcomes that cancel at aggregate EU level. Commission-led incrementalism continues without decisive strategic direction. Franco-German axis functional but stressed." },
+          { code: "S3", tag: "RIGHT TAIL", label: "S3", pct: 25, ci: "20-31%", pol: "red",       body: "<em>Coordinated nationalist shift.</em> RN victory in France + German coalition collapse + PiS return in Poland. EU shifts toward intergovernmentalism, defence spending under pressure, migration hardening, climate delivery slowed." },
+          { code: "S4", tag: "UNSTABLE",   label: "S4", pct: 14, ci: "9-19%",  pol: "dim-amber", body: "<em>Asymmetric shock.</em> Single major shift (e.g. RN victory) without corresponding movements elsewhere generates acute EU-level crisis without stable new equilibrium. High volatility phase." }
+        ],
+        latticeCaption: "Each terminal is EU political configuration at 24-month horizon; modal band (drift) concentrates most weight but tails have material probability due to multiple pivotal cycles.",
+        sensitivity: "Most sensitive to <em>French presidential outcome</em>: RN victory single most consequential outcome across scenarios. Second: <em>German coalition stability</em>: collapse moves S3+S4 collectively higher. Third: <em>Polish presidential and parliamentary cycles</em>.",
+        robustness: 3.1, robustnessCaption: "MEDIUM",
+        robustnessNote: "Distribution moderately stable across 4 seeds (max delta 8pp). Multiple pivotal cycles generate higher variance than single-country scenarios; interactions non-linear.",
+        drivingArcs: [
+          { pair: "DEU - FRA", desc: "Anchor: axis stability",         pol: "amber" },
+          { pair: "DEU - EU",  desc: "Pivot: German capacity",         pol: "amber" },
+          { pair: "FRA - EU",  desc: "Pivot: French direction",        pol: "amber" },
+          { pair: "ITA - EU",  desc: "Modifier: Italian moderation",   pol: "amber" }
+        ],
+        assumptions: [
+          "A1: Electoral cycles proceed on scheduled calendars.",
+          "A2: No major exogenous shock (recession, security crisis) disrupts cycle.",
+          "A3: EU institutional structures unchanged in horizon.",
+          "A4: European Parliament composition post-2024 remains functional coalition.",
+          "A5: No sovereign debt crisis triggers technocratic government interventions."
+        ],
+        stats: { tier: "Standard", iterations: 172, nodes: 1128, time: "2m 58s", cost: "$0.26" },
+        fullReport: {
+          narrative: "The modal trajectory unfolds through progressive individual electoral cycles producing heterogeneous outcomes that cancel at aggregate EU level. German coalition survives 2027 budget cycle with sustained internal stress. French presidential cycle produces three-way contest with centrist candidate consolidating in runoff against RN. Italian cycle returns Meloni coalition with reduced margin. Polish cycles preserve Tusk coalition with contested legitimacy. Netherlands and Czech cycles reinforce center-right rather than nationalist direction. Aggregate EU direction remains Commission-led incrementalism with Franco-German axis under stress but functional. Treaty amendment discussions postponed. Defence spending sustained but coordination challenges persist. By H2 2028 the political architecture has consolidated the drift pattern into structural feature, with strategic direction postponed to post-2029 cycle.",
+          keyMoves: [
+            "Q4 2026: German 2027 budget compromise reached; coalition preserved.",
+            "Q1 2027: French presidential campaign consolidates three-way pattern.",
+            "Q2 2027: French runoff second round; centrist candidate wins.",
+            "Q3 2027: Italian election returns Meloni coalition with reduced margin.",
+            "Q4 2027: Polish presidential cycle preserves Tusk coalition.",
+            "H1 2028: Post-cycle European Council preserves incrementalist trajectory."
+          ]
+        }
+      }
+    },
+
+  },
+
+  insurance: {
+
+    profile: {
+      name: "European Composite Insurer",
+      description: "Mid-size composite (Life + P&C) with EU home bias, EEA-heavy exposure, GWP 800m, AUM 5.0bn",
+      aum: 5000,
+      gwp: 800
+    },
+
+    portfolio: {
+      investments: [
+        { id: "inv01", assetClass: "Government Bond", issuer: "BTP Italia 10Y",        country: "ITA", sector: "Sovereign",       mv: 800, duration: 8.4, rating: "BBB",  ccy: "EUR" },
+        { id: "inv02", assetClass: "Government Bond", issuer: "Bund 10Y",              country: "DEU", sector: "Sovereign",       mv: 700, duration: 8.7, rating: "AAA",  ccy: "EUR" },
+        { id: "inv03", assetClass: "Government Bond", issuer: "OAT France 10Y",        country: "FRA", sector: "Sovereign",       mv: 500, duration: 8.6, rating: "AA-",  ccy: "EUR" },
+        { id: "inv04", assetClass: "Government Bond", issuer: "Bonos Spain 10Y",       country: "ESP", sector: "Sovereign",       mv: 400, duration: 8.5, rating: "A",    ccy: "EUR" },
+        { id: "inv05", assetClass: "Government Bond", issuer: "US Treasury 10Y",       country: "USA", sector: "Sovereign",       mv: 400, duration: 8.6, rating: "AAA",  ccy: "USD" },
+        { id: "inv06", assetClass: "Government Bond", issuer: "UK Gilts 10Y",          country: "GBR", sector: "Sovereign",       mv: 200, duration: 8.5, rating: "AA",   ccy: "GBP" },
+        { id: "inv07", assetClass: "Corporate Bond",  issuer: "Enel bond 5Y",          country: "ITA", sector: "Utilities",       mv: 250, duration: 4.6, rating: "BBB+", ccy: "EUR" },
+        { id: "inv08", assetClass: "Corporate Bond",  issuer: "Volkswagen bond 5Y",    country: "DEU", sector: "Auto",            mv: 200, duration: 4.4, rating: "A-",   ccy: "EUR" },
+        { id: "inv09", assetClass: "Corporate Bond",  issuer: "TotalEnergies bond 5Y", country: "FRA", sector: "Energy",          mv: 200, duration: 4.5, rating: "A+",   ccy: "EUR" },
+        { id: "inv10", assetClass: "Corporate Bond",  issuer: "BNP Paribas senior 5Y", country: "FRA", sector: "Financials",      mv: 200, duration: 4.3, rating: "A+",   ccy: "EUR" },
+        { id: "inv11", assetClass: "Corporate Bond",  issuer: "Unicredit senior 5Y",   country: "ITA", sector: "Financials",      mv: 150, duration: 4.4, rating: "BBB",  ccy: "EUR" },
+        { id: "inv12", assetClass: "Equity",          issuer: "ETF Eurostoxx 50",      country: "EU",  sector: "Diversified",     mv: 200, duration: null, rating: null,   ccy: "EUR" },
+        { id: "inv13", assetClass: "Equity",          issuer: "ETF S&P 500",           country: "USA", sector: "Diversified",     mv: 150, duration: null, rating: null,   ccy: "USD" },
+        { id: "inv14", assetClass: "Equity",          issuer: "ETF MSCI Emerging",     country: "EM",  sector: "Diversified",     mv: 80,  duration: null, rating: null,   ccy: "USD" },
+        { id: "inv15", assetClass: "Equity",          issuer: "ASML (single line)",    country: "NLD", sector: "Semi equipment",  mv: 40,  duration: null, rating: null,   ccy: "EUR" },
+        { id: "inv16", assetClass: "Equity",          issuer: "TSMC ADR",              country: "TWN", sector: "Semiconductors",  mv: 30,  duration: null, rating: null,   ccy: "USD" },
+        { id: "inv17", assetClass: "Real Estate",     issuer: "Milano offices",        country: "ITA", sector: "Office",          mv: 150, duration: null, rating: null,   ccy: "EUR" },
+        { id: "inv18", assetClass: "Real Estate",     issuer: "Frankfurt logistics",   country: "DEU", sector: "Logistics",       mv: 120, duration: null, rating: null,   ccy: "EUR" },
+        { id: "inv19", assetClass: "Real Estate",     issuer: "Warsaw retail",         country: "POL", sector: "Retail",          mv: 80,  duration: null, rating: null,   ccy: "EUR" },
+        { id: "inv20", assetClass: "Alternatives",    issuer: "EU infra fund",         country: "EU",  sector: "Infrastructure",  mv: 100, duration: null, rating: null,   ccy: "EUR" },
+        { id: "inv21", assetClass: "Alternatives",    issuer: "European private debt", country: "EU",  sector: "Private debt",    mv: 50,  duration: null, rating: null,   ccy: "EUR" }
+      ],
+      pandc: [
+        { id: "pol01", lob: "Property Commercial",  country: "ITA", sumInsured: 450, deductible: 5, gwpShare: 90,  wordingExclusions: { war: true,  terrorism: "sublimit 20m", cyber: false, sanctions: true } },
+        { id: "pol02", lob: "Property Commercial",  country: "DEU", sumInsured: 380, deductible: 4, gwpShare: 75,  wordingExclusions: { war: true,  terrorism: "sublimit 15m", cyber: false, sanctions: true } },
+        { id: "pol03", lob: "Property Commercial",  country: "POL", sumInsured: 220, deductible: 3, gwpShare: 45,  wordingExclusions: { war: true,  terrorism: "sublimit 10m", cyber: false, sanctions: true } },
+        { id: "pol04", lob: "Marine Cargo",         country: "Suez route",     sumInsured: 180, deductible: 0.5, gwpShare: 40, wordingExclusions: { war: "LMA5567", terrorism: "included", cyber: true,  sanctions: true } },
+        { id: "pol05", lob: "Marine Cargo",         country: "Hormuz route",   sumInsured: 120, deductible: 0.5, gwpShare: 30, wordingExclusions: { war: "LMA5567", terrorism: "included", cyber: true,  sanctions: true } },
+        { id: "pol06", lob: "Marine Cargo",         country: "Black Sea",      sumInsured: 90,  deductible: 0.5, gwpShare: 25, wordingExclusions: { war: "LMA5567", terrorism: "included", cyber: true,  sanctions: true } },
+        { id: "pol07", lob: "PV & Terrorism",       country: "East Europe retail", sumInsured: 60, deductible: 2, gwpShare: 20, wordingExclusions: { war: false, terrorism: false, cyber: true, sanctions: false } },
+        { id: "pol08", lob: "PV & Terrorism",       country: "North Africa energy",sumInsured: 80, deductible: 3, gwpShare: 28, wordingExclusions: { war: false, terrorism: false, cyber: true, sanctions: false } },
+        { id: "pol09", lob: "Trade Credit",         country: "Turkey buyers",  sumInsured: 40, deductible: 1, gwpShare: 15, wordingExclusions: { war: true, terrorism: true, cyber: true, sanctions: true } },
+        { id: "pol10", lob: "Trade Credit",         country: "Egypt buyers",   sumInsured: 25, deductible: 0.5, gwpShare: 10, wordingExclusions: { war: true, terrorism: true, cyber: true, sanctions: true } },
+        { id: "pol11", lob: "Cyber",                country: "EU mid-corporate", sumInsured: 55, deductible: 1, gwpShare: 30, wordingExclusions: { war: "LMA5400", terrorism: "included", cyber: false, sanctions: true } },
+        { id: "pol12", lob: "Aviation Hull & Liab", country: "EU fleet Asia routes", sumInsured: 200, deductible: 5, gwpShare: 60, wordingExclusions: { war: true, terrorism: "sublimit 30m", cyber: true, sanctions: true } },
+        { id: "pol13", lob: "Motor Fleet",          country: "DEU/ITA/ESP",    sumInsured: 300, deductible: 2, gwpShare: 120, wordingExclusions: { war: true, terrorism: true, cyber: true, sanctions: true } },
+        { id: "pol14", lob: "Health",               country: "ITA/ESP",        sumInsured: 250, deductible: 0.3, gwpShare: 90, wordingExclusions: { war: true, terrorism: true, cyber: true, sanctions: true } },
+        { id: "pol15", lob: "Business Interruption",country: "EU manufacturing",sumInsured: 180, deductible: 3, gwpShare: 55, wordingExclusions: { war: true, terrorism: "sublimit 20m", cyber: true, sanctions: true } }
+      ],
+      operations: [
+        { id: "op01", type: "Head office",  location: "Milano",     country: "ITA", riskLevel: "low",     staff: 850, criticality: "high" },
+        { id: "op02", type: "Regional HQ",  location: "Roma",       country: "ITA", riskLevel: "low",     staff: 320, criticality: "medium" },
+        { id: "op03", type: "Regional HQ",  location: "Frankfurt",  country: "DEU", riskLevel: "low",     staff: 280, criticality: "medium" },
+        { id: "op04", type: "Sales office", location: "Warsaw",     country: "POL", riskLevel: "medium",  staff: 90,  criticality: "medium" },
+        { id: "op05", type: "Sales office", location: "Istanbul",   country: "TUR", riskLevel: "high",    staff: 65,  criticality: "low" },
+        { id: "op06", type: "Sales office", location: "Beirut",     country: "LBN", riskLevel: "critical",staff: 30,  criticality: "low" },
+        { id: "op07", type: "Rep office",   location: "Kiev",       country: "UKR", riskLevel: "critical",staff: 12,  criticality: "low" },
+        { id: "op08", type: "Data center primary",   location: "Dublin",  country: "IRL", riskLevel: "low",     staff: 45,  criticality: "critical" },
+        { id: "op09", type: "Data center secondary", location: "Frankfurt", country: "DEU", riskLevel: "low",  staff: 40,  criticality: "critical" }
+      ]
+    },
+
+    scenarioImpact: {
+      "ukraine-main": {
+        scenarioLabel: "Ukraine attrition dossier",
+        horizonMonths: 12,
+        maturationByHorizon: { "0-12": "materialising", "12-24": "consolidated", ">24": "stable" },
+        impact: {
+          investments: {
+            totalEur: -180,
+            drivers: [
+              { positionId: "inv01", deltaEur: -35, rationale: "BTP spread widening on EU defence spending pressure" },
+              { positionId: "inv02", deltaEur: -20, rationale: "Bund yield rise on German defence commitments" },
+              { positionId: "inv08", deltaEur: -25, rationale: "Volkswagen exposure to European supply chain stress" },
+              { positionId: "inv12", deltaEur: -40, rationale: "Eurostoxx correction on prolonged conflict" },
+              { positionId: "inv18", deltaEur: -10, rationale: "German logistics real estate softer" },
+              { positionId: "inv19", deltaEur: -50, rationale: "Warsaw retail directly exposed to regional risk premium" }
+            ]
+          },
+          pandc: {
+            totalEur: -75,
+            drivers: [
+              { policyId: "pol04", deltaEur: -15, rationale: "Marine Suez route: higher claims frequency, LMA5567 partial coverage" },
+              { policyId: "pol06", deltaEur: -30, rationale: "Marine Black Sea: severe elevated frequency, sub-limits reached" },
+              { policyId: "pol13", deltaEur: -20, rationale: "Motor Fleet: parts scarcity inflates claims cost by 15%" },
+              { policyId: "pol15", deltaEur: -10, rationale: "BI Manufacturing: supply chain disruption claims" }
+            ]
+          },
+          operations: {
+            totalEur: -8,
+            drivers: [
+              { opId: "op07", deltaEur: -5, rationale: "Kiev office: sustained operational disruption" },
+              { opId: "op04", deltaEur: -3, rationale: "Warsaw office: regional stress premium" }
+            ]
+          }
+        },
+        redFlags: [
+          { id: "rf-ukr-1", label: "German 2027 budget vote outcome",                    threshold: "Ukraine envelope <50bn EUR",     status: "amber",  currentValue: "under negotiation" },
+          { id: "rf-ukr-2", label: "US Supplemental status in Congress",                  threshold: "Passed by Q2 2027",              status: "amber",  currentValue: "delayed, uncertain" },
+          { id: "rf-ukr-3", label: "SAMP/T-NG delivery cadence",                          threshold: "On schedule",                     status: "amber",  currentValue: "3-month slippage" },
+          { id: "rf-ukr-4", label: "Russian shadow fleet interdictions rate",             threshold: ">10 per month",                   status: "green",  currentValue: "6/month" },
+          { id: "rf-ukr-5", label: "Ukrainian mobilisation shortfall vs targets",         threshold: "<15% shortfall",                  status: "red",    currentValue: "22% shortfall" }
+        ]
+      },
+      "taiwan-main": {
+        scenarioLabel: "Taiwan blockade rehearsal dossier",
+        horizonMonths: 24,
+        maturationByHorizon: { "0-12": "escalating", "12-24": "critical", ">24": "structural" },
+        impact: {
+          investments: {
+            totalEur: -220,
+            drivers: [
+              { positionId: "inv13", deltaEur: -45, rationale: "S&P 500 correction on AI supply chain risk repricing" },
+              { positionId: "inv14", deltaEur: -35, rationale: "EM equity broadly hit; Asia component leads decline" },
+              { positionId: "inv16", deltaEur: -20, rationale: "TSMC ADR directly exposed to Strait risk" },
+              { positionId: "inv15", deltaEur: -8,  rationale: "ASML pressure on China revenue plus Taiwan supply worry" },
+              { positionId: "inv05", deltaEur: 15,  rationale: "UST 10Y benefits from flight-to-quality flows" },
+              { positionId: "inv02", deltaEur: 12,  rationale: "Bund benefits partially from flight-to-quality" },
+              { positionId: "inv12", deltaEur: -60, rationale: "Eurostoxx: broad market correction on Asia contagion" },
+              { positionId: "inv08", deltaEur: -30, rationale: "Volkswagen: EU auto exposed to chip supply disruption" },
+              { positionId: "inv07", deltaEur: -18, rationale: "Enel: utility exposure to energy price shock" },
+              { positionId: "inv17", deltaEur: -12, rationale: "Milano offices: broader risk-off in EU real estate" },
+              { positionId: "inv20", deltaEur: -19, rationale: "EU infrastructure fund: broader correction" }
+            ]
+          },
+          pandc: {
+            totalEur: -95,
+            drivers: [
+              { policyId: "pol12", deltaEur: -40, rationale: "Aviation Hull & Liab Asia routes: rerouting costs, hull risk elevated" },
+              { policyId: "pol04", deltaEur: -20, rationale: "Marine Cargo Suez: Asia trade disruption spillover" },
+              { policyId: "pol15", deltaEur: -25, rationale: "BI Manufacturing: chip supply-driven claims" },
+              { policyId: "pol13", deltaEur: -10, rationale: "Motor Fleet: parts scarcity impact from Asia disruption" }
+            ]
+          },
+          operations: {
+            totalEur: -2,
+            drivers: [
+              { opId: "op03", deltaEur: -2, rationale: "Frankfurt HQ: elevated cyber threat during Asia crisis" }
+            ]
+          }
+        },
+        redFlags: [
+          { id: "rf-twn-1", label: "PLA off-calendar exercise count last 90 days",       threshold: ">2",                             status: "amber",  currentValue: "1" },
+          { id: "rf-twn-2", label: "TSMC Arizona Phase 3 delivery slippage",              threshold: ">6 months",                       status: "green",  currentValue: "3 months" },
+          { id: "rf-twn-3", label: "Japan white paper language on Taiwan",                threshold: "operational commitment",          status: "amber",  currentValue: "substantive" },
+          { id: "rf-twn-4", label: "US arms transfer categorization language",            threshold: "offensive framing",               status: "green",  currentValue: "defensive framing" },
+          { id: "rf-twn-5", label: "PLA contiguous zone incursions frequency",            threshold: ">50 per month",                   status: "amber",  currentValue: "42/month" },
+          { id: "rf-twn-6", label: "Taiwan 2028 election polling: DPP-independence stance",threshold: ">45% consolidation",              status: "green",  currentValue: "38%" }
+        ]
+      },
+      "iran-main": {
+        scenarioLabel: "Iran post-Epic Fury dossier",
+        horizonMonths: 12,
+        maturationByHorizon: { "0-12": "active", "12-24": "recalibration", ">24": "new equilibrium" },
+        impact: {
+          investments: {
+            totalEur: -95,
+            drivers: [
+              { positionId: "inv09", deltaEur: -35, rationale: "TotalEnergies: oil price volatility, Iranian production disruption" },
+              { positionId: "inv07", deltaEur: -12, rationale: "Enel: energy input cost spike" },
+              { positionId: "inv13", deltaEur: -20, rationale: "S&P 500: geopolitical premium in energy and defence" },
+              { positionId: "inv14", deltaEur: -18, rationale: "EM equity: broader risk-off; MENA weakness" },
+              { positionId: "inv12", deltaEur: -25, rationale: "Eurostoxx: energy cost pass-through concerns" },
+              { positionId: "inv05", deltaEur: 15,  rationale: "UST benefits from flight-to-quality" }
+            ]
+          },
+          pandc: {
+            totalEur: -110,
+            drivers: [
+              { policyId: "pol05", deltaEur: -45, rationale: "Marine Hormuz: direct exposure; frequency and severity spike" },
+              { policyId: "pol08", deltaEur: -30, rationale: "PV North Africa energy: infrastructure attacks risk" },
+              { policyId: "pol04", deltaEur: -15, rationale: "Marine Suez: Iran-linked disruption in Red Sea" },
+              { policyId: "pol10", deltaEur: -12, rationale: "Trade Credit Egypt: buyer default risk elevated" },
+              { policyId: "pol09", deltaEur: -8,  rationale: "Trade Credit Turkey: regional spillover" }
+            ]
+          },
+          operations: {
+            totalEur: -6,
+            drivers: [
+              { opId: "op06", deltaEur: -4, rationale: "Beirut office: regional stress" },
+              { opId: "op05", deltaEur: -2, rationale: "Istanbul office: regional stress" }
+            ]
+          }
+        },
+        redFlags: [
+          { id: "rf-irn-1", label: "US 5th Fleet posture in Gulf",                        threshold: "reduced presence",                status: "green",  currentValue: "rotation continues" },
+          { id: "rf-irn-2", label: "Bessent sanctions program on Chinese refiners",       threshold: "active enforcement",              status: "red",    currentValue: "expanding" },
+          { id: "rf-irn-3", label: "Israeli independent strike frequency on Iranian assets", threshold: ">1 per quarter",              status: "amber",  currentValue: "1 in Q3" },
+          { id: "rf-irn-4", label: "Iran-Oman Hormuz corridor negotiations",              threshold: "signed agreement",                status: "amber",  currentValue: "technical talks" },
+          { id: "rf-irn-5", label: "PRC-Iran oil purchase volume vs 2024 baseline",       threshold: ">150% baseline",                  status: "red",    currentValue: "168%" }
+        ]
+      },
+      "eu-china-trade-main": {
+        scenarioLabel: "EU-China trade friction dossier",
+        horizonMonths: 24,
+        maturationByHorizon: { "0-12": "escalating", "12-24": "structural", ">24": "consolidated" },
+        impact: {
+          investments: {
+            totalEur: -130,
+            drivers: [
+              { positionId: "inv08", deltaEur: -35, rationale: "Volkswagen: retaliation targets German auto exports to China" },
+              { positionId: "inv15", deltaEur: -12, rationale: "ASML: export licensing pressure sustained" },
+              { positionId: "inv09", deltaEur: -8,  rationale: "TotalEnergies: PRC gas import concerns" },
+              { positionId: "inv12", deltaEur: -40, rationale: "Eurostoxx: broad correction on trade war expectations" },
+              { positionId: "inv14", deltaEur: -20, rationale: "EM equity: PRC weight in indices" },
+              { positionId: "inv07", deltaEur: -10, rationale: "Enel: Chinese solar/battery inputs cost pressure" },
+              { positionId: "inv17", deltaEur: -5,  rationale: "Milano offices: broader risk sentiment" }
+            ]
+          },
+          pandc: {
+            totalEur: -55,
+            drivers: [
+              { policyId: "pol04", deltaEur: -20, rationale: "Marine Cargo Suez: EU-China trade volumes shift" },
+              { policyId: "pol15", deltaEur: -20, rationale: "BI Manufacturing: EU firms in supply chain disputes" },
+              { policyId: "pol12", deltaEur: -10, rationale: "Aviation cargo: Asia route disruption from trade tensions" },
+              { policyId: "pol13", deltaEur: -5,  rationale: "Motor Fleet: input cost pressure" }
+            ]
+          },
+          operations: {
+            totalEur: 0,
+            drivers: []
+          }
+        },
+        redFlags: [
+          { id: "rf-euchn-1", label: "EU medical devices duties determination",           threshold: "duties imposed >10%",            status: "amber",  currentValue: "investigation phase" },
+          { id: "rf-euchn-2", label: "PRC rare earth export licensing tightness",         threshold: "additional restrictions",         status: "red",    currentValue: "tightening" },
+          { id: "rf-euchn-3", label: "German coalition China policy divergence (SPD-CDU)",threshold: "public disagreement",             status: "amber",  currentValue: "quiet tension" },
+          { id: "rf-euchn-4", label: "Anti-Coercion Instrument activation",               threshold: "any activation",                  status: "green",  currentValue: "standby" },
+          { id: "rf-euchn-5", label: "Chinese OEM investment in EU auto plants",          threshold: ">3 new announcements/quarter",    status: "amber",  currentValue: "2/quarter" }
+        ]
+      },
+      "us-debt-hyperscalers-main": {
+        scenarioLabel: "US debt & hyperscalers coupled fragility dossier",
+        horizonMonths: 24,
+        maturationByHorizon: { "0-12": "building", "12-24": "tension peak", ">24": "resolution or break" },
+        impact: {
+          investments: {
+            totalEur: -165,
+            drivers: [
+              { positionId: "inv05", deltaEur: -25, rationale: "UST 10Y: term premium expansion, mark-to-market loss" },
+              { positionId: "inv13", deltaEur: -55, rationale: "S&P 500: AI equity concentration reprices lower" },
+              { positionId: "inv14", deltaEur: -20, rationale: "EM equity: USD strength and rate impact" },
+              { positionId: "inv15", deltaEur: -10, rationale: "ASML: hyperscaler capex trajectory reprices" },
+              { positionId: "inv16", deltaEur: -8,  rationale: "TSMC: coupled exposure" },
+              { positionId: "inv12", deltaEur: -25, rationale: "Eurostoxx: correlation with US rate move" },
+              { positionId: "inv10", deltaEur: -8,  rationale: "BNP Paribas: European bank spread widening" },
+              { positionId: "inv11", deltaEur: -8,  rationale: "Unicredit: peripheral bank spread pressure" },
+              { positionId: "inv20", deltaEur: -6,  rationale: "EU infra fund: broader repricing" }
+            ]
+          },
+          pandc: {
+            totalEur: -25,
+            drivers: [
+              { policyId: "pol11", deltaEur: -15, rationale: "Cyber: attacks on financial sector during volatility spike" },
+              { policyId: "pol15", deltaEur: -10, rationale: "BI Manufacturing: rate shock hits EU firms" }
+            ]
+          },
+          operations: {
+            totalEur: 0,
+            drivers: []
+          }
+        },
+        redFlags: [
+          { id: "rf-usdb-1", label: "10Y Treasury yield vs 6M average",                   threshold: ">50bp expansion",                status: "amber",  currentValue: "+32bp" },
+          { id: "rf-usdb-2", label: "Hyperscaler aggregated quarterly bond issuance",     threshold: ">100bn USD/quarter",              status: "red",    currentValue: "112bn Q3" },
+          { id: "rf-usdb-3", label: "TSMC leading-node utilization rate",                 threshold: ">95%",                            status: "red",    currentValue: "97%" },
+          { id: "rf-usdb-4", label: "Fed communication on debt monetisation",             threshold: "any pivot",                       status: "green",  currentValue: "no signal" },
+          { id: "rf-usdb-5", label: "Japan life insurers USD flows",                      threshold: "net outflow",                     status: "amber",  currentValue: "reduced inflow" }
+        ]
+      },
+      "us-china-tensions-main": {
+        scenarioLabel: "US-China strategic tensions dossier",
+        horizonMonths: 24,
+        maturationByHorizon: { "0-12": "active", "12-24": "structural", ">24": "consolidated" },
+        impact: {
+          investments: {
+            totalEur: -85,
+            drivers: [
+              { positionId: "inv15", deltaEur: -12, rationale: "ASML: sustained export control pressure" },
+              { positionId: "inv13", deltaEur: -25, rationale: "S&P 500: rivalry uncertainty premium" },
+              { positionId: "inv14", deltaEur: -22, rationale: "EM equity: PRC weight; regional bifurcation" },
+              { positionId: "inv08", deltaEur: -12, rationale: "Volkswagen: EU-US alignment pressures China exports" },
+              { positionId: "inv12", deltaEur: -10, rationale: "Eurostoxx: broader sentiment" },
+              { positionId: "inv16", deltaEur: -4,  rationale: "TSMC: coupled to broader tensions" }
+            ]
+          },
+          pandc: {
+            totalEur: -35,
+            drivers: [
+              { policyId: "pol12", deltaEur: -15, rationale: "Aviation Asia routes: alliance dynamics affect operations" },
+              { policyId: "pol15", deltaEur: -15, rationale: "BI: EU exporters in tech control regime crossfire" },
+              { policyId: "pol04", deltaEur: -5,  rationale: "Marine Cargo: sanctions compliance costs" }
+            ]
+          },
+          operations: {
+            totalEur: 0,
+            drivers: []
+          }
+        },
+        redFlags: [
+          { id: "rf-uscn-1", label: "US export control expansion frequency",              threshold: ">1 major expansion/quarter",     status: "red",    currentValue: "quarterly" },
+          { id: "rf-uscn-2", label: "AUKUS Pillar Two operational milestones",            threshold: "on schedule",                     status: "green",  currentValue: "on schedule" },
+          { id: "rf-uscn-3", label: "PRC economic coercion incidents on Western firms",   threshold: ">3 per quarter",                  status: "amber",  currentValue: "2/quarter" },
+          { id: "rf-uscn-4", label: "Big Fund IV size vs III",                            threshold: ">2x",                             status: "amber",  currentValue: "1.7x announced" },
+          { id: "rf-uscn-5", label: "Trump II China policy volatility (monthly changes)", threshold: ">2 major shifts/month",           status: "amber",  currentValue: "1.5/month" }
+        ]
+      },
+      "eu-hybrid-main": {
+        scenarioLabel: "EU hybrid pressure dossier",
+        horizonMonths: 12,
+        maturationByHorizon: { "0-12": "ongoing", "12-24": "consolidated", ">24": "structural" },
+        impact: {
+          investments: {
+            totalEur: -45,
+            drivers: [
+              { positionId: "inv01", deltaEur: -12, rationale: "BTP: broader EU risk premium in hybrid climate" },
+              { positionId: "inv03", deltaEur: -8,  rationale: "OAT: France disinformation exposure risk premium" },
+              { positionId: "inv19", deltaEur: -18, rationale: "Warsaw retail: Poland front-line exposure" },
+              { positionId: "inv18", deltaEur: -4,  rationale: "Frankfurt logistics: cable/pipeline incidents in region" },
+              { positionId: "inv12", deltaEur: -3,  rationale: "Eurostoxx: modest correction" }
+            ]
+          },
+          pandc: {
+            totalEur: -85,
+            drivers: [
+              { policyId: "pol11", deltaEur: -35, rationale: "Cyber EU mid-corporate: attack frequency and severity elevated" },
+              { policyId: "pol01", deltaEur: -15, rationale: "Property IT: sabotage risk on critical infrastructure" },
+              { policyId: "pol02", deltaEur: -12, rationale: "Property DEU: airspace incident spillover" },
+              { policyId: "pol03", deltaEur: -20, rationale: "Property POL: direct front-line exposure" },
+              { policyId: "pol15", deltaEur: -3,  rationale: "BI: cyber incidents disrupt operations" }
+            ]
+          },
+          operations: {
+            totalEur: -12,
+            drivers: [
+              { opId: "op09", deltaEur: -6, rationale: "Frankfurt data center: elevated attack surface" },
+              { opId: "op08", deltaEur: -4, rationale: "Dublin data center: elevated attack surface" },
+              { opId: "op04", deltaEur: -2, rationale: "Warsaw sales office: security cost increase" }
+            ]
+          }
+        },
+        redFlags: [
+          { id: "rf-hyb-1", label: "Baltic cable/pipeline incidents last 90 days",        threshold: ">3",                             status: "red",    currentValue: "4" },
+          { id: "rf-hyb-2", label: "Attributable disinformation ops per EU election cycle",threshold: ">1 documented per election",    status: "red",    currentValue: "2 documented" },
+          { id: "rf-hyb-3", label: "EU joint attribution mechanism status",               threshold: "activated",                       status: "green",  currentValue: "under discussion" },
+          { id: "rf-hyb-4", label: "GPS jamming/spoofing incidents in Baltic",            threshold: "persistent >100 events/month",    status: "red",    currentValue: "180/month" },
+          { id: "rf-hyb-5", label: "Arson attacks on Ukraine logistics chains",           threshold: ">2 per quarter",                  status: "amber",  currentValue: "1/quarter" }
+        ]
+      },
+      "eu-political-2027-main": {
+        scenarioLabel: "EU political evolution 2027-2028 dossier",
+        horizonMonths: 24,
+        maturationByHorizon: { "0-12": "campaigns", "12-24": "outcomes", ">24": "post-cycle configuration" },
+        impact: {
+          investments: {
+            totalEur: -140,
+            drivers: [
+              { positionId: "inv01", deltaEur: -30, rationale: "BTP: Italian election-cycle spread widening" },
+              { positionId: "inv03", deltaEur: -35, rationale: "OAT: French election risk premium, RN outcome scenario" },
+              { positionId: "inv04", deltaEur: -12, rationale: "Bonos: Spain contagion from French spread" },
+              { positionId: "inv12", deltaEur: -25, rationale: "Eurostoxx: political uncertainty premium" },
+              { positionId: "inv10", deltaEur: -10, rationale: "BNP Paribas: French bank sovereign feedback loop" },
+              { positionId: "inv11", deltaEur: -8,  rationale: "Unicredit: Italian bank sovereign feedback loop" },
+              { positionId: "inv17", deltaEur: -8,  rationale: "Milano offices: election uncertainty" },
+              { positionId: "inv19", deltaEur: -12, rationale: "Warsaw retail: Polish election risk" }
+            ]
+          },
+          pandc: {
+            totalEur: -20,
+            drivers: [
+              { policyId: "pol07", deltaEur: -12, rationale: "PV East Europe retail: election-related civil unrest" },
+              { policyId: "pol11", deltaEur: -8,  rationale: "Cyber: election-targeted attacks" }
+            ]
+          },
+          operations: {
+            totalEur: -3,
+            drivers: [
+              { opId: "op04", deltaEur: -3, rationale: "Warsaw sales office: election-cycle uncertainty" }
+            ]
+          }
+        },
+        redFlags: [
+          { id: "rf-pol-1", label: "German AfD polling in eastern Lander",                threshold: ">35%",                            status: "amber",  currentValue: "31%" },
+          { id: "rf-pol-2", label: "French RN polling first round",                       threshold: ">32%",                            status: "amber",  currentValue: "30%" },
+          { id: "rf-pol-3", label: "Italian coalition arithmetic vs Meloni government",   threshold: "loss of Senate majority",         status: "green",  currentValue: "stable" },
+          { id: "rf-pol-4", label: "Polish presidential polling: Tusk-backed candidate",  threshold: "<45%",                            status: "amber",  currentValue: "47%" },
+          { id: "rf-pol-5", label: "BTP-Bund spread widening from baseline",              threshold: ">50bp",                           status: "amber",  currentValue: "+35bp" },
+          { id: "rf-pol-6", label: "OAT-Bund spread widening from baseline",              threshold: ">80bp",                           status: "red",    currentValue: "+85bp" }
+        ]
+      }
+    },
+
+    q3Levers: [
+      {
+        id: "lever01",
+        label: "Reduce BTP exposure by 50% (rotate to Bund)",
+        description: "Sell 400m of inv01 (BTP Italia 10Y), buy 400m of Bund 10Y equivalent. Reduces sovereign concentration risk on Italy.",
+        deltaByScenario: {
+          "ukraine-main":          { investEur: 22, pandcEur: 0,  opsEur: 0, comment: "Reduces BTP spread exposure" },
+          "eu-political-2027-main":{ investEur: 18, pandcEur: 0,  opsEur: 0, comment: "Reduces election-cycle Italian sovereign risk" },
+          "us-debt-hyperscalers-main":{ investEur: -3, pandcEur: 0, opsEur: 0, comment: "Slight negative: Bund also affected but less" },
+          "eu-hybrid-main":        { investEur: 6,  pandcEur: 0,  opsEur: 0, comment: "Modest reduction in EU risk premium" }
+        }
+      },
+      {
+        id: "lever02",
+        label: "Apply war exclusion LMA5567 to all Marine Cargo",
+        description: "Standardize LMA5567 war exclusion across Suez, Hormuz, Black Sea Marine Cargo policies. Reduces GWP by 8%.",
+        deltaByScenario: {
+          "ukraine-main":          { investEur: 0, pandcEur: 22, opsEur: 0, comment: "Black Sea exposure sharply reduced" },
+          "iran-main":             { investEur: 0, pandcEur: 30, opsEur: 0, comment: "Hormuz exposure sharply reduced" },
+          "taiwan-main":           { investEur: 0, pandcEur: 8,  opsEur: 0, comment: "Suez Asia trade exposure reduced" }
+        }
+      },
+      {
+        id: "lever03",
+        label: "Close Istanbul and Beirut offices, consolidate to Milano",
+        description: "Exit high-risk operational geographies. Loss of local market presence estimated at 5% regional GWP.",
+        deltaByScenario: {
+          "iran-main":             { investEur: 0, pandcEur: 0,  opsEur: 6, comment: "Direct removal of exposed sites" },
+          "ukraine-main":          { investEur: 0, pandcEur: 0,  opsEur: 0, comment: "Neutral: exposure not in these sites" }
+        }
+      },
+      {
+        id: "lever04",
+        label: "Halve Trade Credit exposure to Turkey and Egypt",
+        description: "Reduce buyer limits for Turkish and Egyptian buyers by 50%. Reduces GWP by 3%.",
+        deltaByScenario: {
+          "iran-main":             { investEur: 0, pandcEur: 10, opsEur: 0, comment: "Turkish and Egyptian buyer risk lowered" },
+          "eu-china-trade-main":   { investEur: 0, pandcEur: 0,  opsEur: 0, comment: "Neutral" }
+        }
+      },
+      {
+        id: "lever05",
+        label: "Reduce Asia equity exposure by 50% (TSMC, MSCI EM)",
+        description: "Sell 15m of TSMC ADR and 40m of MSCI EM ETF. Rotate to European equity ETF. Reduces Asia concentration.",
+        deltaByScenario: {
+          "taiwan-main":           { investEur: 30, pandcEur: 0, opsEur: 0, comment: "Direct removal of Taiwan-exposed equity" },
+          "us-china-tensions-main":{ investEur: 15, pandcEur: 0, opsEur: 0, comment: "Reduces PRC-adjacent exposure" },
+          "us-debt-hyperscalers-main":{ investEur: 6, pandcEur: 0, opsEur: 0, comment: "Modest reduction in coupled repricing" }
+        }
+      }
+    ]
+
+  },
+
 
 };
