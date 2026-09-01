@@ -635,12 +635,14 @@ window.addEventListener('error', function(e) {
     }
   }
 
-  function renderLandingCenter() {
-    if (!centerPanel) return;
-    centerPanel.innerHTML = '<div class="demo-banner">DEMO ONLY &mdash; NOT REAL DATA</div><div class="center-hdr"><div class="center-hdr-left"><div class="ctx-tag">GLOBAL &middot; MULTI-DOSSIER</div><div class="center-title">The world in arcs</div></div><div class="center-hdr-right"><div class="meta-row"><span class="meta-lbl">ACTORS</span><span class="meta-val">147</span></div><div class="meta-row"><span class="meta-lbl">ARCS</span><span class="meta-val">428</span></div><div class="meta-row"><span class="meta-lbl">VIEW</span><span class="meta-val">sphere</span></div></div></div><div class="graph-canvas"><svg id="global-graph" preserveAspectRatio="xMidYMid meet"></svg></div><div class="graph-hints"><em>Drag to rotate &middot; </em><span class="highlight">Click a node to explore its relations</span><em> &middot; Ask a question to pull the relevant subgraph into focus</em></div>';
-    renderGlobalGraph('global-graph');
-    attachSphereInteraction();
+   function renderLandingCenter() {
+    if (!centerPanel) {
+      alert('centerPanel NULL');
+      return;
+    }
+    centerPanel.innerHTML = '<div style="color:#0f0;padding:40px;font-size:20px;font-family:monospace">LANDING RENDERED OK</div>';
   }
+
 
   function renderAskingCenter() {
     var s = STATE.activeScenario;
