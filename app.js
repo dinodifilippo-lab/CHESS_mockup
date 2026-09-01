@@ -1246,8 +1246,22 @@ window.addEventListener('error', function(e) {
     });
   }
 
-  function resetToLanding() {
-    clearTimers();
+    function resetToLanding() {
+    var trace = document.createElement('div');
+    trace.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#060;color:#fff;padding:8px;z-index:99999;font-family:monospace;font-size:10px';
+    trace.id = 'debug-trace';
+    trace.textContent = 'TRACE: resetToLanding start';
+    if (document.body) {
+      var old = document.getElementById('debug-trace');
+      if (old) old.remove();
+      document.body.appendChild(trace);
+    }
+    function log(msg) {
+      var t = document.getElementById('debug-trace');
+      if (t) t.textContent += ' | ' + msg;
+    }
+
+    clearTimers(); log('timers cleared');
     if (overlay) overlay.classList.remove('open');
     STATE.flow = 'landing';
     STATE.activeScenario = null;
@@ -1259,12 +1273,24 @@ window.addEventListener('error', function(e) {
     STATE.sphere.lastInteract = 0;
     STATE.sphere.selectedNode = null;
     STATE.sphere.animating = false;
+    log('state ok');
+    log('centerPanel=' + (centerPanel ? 'YES' : 'NULL'));
+    log('intelPanel=' + (intelPanel ? 'YES' : 'NULL'));
+    log('chatBody=' + (chatBody ? 'YES' : 'NULL'));
+
     if (chatSubtitle) { chatSubtitle.textContent = 'Session - new'; chatSubtitle.className = 'panel-subtitle'; }
     if (chatInput) { chatInput.disabled = false; chatInput.value = ''; }
     if (runBtn) runBtn.classList.remove('active');
     if (inputHint) inputHint.textContent = 'Answer first - Deep-Think from the report if needed';
-    renderFull();
+    log('calling renderFull');
+    try {
+      renderFull();
+      log('renderFull ok');
+    } catch(e) {
+      log('renderFull ERR: ' + e.message);
+    }
   }
+
 
   function startScenario(scenarioKey) {
     var s = window.GEODATA.scenarios[scenarioKey];
