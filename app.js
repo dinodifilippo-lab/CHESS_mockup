@@ -1,17 +1,16 @@
 // CHESS Mockup - Phase 3 v2
 
-document.body.insertAdjacentHTML('afterbegin','<div style="position:fixed;top:0;left:0;right:0;background:#0f0;color:#000;padding:8px;z-index:99999;font-family:monospace">APP.JS LOADED OK</div>');(function() {
-
-  'use strict';
-
-
 window.addEventListener('error', function(e) {
   var d = document.createElement('div');
   d.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#900;color:#fff;padding:10px;z-index:99999;font-family:monospace;font-size:11px';
   d.textContent = 'ERR: ' + e.message + ' @ ' + e.filename + ':' + e.lineno;
-  document.body.appendChild(d);
+  if (document.body) document.body.appendChild(d);
+  else document.addEventListener('DOMContentLoaded', function(){ document.body.appendChild(d); });
 });
 
+(function() {
+
+  'use strict';
 
   try {
 
