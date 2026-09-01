@@ -1,6 +1,7 @@
 // CHESS Mockup - Phase 3 v2
 
-(function() {
+document.body.insertAdjacentHTML('afterbegin','<div style="position:fixed;top:0;left:0;right:0;background:#0f0;color:#000;padding:8px;z-index:99999;font-family:monospace">APP.JS LOADED OK</div>');(function() {
+
   'use strict';
 
   try {
