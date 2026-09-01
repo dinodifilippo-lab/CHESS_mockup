@@ -3,6 +3,157 @@
 
 window.GEODATA = {
 
+
+  actorNames: {
+    USA: "United States", PRC: "China", RUS: "Russia", IRN: "Iran", ISR: "Israel",
+    EU:  "European Union", JPN: "Japan", KOR: "South Korea", TWN: "Taiwan",
+    IND: "India", TUR: "Turkey", KSA: "Saudi Arabia",
+    UKR: "Ukraine", DEU: "Germany", GBR: "United Kingdom", FRA: "France",
+    POL: "Poland", BLR: "Belarus", CAN: "Canada", MEX: "Mexico", BRA: "Brazil",
+    AUS: "Australia", EGY: "Egypt", SYR: "Syria",
+    PHL: "Philippines", IDN: "Indonesia", VNM: "Vietnam", THA: "Thailand",
+    PAK: "Pakistan", AFG: "Afghanistan", IRQ: "Iraq", YEM: "Yemen",
+    LBY: "Libya", ETH: "Ethiopia", NGA: "Nigeria", ZAF: "South Africa",
+    ARG: "Argentina", CHL: "Chile", COL: "Colombia", PER: "Peru",
+    NOR: "Norway", SWE: "Sweden", FIN: "Finland", EST: "Estonia",
+    GRC: "Greece", ITA: "Italy", ESP: "Spain", NLD: "Netherlands",
+    CHE: "Switzerland", AUT: "Austria", HUN: "Hungary", ROU: "Romania", CZE: "Czech Republic"
+  },
+
+  globalEdges: [
+    { s: "USA", t: "GBR", pol: "aligned", w: 4.9 },
+    { s: "USA", t: "CAN", pol: "aligned", w: 4.8 },
+    { s: "USA", t: "DEU", pol: "aligned", w: 4.6 },
+    { s: "USA", t: "FRA", pol: "aligned", w: 4.4 },
+    { s: "USA", t: "ITA", pol: "aligned", w: 4.2 },
+    { s: "USA", t: "POL", pol: "aligned", w: 4.5 },
+    { s: "USA", t: "NLD", pol: "aligned", w: 4.3 },
+    { s: "USA", t: "ESP", pol: "aligned", w: 3.9 },
+    { s: "USA", t: "NOR", pol: "aligned", w: 4.2 },
+    { s: "USA", t: "TUR", pol: "complex", w: 3.8 },
+    { s: "USA", t: "GRC", pol: "aligned", w: 3.7 },
+    { s: "USA", t: "ROU", pol: "aligned", w: 4.0 },
+    { s: "USA", t: "CZE", pol: "aligned", w: 3.8 },
+    { s: "USA", t: "HUN", pol: "complex", w: 3.2 },
+    { s: "USA", t: "EU",  pol: "complex", w: 4.5 },
+    { s: "DEU", t: "FRA", pol: "aligned", w: 4.7 },
+    { s: "DEU", t: "POL", pol: "aligned", w: 4.2 },
+    { s: "DEU", t: "ITA", pol: "aligned", w: 4.3 },
+    { s: "DEU", t: "NLD", pol: "aligned", w: 4.5 },
+    { s: "DEU", t: "AUT", pol: "aligned", w: 4.4 },
+    { s: "DEU", t: "CHE", pol: "aligned", w: 4.3 },
+    { s: "FRA", t: "ITA", pol: "aligned", w: 4.2 },
+    { s: "FRA", t: "ESP", pol: "aligned", w: 4.1 },
+    { s: "GBR", t: "FRA", pol: "aligned", w: 4.0 },
+    { s: "GBR", t: "DEU", pol: "aligned", w: 4.1 },
+    { s: "POL", t: "UKR", pol: "aligned", w: 4.4 },
+    { s: "POL", t: "CZE", pol: "aligned", w: 4.1 },
+    { s: "POL", t: "ROU", pol: "aligned", w: 4.0 },
+    { s: "FIN", t: "SWE", pol: "aligned", w: 4.6 },
+    { s: "FIN", t: "NOR", pol: "aligned", w: 4.4 },
+    { s: "FIN", t: "EST", pol: "aligned", w: 4.2 },
+    { s: "SWE", t: "NOR", pol: "aligned", w: 4.5 },
+    { s: "NOR", t: "DEU", pol: "aligned", w: 4.0 },
+    { s: "HUN", t: "AUT", pol: "aligned", w: 3.8 },
+    { s: "RUS", t: "UKR", pol: "hostile", w: 5.0 },
+    { s: "USA", t: "UKR", pol: "aligned", w: 4.3 },
+    { s: "DEU", t: "UKR", pol: "aligned", w: 4.2 },
+    { s: "GBR", t: "UKR", pol: "aligned", w: 4.4 },
+    { s: "FRA", t: "UKR", pol: "aligned", w: 3.9 },
+    { s: "EU",  t: "UKR", pol: "aligned", w: 4.5 },
+    { s: "RUS", t: "BLR", pol: "aligned", w: 4.5 },
+    { s: "RUS", t: "POL", pol: "hostile", w: 4.3 },
+    { s: "RUS", t: "EST", pol: "hostile", w: 4.1 },
+    { s: "RUS", t: "FIN", pol: "hostile", w: 4.0 },
+    { s: "RUS", t: "DEU", pol: "hostile", w: 4.2 },
+    { s: "RUS", t: "GBR", pol: "hostile", w: 4.3 },
+    { s: "RUS", t: "EU",  pol: "hostile", w: 4.5 },
+    { s: "USA", t: "PRC", pol: "complex", w: 4.9 },
+    { s: "USA", t: "JPN", pol: "aligned", w: 4.8 },
+    { s: "USA", t: "KOR", pol: "aligned", w: 4.6 },
+    { s: "USA", t: "TWN", pol: "aligned", w: 4.5 },
+    { s: "USA", t: "PHL", pol: "aligned", w: 4.4 },
+    { s: "USA", t: "AUS", pol: "aligned", w: 4.7 },
+    { s: "USA", t: "IND", pol: "aligned", w: 4.0 },
+    { s: "USA", t: "VNM", pol: "aligned", w: 3.5 },
+    { s: "USA", t: "THA", pol: "aligned", w: 3.6 },
+    { s: "PRC", t: "TWN", pol: "hostile", w: 4.9 },
+    { s: "PRC", t: "JPN", pol: "complex", w: 4.0 },
+    { s: "PRC", t: "KOR", pol: "complex", w: 3.7 },
+    { s: "PRC", t: "IND", pol: "hostile", w: 4.2 },
+    { s: "PRC", t: "PHL", pol: "hostile", w: 4.0 },
+    { s: "PRC", t: "VNM", pol: "complex", w: 3.8 },
+    { s: "PRC", t: "AUS", pol: "complex", w: 3.7 },
+    { s: "JPN", t: "TWN", pol: "aligned", w: 4.2 },
+    { s: "JPN", t: "KOR", pol: "complex", w: 3.8 },
+    { s: "JPN", t: "PHL", pol: "aligned", w: 4.0 },
+    { s: "JPN", t: "AUS", pol: "aligned", w: 4.2 },
+    { s: "IND", t: "PAK", pol: "hostile", w: 4.6 },
+    { s: "IDN", t: "AUS", pol: "aligned", w: 3.6 },
+    { s: "THA", t: "VNM", pol: "aligned", w: 3.5 },
+    { s: "AUS", t: "GBR", pol: "aligned", w: 4.6 },
+    { s: "USA", t: "ISR", pol: "aligned", w: 4.9 },
+    { s: "USA", t: "KSA", pol: "aligned", w: 4.5 },
+    { s: "USA", t: "EGY", pol: "aligned", w: 4.0 },
+    { s: "USA", t: "IRN", pol: "hostile", w: 4.8 },
+    { s: "USA", t: "SYR", pol: "hostile", w: 3.9 },
+    { s: "USA", t: "YEM", pol: "hostile", w: 3.6 },
+    { s: "ISR", t: "IRN", pol: "hostile", w: 4.9 },
+    { s: "ISR", t: "SYR", pol: "hostile", w: 4.4 },
+    { s: "ISR", t: "EGY", pol: "complex", w: 3.6 },
+    { s: "ISR", t: "KSA", pol: "complex", w: 3.4 },
+    { s: "IRN", t: "KSA", pol: "hostile", w: 4.3 },
+    { s: "IRN", t: "IRQ", pol: "aligned", w: 4.1 },
+    { s: "IRN", t: "SYR", pol: "aligned", w: 4.4 },
+    { s: "IRN", t: "YEM", pol: "aligned", w: 3.9 },
+    { s: "KSA", t: "EGY", pol: "aligned", w: 4.2 },
+    { s: "KSA", t: "YEM", pol: "hostile", w: 4.3 },
+    { s: "KSA", t: "PAK", pol: "aligned", w: 3.9 },
+    { s: "TUR", t: "SYR", pol: "hostile", w: 4.1 },
+    { s: "TUR", t: "GRC", pol: "hostile", w: 3.8 },
+    { s: "TUR", t: "EGY", pol: "complex", w: 3.5 },
+    { s: "PRC", t: "RUS", pol: "aligned", w: 4.6 },
+    { s: "PRC", t: "IRN", pol: "aligned", w: 4.2 },
+    { s: "RUS", t: "IRN", pol: "aligned", w: 4.1 },
+    { s: "PRC", t: "PAK", pol: "aligned", w: 4.4 },
+    { s: "RUS", t: "IND", pol: "aligned", w: 4.0 },
+    { s: "PRC", t: "DEU", pol: "complex", w: 4.0 },
+    { s: "PRC", t: "EU",  pol: "complex", w: 4.2 },
+    { s: "USA", t: "MEX", pol: "complex", w: 4.5 },
+    { s: "USA", t: "BRA", pol: "complex", w: 3.8 },
+    { s: "USA", t: "COL", pol: "aligned", w: 4.1 },
+    { s: "USA", t: "CHL", pol: "aligned", w: 3.8 },
+    { s: "USA", t: "ARG", pol: "complex", w: 3.6 },
+    { s: "BRA", t: "ARG", pol: "aligned", w: 4.2 },
+    { s: "BRA", t: "COL", pol: "aligned", w: 3.7 },
+    { s: "CHL", t: "PER", pol: "complex", w: 3.5 },
+    { s: "COL", t: "PER", pol: "aligned", w: 3.7 },
+    { s: "BRA", t: "PRC", pol: "aligned", w: 4.0 },
+    { s: "ARG", t: "PRC", pol: "complex", w: 3.5 },
+    { s: "MEX", t: "CAN", pol: "aligned", w: 4.3 },
+    { s: "ETH", t: "EGY", pol: "hostile", w: 3.8 },
+    { s: "NGA", t: "ETH", pol: "aligned", w: 3.3 },
+    { s: "ZAF", t: "NGA", pol: "aligned", w: 3.6 },
+    { s: "ZAF", t: "PRC", pol: "aligned", w: 3.9 },
+    { s: "NGA", t: "PRC", pol: "aligned", w: 3.7 },
+    { s: "LBY", t: "EGY", pol: "complex", w: 3.5 },
+    { s: "LBY", t: "TUR", pol: "aligned", w: 3.6 },
+    { s: "AFG", t: "PAK", pol: "complex", w: 4.0 },
+    { s: "AFG", t: "IRN", pol: "complex", w: 3.7 },
+    { s: "CHE", t: "EU",  pol: "aligned", w: 4.2 }
+  ],
+
+  actorCentrality: {
+    USA: 22, PRC: 18, RUS: 11, EU: 5, DEU: 10, FRA: 8, GBR: 7,
+    UKR: 6, ISR: 9, IRN: 10, TUR: 5, KSA: 7, JPN: 6, TWN: 4,
+    POL: 6, KOR: 3, IND: 5, AUS: 5, ITA: 4, ESP: 3, NLD: 3,
+    EGY: 5, PAK: 5, PHL: 3, VNM: 3, THA: 3, MEX: 3,
+    BRA: 4, CAN: 3, HUN: 2, ROU: 2, CZE: 2, NOR: 4, SWE: 3, FIN: 4,
+    EST: 2, GRC: 3, AUT: 3, CHE: 2, SYR: 4, IRQ: 1, YEM: 3,
+    IDN: 2, LBY: 3, ETH: 3, NGA: 3, ZAF: 2, ARG: 3, CHL: 2,
+    COL: 3, PER: 2, BLR: 2, AFG: 2
+  },
+
   dossiers: [
     { id: "global", name: "Global overview" },
     { id: "ukraine", name: "Ukraine / Russia / NATO" },
@@ -244,11 +395,11 @@ window.GEODATA = {
         divergence: "IISS reads the operational buffer as thicker than ECFR; both agree on the 2027 timing pivot.",
         sources: [ {name:"ECFR",passages:13},{name:"IISS",passages:11},{name:"CSIS",passages:10},{name:"Bruegel",passages:9},{name:"FP",passages:8},{name:"ISPI",passages:7} ],
         topArcs: [
-          { pair: "RUS ↔ UKR", pol: "hostile", w: 4.8, vol: "H" },
-          { pair: "EU ↔ UKR",  pol: "aligned", w: 4.2, vol: "M" },
-          { pair: "USA ↔ EU",  pol: "complex", w: 4.0, vol: "M" },
-          { pair: "DEU ↔ UKR", pol: "aligned", w: 3.9, vol: "M" },
-          { pair: "RUS ↔ EU",  pol: "hostile", w: 3.8, vol: "H" }
+          { pair: "RUS - UKR", pol: "hostile", w: 4.8, vol: "H" },
+          { pair: "EU - UKR",  pol: "aligned", w: 4.2, vol: "M" },
+          { pair: "USA - EU",  pol: "complex", w: 4.0, vol: "M" },
+          { pair: "DEU - UKR", pol: "aligned", w: 3.9, vol: "M" },
+          { pair: "RUS - EU",  pol: "hostile", w: 3.8, vol: "H" }
         ],
         cost: "$0.02", composedAt: "10:26"
       },
@@ -268,10 +419,10 @@ window.GEODATA = {
         robustness: 3.5, robustnessCaption: "MEDIUM-HIGH",
         robustnessNote: "Distribution stable across 4 restart seeds (max delta 5pp). Confidence limited by dependence on political catalysts across three polities (US, DEU, EU-level).",
         drivingArcs: [
-          { pair: "USA ↔ UKR", desc: "Pivot: supplemental cycle",     pol: "amber" },
-          { pair: "DEU ↔ EU",  desc: "Driver: budget stress",         pol: "amber" },
-          { pair: "EU ↔ UKR",  desc: "Anchor: multi-annual envelope", pol: "green" },
-          { pair: "RUS ↔ UKR", desc: "Frame: attrition dynamic",      pol: "red" }
+          { pair: "USA - UKR", desc: "Pivot: supplemental cycle",     pol: "amber" },
+          { pair: "DEU - EU",  desc: "Driver: budget stress",         pol: "amber" },
+          { pair: "EU - UKR",  desc: "Anchor: multi-annual envelope", pol: "green" },
+          { pair: "RUS - UKR", desc: "Frame: attrition dynamic",      pol: "red" }
         ],
         assumptions: [
           "A1: No Russian battlefield breakthrough in the horizon.",
@@ -322,10 +473,10 @@ window.GEODATA = {
         divergence: "Bruegel weights the signaling channel more heavily than ECFR, which sees the disbursement rhythm as more consequential.",
         sources: [ {name:"Bruegel",passages:11},{name:"ECFR",passages:9},{name:"ISPI",passages:8},{name:"FP",passages:6} ],
         topArcs: [
-          { pair: "DEU ↔ EU",  pol: "aligned", w: 4.5, vol: "M" },
-          { pair: "EU ↔ UKR",  pol: "aligned", w: 4.2, vol: "M" },
-          { pair: "USA ↔ EU",  pol: "complex", w: 4.0, vol: "M" },
-          { pair: "DEU ↔ UKR", pol: "aligned", w: 3.9, vol: "H" }
+          { pair: "DEU - EU",  pol: "aligned", w: 4.5, vol: "M" },
+          { pair: "EU - UKR",  pol: "aligned", w: 4.2, vol: "M" },
+          { pair: "USA - EU",  pol: "complex", w: 4.0, vol: "M" },
+          { pair: "DEU - UKR", pol: "aligned", w: 3.9, vol: "H" }
         ],
         cost: "$0.02", composedAt: "10:34"
       },
@@ -362,11 +513,11 @@ window.GEODATA = {
         divergence: "ECFR reads the coordination deficit as improvable within existing treaties; IISS sees it as requiring a crisis trigger to move.",
         sources: [ {name:"ECFR",passages:12},{name:"IISS",passages:10},{name:"CSIS",passages:9},{name:"ISPI",passages:7},{name:"Bruegel",passages:4} ],
         topArcs: [
-          { pair: "RUS ↔ EU",  pol: "hostile", w: 4.1, vol: "H" },
-          { pair: "EU ↔ DEU",  pol: "aligned", w: 4.5, vol: "M" },
-          { pair: "EU ↔ POL",  pol: "aligned", w: 3.9, vol: "L" },
-          { pair: "RUS ↔ POL", pol: "hostile", w: 3.8, vol: "H" },
-          { pair: "RUS ↔ DEU", pol: "hostile", w: 3.7, vol: "H" }
+          { pair: "RUS - EU",  pol: "hostile", w: 4.1, vol: "H" },
+          { pair: "EU - DEU",  pol: "aligned", w: 4.5, vol: "M" },
+          { pair: "EU - POL",  pol: "aligned", w: 3.9, vol: "L" },
+          { pair: "RUS - POL", pol: "hostile", w: 3.8, vol: "H" },
+          { pair: "RUS - DEU", pol: "hostile", w: 3.7, vol: "H" }
         ],
         cost: "$0.02", composedAt: "10:38"
       },
@@ -404,18 +555,18 @@ window.GEODATA = {
         divergence: "CSIS emphasizes the 2027 capability window; MERICS emphasizes the trigger conditions as more decisive than capability.",
         sources: [ {name:"CSIS",passages:14},{name:"MERICS",passages:11},{name:"ISPI",passages:9},{name:"The Diplomat",passages:8},{name:"FP",passages:5} ],
         topArcs: [
-          { pair: "PRC ↔ TWN", pol: "hostile", w: 4.7, vol: "H" },
-          { pair: "USA ↔ PRC", pol: "complex", w: 4.9, vol: "H" },
-          { pair: "USA ↔ JPN", pol: "aligned", w: 4.2, vol: "L" },
-          { pair: "USA ↔ TWN", pol: "aligned", w: 4.1, vol: "M" },
-          { pair: "USA ↔ PHL", pol: "aligned", w: 3.8, vol: "M" }
+          { pair: "PRC - TWN", pol: "hostile", w: 4.7, vol: "H" },
+          { pair: "USA - PRC", pol: "complex", w: 4.9, vol: "H" },
+          { pair: "USA - JPN", pol: "aligned", w: 4.2, vol: "L" },
+          { pair: "USA - TWN", pol: "aligned", w: 4.1, vol: "M" },
+          { pair: "USA - PHL", pol: "aligned", w: 3.8, vol: "M" }
         ],
         cost: "$0.02", composedAt: "10:26"
       },
       dtReport: {
         title: "Modal path is blockade escalation, not assault -- but the tail toward kinetic action is not thin in 2027.",
         subtitle: "A 24-month projection of the Taiwan Strait dossier across 4 scenarios, informed by PLA doctrine and precondition dynamics.",
-        thesis: "The simulation explored four trajectories on the Taiwan Strait dossier over the twenty-four-month horizon.\n\nIn the modal scenario (46%), the People's Liberation Army maintains large-scale exercises at Justice Mission scale two to three times per year, with continued normalisation of activity inside Taiwan's contiguous zone. Each exercise expands the operational envelope incrementally without crossing thresholds that would force a coalition response. The PLA reaches full invasion capability by the fourth quarter of 2027 but does not employ it. The trajectory closes with the Strait in a new equilibrium characterised by permanent higher-alert posture and normalised coercive activity below the kinetic threshold.\n\nIn the second scenario (22%), a grey-zone activity crosses a threshold that neither side had intended to breach. The most probable triggering events are an aerial intercept resulting in collision, maritime enforcement of an exclusion zone striking a civilian vessel, or a cyber operation with visible physical consequences. The subsequent trajectory depends on the speed and coherence of the trilateral response linking Washington, Tokyo and Taipei. Rapid coordination and effective backchannel communication produce de-escalation and a return to the pre-incident baseline. Slower or fragmented response produces formalisation of the blockade as a permanent posture, generating a Taiwan crisis without a Taiwan war.\n\nIn the third scenario (20%), one of the three precondition categories activates. A Taiwanese political move interpreted in Beijing as crossing a red line, a US-Taiwan formal defence treaty, or an internal Chinese crisis requiring external distraction. Any of these triggers shifts the kinetic option from unlikely to probable, with a concentrated window of six to twelve months following the triggering event. The most probable timing for the overall trajectory falls between the fourth quarter of 2027 and the first half of 2028, coinciding with the completion of PLA modernisation targets and the Taiwan electoral cycle.\n\nIn the fourth scenario (12%), a change of political configuration in Taipei following the 2028 elections opens dialogue space. Beijing responds by reducing exercise tempo in exchange for softer US arms transfer language, and a partial détente takes hold. This trajectory requires a specific electoral outcome favourable to the KMT or a third party, combined with a Trump administration recalibration toward the Indo-Pacific that would create political space for the reduced US posture on Taiwan that Beijing would demand.",
+        thesis: "The simulation explored four trajectories on the Taiwan Strait dossier over the twenty-four-month horizon.\n\nIn the modal scenario (46%), the People's Liberation Army maintains large-scale exercises at Justice Mission scale two to three times per year, with continued normalisation of activity inside Taiwan's contiguous zone. Each exercise expands the operational envelope incrementally without crossing thresholds that would force a coalition response. The PLA reaches full invasion capability by the fourth quarter of 2027 but does not employ it. The trajectory closes with the Strait in a new equilibrium characterised by permanent higher-alert posture and normalised coercive activity below the kinetic threshold.\n\nIn the second scenario (22%), a grey-zone activity crosses a threshold that neither side had intended to breach. The most probable triggering events are an aerial intercept resulting in collision, maritime enforcement of an exclusion zone striking a civilian vessel, or a cyber operation with visible physical consequences. The subsequent trajectory depends on the speed and coherence of the trilateral response linking Washington, Tokyo and Taipei. Rapid coordination and effective backchannel communication produce de-escalation and a return to the pre-incident baseline. Slower or fragmented response produces formalisation of the blockade as a permanent posture, generating a Taiwan crisis without a Taiwan war.\n\nIn the third scenario (20%), one of the three precondition categories activates. A Taiwanese political move interpreted in Beijing as crossing a red line, a US-Taiwan formal defence treaty, or an internal Chinese crisis requiring external distraction. Any of these triggers shifts the kinetic option from unlikely to probable, with a concentrated window of six to twelve months following the triggering event. The most probable timing for the overall trajectory falls between the fourth quarter of 2027 and the first half of 2028, coinciding with the completion of PLA modernisation targets and the Taiwan electoral cycle.\n\nIn the fourth scenario (12%), a change of political configuration in Taipei following the 2028 elections opens dialogue space. Beijing responds by reducing exercise tempo in exchange for softer US arms transfer language, and a partial detente takes hold. This trajectory requires a specific electoral outcome favourable to the KMT or a third party, combined with a Trump administration recalibration toward the Indo-Pacific that would create political space for the reduced US posture on Taiwan that Beijing would demand.",
         implication: "The consolidation of the modal blockade equilibrium generates effects that extend well beyond the immediate question of Taiwan and reshape the security architecture of the Indo-Pacific over the horizon. The first effect is the entrenchment of a regional deterrence architecture that operates continuously at levels previously reserved for crisis response. The tempo of allied exercises, the density of forward-deployed assets, the frequency of freedom of navigation operations and the pattern of intelligence sharing all shift to a new baseline that is stable but structurally more expensive and less flexible than the pre-2024 configuration. This baseline generates its own political constituency across allied capitals, its own budgetary requirements, and its own logic that persists regardless of the underlying Chinese behaviour. The second effect is the transformation of miscalculation from residual concern to primary risk. In an equilibrium characterised by high tempo, permanent presence and normalised coercive activity, the probability of an unintended incident producing an escalatory spiral increases even as the probability of deliberate war-initiation remains constrained. The failure mode of the system shifts from strategic choice to protocol breakdown, and the mechanisms designed to prevent the former are poorly adapted to prevent the latter. The third effect operates through the global semiconductor supply chain. The sustained visibility of Taiwan risk accelerates dispersion of leading-node fabrication capacity beyond the pace that Beijing had anticipated. As dispersion progresses, the economic disincentive that currently constrains Chinese kinetic options weakens progressively. By 2028 the calculation that today makes seizure of TSMC self-defeating will be materially less binding than it is now, altering the strategic equation without any change in Beijing's declaratory position. The fourth effect is the crystallisation of Japan's transition from constrained security actor to full regional power. The formalisation of Taiwan as a Japanese interest, combined with the operational integration with US forces, the expansion of Nansei island chain infrastructure and the sustained increase in defence spending, produces a Japanese posture in 2028 that removes long-standing ambiguities and generates its own diplomatic weight across Southeast Asia. This weight interacts with Chinese regional strategy in ways that go beyond the Taiwan question, altering the calculus on the East China Sea, on South China Sea claims, and on Chinese influence operations across the Association of Southeast Asian Nations. The fifth effect concerns the pattern that Beijing has developed for managing pressure against Japan -- sustained economic and diplomatic friction without dramatic escalation -- which generalises across the region as the default operating mode. This mode is applied not as explicit strategy but as learned default, extending to Philippine, South Korean and Australian relationships in ways that reshape regional expectations of Chinese behaviour.",
         scenarios: [
           { code: "S1", tag: "LEFT TAIL", label: "S1", pct: 12, ci: "8-16%",  pol: "blue",      body: "<em>Cross-strait detente window.</em> A new political configuration in Taipei (2028 election) opens dialogue space. PRC reduces exercise tempo in exchange for softer US arms transfer language. Requires a specific electoral outcome and a Trump administration recalibration; neither is currently visible." },
@@ -428,10 +579,10 @@ window.GEODATA = {
         robustness: 3.7, robustnessCaption: "HIGH",
         robustnessNote: "Distribution stable across 5 restart seeds. Confidence high on the modal path; tail probabilities have wider intervals due to trigger dependence.",
         drivingArcs: [
-          { pair: "PRC ↔ TWN", desc: "Frame: PLA tempo",              pol: "red" },
-          { pair: "USA ↔ TWN", desc: "Anchor: reinforcement cadence", pol: "green" },
-          { pair: "USA ↔ JPN", desc: "Deterrent: trilateral tightness",pol: "green" },
-          { pair: "USA ↔ PRC", desc: "Frame: managed rivalry",        pol: "amber" }
+          { pair: "PRC - TWN", desc: "Frame: PLA tempo",              pol: "red" },
+          { pair: "USA - TWN", desc: "Anchor: reinforcement cadence", pol: "green" },
+          { pair: "USA - JPN", desc: "Deterrent: trilateral tightness",pol: "green" },
+          { pair: "USA - PRC", desc: "Frame: managed rivalry",        pol: "amber" }
         ],
         assumptions: [
           "A1: 2027 marks capability inflection, not scheduled event.",
@@ -485,11 +636,11 @@ window.GEODATA = {
         divergence: "CSIS reads the semiconductor constraint as decisive against kinetic action; MERICS reads it as slowing but not preventing.",
         sources: [ {name:"CSIS",passages:12},{name:"Bruegel",passages:9},{name:"MERICS",passages:8},{name:"ISPI",passages:6},{name:"FP",passages:4} ],
         topArcs: [
-          { pair: "USA ↔ PRC",  pol: "complex", w: 4.9, vol: "H" },
-          { pair: "PRC ↔ TWN",  pol: "hostile", w: 4.7, vol: "H" },
-          { pair: "USA ↔ TSMC", pol: "aligned", w: 4.4, vol: "M" },
-          { pair: "PRC ↔ TSMC", pol: "complex", w: 4.3, vol: "M" },
-          { pair: "USA ↔ NLD",  pol: "aligned", w: 4.0, vol: "L" }
+          { pair: "USA - PRC",  pol: "complex", w: 4.9, vol: "H" },
+          { pair: "PRC - TWN",  pol: "hostile", w: 4.7, vol: "H" },
+          { pair: "USA - TSMC", pol: "aligned", w: 4.4, vol: "M" },
+          { pair: "PRC - TSMC", pol: "complex", w: 4.3, vol: "M" },
+          { pair: "USA - NLD",  pol: "aligned", w: 4.0, vol: "L" }
         ],
         cost: "$0.02", composedAt: "10:34"
       },
@@ -524,10 +675,10 @@ window.GEODATA = {
         divergence: "CSIS emphasizes deterrent strengthening; MERICS emphasizes the miscalculation risk from removed ambiguity.",
         sources: [ {name:"CSIS",passages:11},{name:"MERICS",passages:9},{name:"ISPI",passages:8},{name:"Japan MoD",passages:5} ],
         topArcs: [
-          { pair: "PRC ↔ TWN", pol: "hostile", w: 4.7, vol: "H" },
-          { pair: "USA ↔ JPN", pol: "aligned", w: 4.3, vol: "L" },
-          { pair: "JPN ↔ TWN", pol: "aligned", w: 3.8, vol: "M" },
-          { pair: "PRC ↔ JPN", pol: "complex", w: 3.7, vol: "M" }
+          { pair: "PRC - TWN", pol: "hostile", w: 4.7, vol: "H" },
+          { pair: "USA - JPN", pol: "aligned", w: 4.3, vol: "L" },
+          { pair: "JPN - TWN", pol: "aligned", w: 3.8, vol: "M" },
+          { pair: "PRC - JPN", pol: "complex", w: 3.7, vol: "M" }
         ],
         cost: "$0.02", composedAt: "10:38"
       },
@@ -566,11 +717,11 @@ window.GEODATA = {
         divergence: "CNN reads sanctions as escalation via new means; MERICS reads them as prelude to negotiated exit; ISPI positions between the two.",
         sources: [ {name:"CNN",passages:12},{name:"CSIS",passages:10},{name:"MERICS",passages:9},{name:"FP",passages:8},{name:"Reuters",passages:7},{name:"ISPI",passages:5} ],
         topArcs: [
-          { pair: "USA ↔ PRC", pol: "complex", w: 4.9, vol: "H" },
-          { pair: "IRN ↔ ISR", pol: "hostile", w: 4.7, vol: "H" },
-          { pair: "USA ↔ IRN", pol: "hostile", w: 4.6, vol: "H" },
-          { pair: "USA ↔ ISR", pol: "aligned", w: 4.5, vol: "M" },
-          { pair: "PRC ↔ IRN", pol: "aligned", w: 4.0, vol: "H" }
+          { pair: "USA - PRC", pol: "complex", w: 4.9, vol: "H" },
+          { pair: "IRN - ISR", pol: "hostile", w: 4.7, vol: "H" },
+          { pair: "USA - IRN", pol: "hostile", w: 4.6, vol: "H" },
+          { pair: "USA - ISR", pol: "aligned", w: 4.5, vol: "M" },
+          { pair: "PRC - IRN", pol: "aligned", w: 4.0, vol: "H" }
         ],
         cost: "$0.02", composedAt: "10:26"
       },
@@ -590,10 +741,10 @@ window.GEODATA = {
         robustness: 3.3, robustnessCaption: "MEDIUM",
         robustnessNote: "Distribution moderately stable across 4 restart seeds (max delta 7pp). Confidence limited because the counterfactual removes the largest constraining actor (US), amplifying dependence on other actors' choices.",
         drivingArcs: [
-          { pair: "USA ↔ PRC", desc: "Meta-variable",              pol: "amber" },
-          { pair: "PRC ↔ IRN", desc: "Anchor: economic guarantor", pol: "green" },
-          { pair: "IRN ↔ ISR", desc: "Driver: dyadic dynamic",     pol: "red" },
-          { pair: "USA ↔ ISR", desc: "Removed constraint",         pol: "amber" }
+          { pair: "USA - PRC", desc: "Meta-variable",              pol: "amber" },
+          { pair: "PRC - IRN", desc: "Anchor: economic guarantor", pol: "green" },
+          { pair: "IRN - ISR", desc: "Driver: dyadic dynamic",     pol: "red" },
+          { pair: "USA - ISR", desc: "Removed constraint",         pol: "amber" }
         ],
         assumptions: [
           "A1: Disengagement is discontinuous, not gradual (counterfactual definition).",
@@ -645,10 +796,10 @@ window.GEODATA = {
         divergence: "FP emphasizes doctrinal compression; CSIS emphasizes regional partnership adaptation.",
         sources: [ {name:"FP",passages:11},{name:"CSIS",passages:9},{name:"ISPI",passages:7},{name:"MERICS",passages:5},{name:"Reuters",passages:4} ],
         topArcs: [
-          { pair: "IRN ↔ ISR", pol: "hostile", w: 4.7, vol: "H" },
-          { pair: "USA ↔ ISR", pol: "aligned", w: 4.5, vol: "H" },
-          { pair: "ISR ↔ UAE", pol: "aligned", w: 3.8, vol: "L" },
-          { pair: "ISR ↔ KSA", pol: "complex", w: 3.5, vol: "M" }
+          { pair: "IRN - ISR", pol: "hostile", w: 4.7, vol: "H" },
+          { pair: "USA - ISR", pol: "aligned", w: 4.5, vol: "H" },
+          { pair: "ISR - UAE", pol: "aligned", w: 3.8, vol: "L" },
+          { pair: "ISR - KSA", pol: "complex", w: 3.5, vol: "M" }
         ],
         cost: "$0.02", composedAt: "10:34"
       },
@@ -684,10 +835,10 @@ window.GEODATA = {
         divergence: "CNN reads Chinese support as strategic commitment; MERICS reads it as tactical calibration; ISPI positions between.",
         sources: [ {name:"CNN",passages:11},{name:"MERICS",passages:9},{name:"CSIS",passages:8},{name:"Reuters",passages:6},{name:"ISPI",passages:4} ],
         topArcs: [
-          { pair: "USA ↔ PRC", pol: "complex", w: 4.9, vol: "H" },
-          { pair: "USA ↔ IRN", pol: "hostile", w: 4.6, vol: "H" },
-          { pair: "PRC ↔ IRN", pol: "aligned", w: 4.2, vol: "H" },
-          { pair: "PRC ↔ RUS", pol: "aligned", w: 4.1, vol: "M" }
+          { pair: "USA - PRC", pol: "complex", w: 4.9, vol: "H" },
+          { pair: "USA - IRN", pol: "hostile", w: 4.6, vol: "H" },
+          { pair: "PRC - IRN", pol: "aligned", w: 4.2, vol: "H" },
+          { pair: "PRC - RUS", pol: "aligned", w: 4.1, vol: "M" }
         ],
         cost: "$0.02", composedAt: "10:38"
       },
