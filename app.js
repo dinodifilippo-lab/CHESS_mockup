@@ -1,15 +1,6 @@
 // CHESS Mockup - Phase 3 v2
 
-window.addEventListener('error', function(e) {
-  var d = document.createElement('div');
-  d.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#900;color:#fff;padding:10px;z-index:99999;font-family:monospace;font-size:11px';
-  d.textContent = 'ERR: ' + e.message + ' @ ' + e.filename + ':' + e.lineno;
-  if (document.body) document.body.appendChild(d);
-  else document.addEventListener('DOMContentLoaded', function(){ document.body.appendChild(d); });
-});
-
 (function() {
-
   'use strict';
 
   try {
@@ -635,14 +626,12 @@ window.addEventListener('error', function(e) {
     }
   }
 
-   function renderLandingCenter() {
-    if (!centerPanel) {
-      alert('centerPanel NULL');
-      return;
-    }
-    centerPanel.innerHTML = '<div style="color:#0f0;padding:40px;font-size:20px;font-family:monospace">LANDING RENDERED OK</div>';
+  function renderLandingCenter() {
+    if (!centerPanel) return;
+    centerPanel.innerHTML = '<div class="demo-banner">DEMO ONLY &mdash; NOT REAL DATA</div><div class="center-hdr"><div class="center-hdr-left"><div class="ctx-tag">GLOBAL &middot; MULTI-DOSSIER</div><div class="center-title">The world in arcs</div></div><div class="center-hdr-right"><div class="meta-row"><span class="meta-lbl">ACTORS</span><span class="meta-val">147</span></div><div class="meta-row"><span class="meta-lbl">ARCS</span><span class="meta-val">428</span></div><div class="meta-row"><span class="meta-lbl">VIEW</span><span class="meta-val">sphere</span></div></div></div><div class="graph-canvas"><svg id="global-graph" preserveAspectRatio="xMidYMid meet"></svg></div><div class="graph-hints"><em>Drag to rotate &middot; </em><span class="highlight">Click a node to explore its relations</span><em> &middot; Ask a question to pull the relevant subgraph into focus</em></div>';
+    renderGlobalGraph('global-graph');
+    attachSphereInteraction();
   }
-
 
   function renderAskingCenter() {
     var s = STATE.activeScenario;
@@ -750,7 +739,6 @@ window.addEventListener('error', function(e) {
     svg.setAttribute('viewBox', '0 0 900 320');
     svg.innerHTML = '';
     var cols = 6, colW = 900 / cols;
-
     for (var c = 0; c < cols; c++) {
       var x = colW * c + colW / 2;
       var isActive = Math.floor(progress * cols) === c;
@@ -765,17 +753,14 @@ window.addEventListener('error', function(e) {
         fill: '#6B7590', 'font-family': 'Courier New, monospace', 'font-size': 9
       }, 't=' + c));
     }
-
     var rootX = colW * 0.5, rootY = 160;
     svg.appendChild(svgEl('circle', {
       cx: rootX, cy: rootY, r: 10,
       fill: '#1A3520', stroke: '#4A9F70', 'stroke-width': 2
     }));
-
     var seedYs = [50, 120, 200, 270];
     var seedX = colW * 1.5;
     var winnerSeed = 1;
-
     for (var i = 0; i < 4; i++) {
       var seedProgress = Math.min(1, Math.max(0, (progress - 0.05) * 5));
       if (seedProgress <= 0) continue;
@@ -803,7 +788,6 @@ window.addEventListener('error', function(e) {
         opacity: opacity
       }, 'S' + (i + 1));
     }
-
     var branchingPerCol = [3, 3, 2, 2];
     for (var c2 = 2; c2 < 6; c2++) {
       var colStartProg = 0.15 + (c2 - 2) * 0.18;
@@ -811,7 +795,6 @@ window.addEventListener('error', function(e) {
       var colProgress = Math.min(1, Math.max(0, (progress - colStartProg) / (colFullProg - colStartProg)));
       if (colProgress <= 0) continue;
       var colX = colW * (c2 + 0.5);
-
       for (var seedIdx = 0; seedIdx < 4; seedIdx++) {
         var isWinnerBranch = seedIdx === winnerSeed;
         var isFadingBranch = !isWinnerBranch && progress > 0.55;
@@ -822,7 +805,6 @@ window.addEventListener('error', function(e) {
           var childY = seedY + (b - (branchCount - 1) / 2) * spread;
           if (childY < 30) childY = 30;
           if (childY > 290) childY = 290;
-
           var branchOpacity;
           if (isFadingBranch) {
             branchOpacity = Math.max(0.08, 0.5 - (progress - 0.55) * 1.2);
@@ -831,7 +813,6 @@ window.addEventListener('error', function(e) {
           } else {
             branchOpacity = 0.4 + 0.3 * colProgress;
           }
-
           var branchColor;
           var isNearFinal = (c2 === 5 && progress > 0.85);
           if (isWinnerBranch && isNearFinal) {
@@ -843,7 +824,6 @@ window.addEventListener('error', function(e) {
           } else {
             branchColor = '#8E9DB8';
           }
-
           var branchThickness = isWinnerBranch ? 1.6 : 0.8;
           var parentX = colW * (c2 - 0.5);
           var parentY;
@@ -867,7 +847,6 @@ window.addEventListener('error', function(e) {
         }
       }
     }
-
     if (progress > 0.9) {
       var finalX = colW * 5.7;
       var outcomes = [
@@ -1217,12 +1196,10 @@ window.addEventListener('error', function(e) {
       filtersHtml += '<button class="filter-chip ' + (STATE.explore.matrixDossier === d ? 'active' : '') + '" data-mdos="' + d + '">' + d + '</button>';
     });
     filtersHtml += '</div><div class="filter-group"><div class="filter-label">MIN VOLUME</div><button class="filter-chip active">Any</button><button class="filter-chip">1000+</button><button class="filter-chip">3000+</button><button class="filter-chip">5000+</button></div><div class="filter-group"><div class="filter-label">PERIOD</div><button class="filter-chip active">All time</button><button class="filter-chip">Last month</button><button class="filter-chip">Last quarter</button></div>';
-
     var headHtml = '<tr><th>Source</th><th>Volume</th>';
     var dossiersToShow = STATE.explore.matrixDossier === 'all' ? matrix.dossiers : [STATE.explore.matrixDossier];
     dossiersToShow.forEach(function(d) { headHtml += '<th>' + d + '</th>'; });
     headHtml += '</tr>';
-
     var rowsHtml = matrix.rows.map(function(row) {
       var cellsHtml = '';
       dossiersToShow.forEach(function(d) {
@@ -1232,14 +1209,12 @@ window.addEventListener('error', function(e) {
       });
       return '<tr><td><span class="src-name">' + row.source + '</span></td><td class="src-num">' + row.articles.toLocaleString() + '</td>' + cellsHtml + '</tr>';
     }).join('');
-
     body.innerHTML =
       '<aside class="expl-filters">' + filtersHtml + '</aside>' +
       '<div class="expl-matrix-wrap">' +
       '<div class="expl-matrix-caption">Convergence heat-map: how densely each source covers each dossier.</div>' +
       '<table class="matrix-table"><thead>' + headHtml + '</thead><tbody>' + rowsHtml + '</tbody></table>' +
       '</div>';
-
     document.querySelectorAll('[data-mdos]').forEach(function(el) {
       el.addEventListener('click', function() {
         STATE.explore.matrixDossier = el.getAttribute('data-mdos');
@@ -1248,22 +1223,8 @@ window.addEventListener('error', function(e) {
     });
   }
 
-    function resetToLanding() {
-    var trace = document.createElement('div');
-    trace.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#060;color:#fff;padding:8px;z-index:99999;font-family:monospace;font-size:10px';
-    trace.id = 'debug-trace';
-    trace.textContent = 'TRACE: resetToLanding start';
-    if (document.body) {
-      var old = document.getElementById('debug-trace');
-      if (old) old.remove();
-      document.body.appendChild(trace);
-    }
-    function log(msg) {
-      var t = document.getElementById('debug-trace');
-      if (t) t.textContent += ' | ' + msg;
-    }
-
-    clearTimers(); log('timers cleared');
+  function resetToLanding() {
+    clearTimers();
     if (overlay) overlay.classList.remove('open');
     STATE.flow = 'landing';
     STATE.activeScenario = null;
@@ -1275,24 +1236,12 @@ window.addEventListener('error', function(e) {
     STATE.sphere.lastInteract = 0;
     STATE.sphere.selectedNode = null;
     STATE.sphere.animating = false;
-    log('state ok');
-    log('centerPanel=' + (centerPanel ? 'YES' : 'NULL'));
-    log('intelPanel=' + (intelPanel ? 'YES' : 'NULL'));
-    log('chatBody=' + (chatBody ? 'YES' : 'NULL'));
-
     if (chatSubtitle) { chatSubtitle.textContent = 'Session - new'; chatSubtitle.className = 'panel-subtitle'; }
     if (chatInput) { chatInput.disabled = false; chatInput.value = ''; }
     if (runBtn) runBtn.classList.remove('active');
     if (inputHint) inputHint.textContent = 'Answer first - Deep-Think from the report if needed';
-    log('calling renderFull');
-    try {
-      renderFull();
-      log('renderFull ok');
-    } catch(e) {
-      log('renderFull ERR: ' + e.message);
-    }
+    renderFull();
   }
-
 
   function startScenario(scenarioKey) {
     var s = window.GEODATA.scenarios[scenarioKey];
@@ -1441,12 +1390,11 @@ window.addEventListener('error', function(e) {
 
   } catch (err) {
     console.error('CHESS init error:', err);
-    var body = document.body;
-    if (body) {
+    if (document.body) {
       var errDiv = document.createElement('div');
       errDiv.style.cssText = 'position:fixed;bottom:20px;left:20px;right:20px;padding:12px;background:#3a1010;color:#ff8080;font-family:monospace;font-size:11px;z-index:99999;border:1px solid #802020;';
       errDiv.textContent = 'CHESS init error: ' + (err && err.message ? err.message : String(err));
-      body.appendChild(errDiv);
+      document.body.appendChild(errDiv);
     }
   }
 
