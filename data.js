@@ -1314,6 +1314,43 @@ window.GEODATA = {
       "ukraine-main": {
         scenarioNarrative: "Compressed defensive posture in Ukraine holds; territory preserved, initiative ceded to Russia, recovery pushed to 2028",
         scenarioFamily: "Ukraine / Russia / NATO",
+        region: "Europe",
+        tailImpact: {
+          tailSeed: "S4",
+          tailSeedLabel: "Unstable",
+          tailSeedPct: 15,
+          tailSeedBody: "EU-only architecture. US assistance withdraws effectively; European scaling insufficient without US air defence; Ukrainian capacity collapses toward negotiated capitulation.",
+          impact: {
+            investments: {
+              totalEur: -285,
+              drivers: [
+                { positionId: "inv01", deltaEur: -65, rationale: "BTP: severe spread blowout on EU-only defence burden" },
+              { positionId: "inv02", deltaEur: -40, rationale: "Bund: German defence spending shock" },
+              { positionId: "inv03", deltaEur: -35, rationale: "OAT: France sovereign under pressure" },
+              { positionId: "inv08", deltaEur: -45, rationale: "Volkswagen: European supply chain collapse" },
+              { positionId: "inv12", deltaEur: -70, rationale: "Eurostoxx: broad market sell-off on defence panic" },
+              { positionId: "inv18", deltaEur: -20, rationale: "Frankfurt logistics: European industrial slowdown" },
+              { positionId: "inv19", deltaEur: -85, rationale: "Warsaw retail: direct front-line exposure" }
+              ]
+            },
+            pandc: {
+              totalEur: -145,
+              drivers: [
+                { policyId: "pol04", deltaEur: -30, rationale: "Marine Suez: Russian retaliation on shipping" },
+              { policyId: "pol06", deltaEur: -60, rationale: "Marine Black Sea: severe frequency spike" },
+              { policyId: "pol13", deltaEur: -35, rationale: "Motor Fleet: parts scarcity extreme" },
+              { policyId: "pol15", deltaEur: -20, rationale: "BI Manufacturing: supply chain collapse" }
+              ]
+            },
+            operations: {
+              totalEur: -15,
+              drivers: [
+                { opId: "op07", deltaEur: -8, rationale: "Kiev office: full evacuation" },
+              { opId: "op04", deltaEur: -7, rationale: "Warsaw office: elevated risk premium" }
+              ]
+            }
+          }
+        },
         scenarioLabel: "Ukraine attrition dossier",
         horizonMonths: 12,
         maturationByHorizon: { "0-12": "materialising", "12-24": "consolidated", ">24": "stable" },
@@ -1357,6 +1394,47 @@ window.GEODATA = {
       "taiwan-main": {
         scenarioNarrative: "PLA sustains blockade rehearsals below kinetic threshold; contiguous zone activity normalises, no invasion",
         scenarioFamily: "Taiwan Strait / Chip supply chain",
+        region: "Asia-Pacific",
+        tailImpact: {
+          tailSeed: "S3",
+          tailSeedLabel: "Right Tail",
+          tailSeedPct: 22,
+          tailSeedBody: "Grey-zone activity crosses threshold; limited kinetic incident (aerial intercept collision or maritime enforcement striking civilian vessel) triggers global market repricing.",
+          impact: {
+            investments: {
+              totalEur: -370,
+              drivers: [
+                { positionId: "inv13", deltaEur: -85, rationale: "S&P 500: sharp correction on Taiwan Strait risk repricing" },
+              { positionId: "inv14", deltaEur: -70, rationale: "EM equity: severe decline on Asia contagion" },
+              { positionId: "inv16", deltaEur: -30, rationale: "TSMC ADR: direct exposure, near delisting risk" },
+              { positionId: "inv15", deltaEur: -18, rationale: "ASML: severe China revenue impact + supply worry" },
+              { positionId: "inv05", deltaEur: 30, rationale: "UST 10Y: strong flight-to-quality bid" },
+              { positionId: "inv02", deltaEur: 20, rationale: "Bund: flight-to-quality partial" },
+              { positionId: "inv12", deltaEur: -110, rationale: "Eurostoxx: broad crash on Asia contagion" },
+              { positionId: "inv08", deltaEur: -60, rationale: "Volkswagen: chip supply severe disruption" },
+              { positionId: "inv07", deltaEur: -30, rationale: "Enel: energy price extreme shock" },
+              { positionId: "inv17", deltaEur: -20, rationale: "Milano offices: broader RE risk-off" },
+              { positionId: "inv20", deltaEur: -32, rationale: "EU infra fund: broad correction" }
+              ]
+            },
+            pandc: {
+              totalEur: -95,
+              drivers: [
+                { policyId: "pol12", deltaEur: -55, rationale: "Aviation Asia routes: severe rerouting, hull risk" },
+              { policyId: "pol04", deltaEur: -25, rationale: "Marine Suez: Asia trade collapse spillover" },
+              { policyId: "pol15", deltaEur: -35, rationale: "BI Manufacturing: chip-driven claims spike" },
+              { policyId: "pol13", deltaEur: -12, rationale: "Motor Fleet: parts scarcity acute" }
+              ]
+            },
+            operations: {
+              totalEur: -8,
+              drivers: [
+                { opId: "op03", deltaEur: -6, rationale: "Frankfurt HQ: cyber threat elevated" },
+              { opId: "op08", deltaEur: -2, rationale: "Dublin data center: elevated attack surface" }
+              ]
+            }
+          }
+        },
         scenarioLabel: "Taiwan blockade rehearsal dossier",
         horizonMonths: 24,
         maturationByHorizon: { "0-12": "escalating", "12-24": "critical", ">24": "structural" },
@@ -1405,6 +1483,45 @@ window.GEODATA = {
       "iran-main": {
         scenarioNarrative: "US posture holds; Bessent economic pressure on Iran-China oil trade; Israel operates within managed rivalry",
         scenarioFamily: "Iran post-Epic Fury",
+        region: "MENA",
+        tailImpact: {
+          tailSeed: "S4",
+          tailSeedLabel: "Unstable",
+          tailSeedPct: 22,
+          tailSeedBody: "Nuclear breakout attempt. Iran reads disengagement as strategic window; Israel responds unilaterally; Gulf states pursue own nuclear capabilities; regional order fractures.",
+          impact: {
+            investments: {
+              totalEur: -180,
+              drivers: [
+                { positionId: "inv09", deltaEur: -75, rationale: "TotalEnergies: oil price extreme volatility" },
+              { positionId: "inv07", deltaEur: -30, rationale: "Enel: energy input cost shock" },
+              { positionId: "inv13", deltaEur: -40, rationale: "S&P 500: geopolitical premium spike" },
+              { positionId: "inv14", deltaEur: -35, rationale: "EM equity: MENA severe weakness" },
+              { positionId: "inv12", deltaEur: -50, rationale: "Eurostoxx: energy cost pass-through" },
+              { positionId: "inv05", deltaEur: 30, rationale: "UST: flight-to-quality" },
+              { positionId: "inv02", deltaEur: 20, rationale: "Bund: flight-to-quality partial" }
+              ]
+            },
+            pandc: {
+              totalEur: -215,
+              drivers: [
+                { policyId: "pol05", deltaEur: -90, rationale: "Marine Hormuz: extreme direct exposure" },
+              { policyId: "pol08", deltaEur: -60, rationale: "PV North Africa energy: infrastructure attacks" },
+              { policyId: "pol04", deltaEur: -30, rationale: "Marine Suez: Iran-linked Red Sea disruption" },
+              { policyId: "pol10", deltaEur: -25, rationale: "Trade Credit Egypt: buyer default extreme" },
+              { policyId: "pol09", deltaEur: -15, rationale: "Trade Credit Turkey: regional spillover" }
+              ]
+            },
+            operations: {
+              totalEur: -18,
+              drivers: [
+                { opId: "op06", deltaEur: -10, rationale: "Beirut office: full evacuation" },
+              { opId: "op05", deltaEur: -6, rationale: "Istanbul office: severe regional stress" },
+              { opId: "op07", deltaEur: -2, rationale: "Kiev office: knock-on effect" }
+              ]
+            }
+          }
+        },
         scenarioLabel: "Iran post-Epic Fury dossier",
         horizonMonths: 12,
         maturationByHorizon: { "0-12": "active", "12-24": "recalibration", ">24": "new equilibrium" },
@@ -1449,6 +1566,43 @@ window.GEODATA = {
       "eu-china-trade-main": {
         scenarioNarrative: "Managed friction structural; incremental tariff escalation on defined sectors, aggregate trade preserved",
         scenarioFamily: "EU-China trade friction",
+        region: "Europe",
+        tailImpact: {
+          tailSeed: "S4",
+          tailSeedLabel: "Unstable",
+          tailSeedPct: 12,
+          tailSeedBody: "German pivot lost. Coalition collapse or French realignment removes moderating role; escalation accelerates toward genuine decoupling architecture; WTO-shattering measures become plausible.",
+          impact: {
+            investments: {
+              totalEur: -195,
+              drivers: [
+                { positionId: "inv08", deltaEur: -60, rationale: "Volkswagen: severe China revenue loss" },
+              { positionId: "inv15", deltaEur: -25, rationale: "ASML: full China export ban scenario" },
+              { positionId: "inv09", deltaEur: -12, rationale: "TotalEnergies: PRC gas import disruption" },
+              { positionId: "inv12", deltaEur: -60, rationale: "Eurostoxx: trade war repricing" },
+              { positionId: "inv14", deltaEur: -30, rationale: "EM equity: PRC weight sharp decline" },
+              { positionId: "inv07", deltaEur: -15, rationale: "Enel: Chinese solar/battery cost spike" },
+              { positionId: "inv17", deltaEur: -8, rationale: "Milano offices: broader risk sentiment" }
+              ]
+            },
+            pandc: {
+              totalEur: -75,
+              drivers: [
+                { policyId: "pol04", deltaEur: -30, rationale: "Marine Suez: EU-China trade volumes collapse" },
+              { policyId: "pol15", deltaEur: -25, rationale: "BI Manufacturing: supply chain disputes escalate" },
+              { policyId: "pol12", deltaEur: -12, rationale: "Aviation cargo: Asia route severe disruption" },
+              { policyId: "pol13", deltaEur: -8, rationale: "Motor Fleet: input cost pressure severe" }
+              ]
+            },
+            operations: {
+              totalEur: -5,
+              drivers: [
+                { opId: "op03", deltaEur: -3, rationale: "Frankfurt regional HQ: trade war admin cost" },
+              { opId: "op02", deltaEur: -2, rationale: "Roma regional HQ: knock-on cost" }
+              ]
+            }
+          }
+        },
         scenarioLabel: "EU-China trade friction dossier",
         horizonMonths: 24,
         maturationByHorizon: { "0-12": "escalating", "12-24": "structural", ">24": "consolidated" },
@@ -1490,6 +1644,41 @@ window.GEODATA = {
       "us-debt-hyperscalers-main": {
         scenarioNarrative: "Coupled tension persists; term premium expands, hyperscaler capex sustained, no break but cumulative pressure",
         scenarioFamily: "US debt & hyperscaler capex",
+        region: "Global / Macro",
+        tailImpact: {
+          tailSeed: "S4",
+          tailSeedLabel: "Unstable",
+          tailSeedPct: 15,
+          tailSeedBody: "Compound crisis via Taiwan. Strait event hits chip supply during peak capex commitments; hyperscaler earnings shock combines with debt refinancing stress; full financial crisis dynamics.",
+          impact: {
+            investments: {
+              totalEur: -320,
+              drivers: [
+                { positionId: "inv05", deltaEur: -45, rationale: "UST 10Y: severe term premium blowout" },
+              { positionId: "inv13", deltaEur: -105, rationale: "S&P 500: AI equity crash" },
+              { positionId: "inv14", deltaEur: -40, rationale: "EM equity: USD strength + Asia contagion" },
+              { positionId: "inv15", deltaEur: -20, rationale: "ASML: hyperscaler capex halt scenario" },
+              { positionId: "inv16", deltaEur: -15, rationale: "TSMC: coupled with Taiwan event" },
+              { positionId: "inv12", deltaEur: -50, rationale: "Eurostoxx: correlation with US crisis" },
+              { positionId: "inv10", deltaEur: -18, rationale: "BNP Paribas: European bank spread blowout" },
+              { positionId: "inv11", deltaEur: -18, rationale: "Unicredit: peripheral bank severe pressure" },
+              { positionId: "inv20", deltaEur: -9, rationale: "EU infra fund: broader repricing" }
+              ]
+            },
+            pandc: {
+              totalEur: -55,
+              drivers: [
+                { policyId: "pol11", deltaEur: -30, rationale: "Cyber: financial sector attack surge" },
+              { policyId: "pol15", deltaEur: -20, rationale: "BI Manufacturing: rate + supply shock" },
+              { policyId: "pol13", deltaEur: -5, rationale: "Motor Fleet: broader disruption" }
+              ]
+            },
+            operations: {
+              totalEur: 0,
+              drivers: []
+            }
+          }
+        },
         scenarioLabel: "US debt & hyperscalers coupled fragility dossier",
         horizonMonths: 24,
         maturationByHorizon: { "0-12": "building", "12-24": "tension peak", ">24": "resolution or break" },
@@ -1531,6 +1720,38 @@ window.GEODATA = {
       "us-china-tensions-main": {
         scenarioNarrative: "Structural competition intensifies across tech, alliances, trade with periodic tactical de-escalations",
         scenarioFamily: "US-China strategic tensions",
+        region: "Asia-Pacific",
+        tailImpact: {
+          tailSeed: "S3",
+          tailSeedLabel: "Right Tail",
+          tailSeedPct: 22,
+          tailSeedBody: "Trigger event escalates cycle. Major sanctions round, alliance treaty crossing threshold, or Chinese coercion on Western firm triggers cycle. Higher friction equilibrium reached.",
+          impact: {
+            investments: {
+              totalEur: -165,
+              drivers: [
+                { positionId: "inv15", deltaEur: -25, rationale: "ASML: severe export control tightening" },
+              { positionId: "inv13", deltaEur: -50, rationale: "S&P 500: rivalry escalation premium" },
+              { positionId: "inv14", deltaEur: -40, rationale: "EM equity: PRC weight sharp move" },
+              { positionId: "inv08", deltaEur: -25, rationale: "Volkswagen: EU-US alignment pressures" },
+              { positionId: "inv12", deltaEur: -20, rationale: "Eurostoxx: broader sentiment" },
+              { positionId: "inv16", deltaEur: -8, rationale: "TSMC: coupled with tensions" }
+              ]
+            },
+            pandc: {
+              totalEur: -65,
+              drivers: [
+                { policyId: "pol12", deltaEur: -30, rationale: "Aviation Asia routes: alliance dynamics severe" },
+              { policyId: "pol15", deltaEur: -25, rationale: "BI: EU exporters in crossfire escalate" },
+              { policyId: "pol04", deltaEur: -10, rationale: "Marine Cargo: sanctions compliance surge" }
+              ]
+            },
+            operations: {
+              totalEur: 0,
+              drivers: []
+            }
+          }
+        },
         scenarioLabel: "US-China strategic tensions dossier",
         horizonMonths: 24,
         maturationByHorizon: { "0-12": "active", "12-24": "structural", ">24": "consolidated" },
@@ -1570,6 +1791,43 @@ window.GEODATA = {
       "eu-hybrid-main": {
         scenarioNarrative: "Sustained hybrid pressure with fragmented European response; Nordic-Baltic minilateral mechanisms strengthen",
         scenarioFamily: "EU hybrid pressure",
+        region: "Europe",
+        tailImpact: {
+          tailSeed: "S4",
+          tailSeedLabel: "Unstable",
+          tailSeedPct: 14,
+          tailSeedBody: "Kinetic proxy attack. Physical attack on infrastructure attributed to Russian direction. Forces NATO Article 5 consultation. Discontinuous change in European security posture.",
+          impact: {
+            investments: {
+              totalEur: -95,
+              drivers: [
+                { positionId: "inv01", deltaEur: -25, rationale: "BTP: severe EU risk premium" },
+              { positionId: "inv03", deltaEur: -18, rationale: "OAT: France frontline risk" },
+              { positionId: "inv19", deltaEur: -35, rationale: "Warsaw retail: extreme frontline exposure" },
+              { positionId: "inv18", deltaEur: -12, rationale: "Frankfurt logistics: infrastructure attacks" },
+              { positionId: "inv12", deltaEur: -5, rationale: "Eurostoxx: correction on Article 5" }
+              ]
+            },
+            pandc: {
+              totalEur: -175,
+              drivers: [
+                { policyId: "pol11", deltaEur: -70, rationale: "Cyber EU: attack surge extreme" },
+              { policyId: "pol01", deltaEur: -35, rationale: "Property IT: sabotage risk critical" },
+              { policyId: "pol02", deltaEur: -25, rationale: "Property DEU: infrastructure attacks" },
+              { policyId: "pol03", deltaEur: -40, rationale: "Property POL: direct frontline" },
+              { policyId: "pol15", deltaEur: -5, rationale: "BI: severe cyber disruption" }
+              ]
+            },
+            operations: {
+              totalEur: -35,
+              drivers: [
+                { opId: "op09", deltaEur: -18, rationale: "Frankfurt DC: physical + cyber attack" },
+              { opId: "op08", deltaEur: -12, rationale: "Dublin DC: attack surface elevated" },
+              { opId: "op04", deltaEur: -5, rationale: "Warsaw sales: security cost spike" }
+              ]
+            }
+          }
+        },
         scenarioLabel: "EU hybrid pressure dossier",
         horizonMonths: 12,
         maturationByHorizon: { "0-12": "ongoing", "12-24": "consolidated", ">24": "structural" },
@@ -1614,6 +1872,41 @@ window.GEODATA = {
       "eu-political-2027-main": {
         scenarioNarrative: "Heterogeneous drift; individual cycles produce mixed outcomes that cancel at aggregate EU level",
         scenarioFamily: "EU political evolution 2027",
+        region: "Europe",
+        tailImpact: {
+          tailSeed: "S3",
+          tailSeedLabel: "Right Tail",
+          tailSeedPct: 25,
+          tailSeedBody: "Coordinated nationalist shift. RN victory in France + German coalition collapse + PiS return in Poland; EU shifts toward intergovernmentalism, defence spending under pressure, migration hardening.",
+          impact: {
+            investments: {
+              totalEur: -215,
+              drivers: [
+                { positionId: "inv01", deltaEur: -50, rationale: "BTP: severe Italian sovereign stress" },
+              { positionId: "inv03", deltaEur: -60, rationale: "OAT: RN outcome full pricing" },
+              { positionId: "inv04", deltaEur: -22, rationale: "Bonos: contagion from French spread" },
+              { positionId: "inv12", deltaEur: -40, rationale: "Eurostoxx: political shock premium" },
+              { positionId: "inv10", deltaEur: -18, rationale: "BNP Paribas: French bank feedback loop" },
+              { positionId: "inv11", deltaEur: -15, rationale: "Unicredit: Italian bank feedback loop" },
+              { positionId: "inv17", deltaEur: -12, rationale: "Milano offices: election uncertainty spike" },
+              { positionId: "inv19", deltaEur: -20, rationale: "Warsaw retail: Polish election shock" }
+              ]
+            },
+            pandc: {
+              totalEur: -40,
+              drivers: [
+                { policyId: "pol07", deltaEur: -25, rationale: "PV East Europe: civil unrest severe" },
+              { policyId: "pol11", deltaEur: -15, rationale: "Cyber: election-targeted attacks surge" }
+              ]
+            },
+            operations: {
+              totalEur: -5,
+              drivers: [
+                { opId: "op04", deltaEur: -5, rationale: "Warsaw sales: election-cycle uncertainty" }
+              ]
+            }
+          }
+        },
         scenarioLabel: "EU political evolution 2027-2028 dossier",
         horizonMonths: 24,
         maturationByHorizon: { "0-12": "campaigns", "12-24": "outcomes", ">24": "post-cycle configuration" },

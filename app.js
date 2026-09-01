@@ -1234,7 +1234,8 @@
   }
 
   // ========================================================================
-  // PORTFOLIO IMPACT (v2 - user feedback iteration)
+  // ========================================================================
+  // PORTFOLIO IMPACT v3 - bidirectional explorer with rollup
   // ========================================================================
 
   var DOSSIER_MAIN_KEYS = [
@@ -1260,30 +1261,228 @@
     }
   }
 
-  function totalImpactFor(scenarioKey, horizon) {
+  // Returns the impact block (modal or tail) based on state.seed
+  function getImpactBlock(scenarioKey) {
     var mat = window.GEODATA.insurance.scenarioImpact[scenarioKey];
-    if (!mat) return { invest: 0, pandc: 0, ops: 0, total: 0 };
+    if (!mat) return null;
+    if (STATE.portfolio.seed === 'tail' && mat.tailImpact) return mat.tailImpact.impact;
+    return mat.impact;
+  }
+
+  function getSeedInfo(scenarioKey) {
+    var mat = window.GEODATA.insurance.scenarioImpact[scenarioKey];
+    if (!mat) return { pct: 0, label: '', body: '', seedCode: '' };
+    if (STATE.portfolio.seed === 'tail' && mat.tailImpact) {
+      return {
+        pct: mat.tailImpact.tailSeedPct,
+        label: mat.tailImpact.tailSeedLabel,
+        body: mat.tailImpact.tailSeedBody,
+        seedCode: mat.tailImpact.tailSeed
+      };
+    }
+    // modal
+    var scen = window.GEODATA.scenarios[scenarioKey];
+    var modalPct = 0; var modalBody = mat.scenarioNarrative;
+    if (scen && scen.dtReport && scen.dtReport.scenarios) {
+      for (var i = 0; i < scen.dtReport.scenarios.length; i++) {
+        if (scen.dtReport.scenarios[i].tag === 'MODAL') {
+          modalPct = scen.dtReport.scenarios[i].pct;
+          break;
+        }
+      }
+    }
+    return { pct: modalPct, label: 'Modal', body: modalBody, seedCode: 'S2' };
+  }
+
+  function totalImpactFor(scenarioKey, horizon) {
+    var block = getImpactBlock(scenarioKey);
+    if (!block) return { invest: 0, pandc: 0, ops: 0, total: 0 };
     var mult = horizonMultiplier(scenarioKey, horizon);
-    var inv = Math.round((mat.impact.investments.totalEur || 0) * mult);
-    var pc  = Math.round((mat.impact.pandc.totalEur       || 0) * mult);
-    var op  = Math.round((mat.impact.operations.totalEur  || 0) * mult);
+    var inv = Math.round((block.investments.totalEur || 0) * mult);
+    var pc  = Math.round((block.pandc.totalEur       || 0) * mult);
+    var op  = Math.round((block.operations.totalEur  || 0) * mult);
     return { invest: inv, pandc: pc, ops: op, total: inv + pc + op };
   }
 
-  function modalPctFor(scenarioKey) {
-    var scen = window.GEODATA.scenarios[scenarioKey];
-    if (!scen || !scen.dtReport || !scen.dtReport.scenarios) return 0;
-    for (var i = 0; i < scen.dtReport.scenarios.length; i++) {
-      if (scen.dtReport.scenarios[i].tag === 'MODAL') return scen.dtReport.scenarios[i].pct;
-    }
-    return scen.dtReport.scenarios[1] ? scen.dtReport.scenarios[1].pct : 0;
+  // Rollup: sum of impacts across a set of scenario keys
+  function rollupScenarios(scenarioKeys, horizon) {
+    var agg = { invest: 0, pandc: 0, ops: 0, total: 0 };
+    scenarioKeys.forEach(function(k) {
+      var t = totalImpactFor(k, horizon);
+      agg.invest += t.invest;
+      agg.pandc += t.pandc;
+      agg.ops += t.ops;
+      agg.total += t.total;
+    });
+    return agg;
   }
 
-  function expectedLossFor(scenarioKey, horizon) {
-    var impact = totalImpactFor(scenarioKey, horizon);
-    var pct = modalPctFor(scenarioKey);
-    return Math.round(impact.total * pct / 100);
+  // Given a positionId (inv/pol/op), returns list of scenarios that impact it, with delta
+  function scenariosImpactingPosition(positionId, kind) {
+    var hits = [];
+    DOSSIER_MAIN_KEYS.forEach(function(scenKey) {
+      var block = getImpactBlock(scenKey);
+      if (!block) return;
+      var mult = horizonMultiplier(scenKey, STATE.portfolio.horizon);
+      var driverList = kind === 'inv' ? block.investments.drivers
+                     : kind === 'pol' ? block.pandc.drivers
+                     : block.operations.drivers;
+      var idField = kind === 'inv' ? 'positionId' : (kind === 'pol' ? 'policyId' : 'opId');
+      driverList.forEach(function(d) {
+        if (d[idField] === positionId) {
+          hits.push({
+            scenarioKey: scenKey,
+            deltaEur: Math.round(d.deltaEur * mult),
+            rationale: d.rationale
+          });
+        }
+      });
+    });
+    hits.sort(function(a, b) { return a.deltaEur - b.deltaEur; });
+    return hits;
   }
+
+  // Aggregate: for a set of positions (ids), sum impact per position across all scenarios
+  function positionImpactAggregate(positionIds, kind) {
+    var out = {};
+    positionIds.forEach(function(pid) {
+      var hits = scenariosImpactingPosition(pid, kind);
+      var tot = 0;
+      hits.forEach(function(h) { tot += h.deltaEur; });
+      out[pid] = { total: tot, scenarioCount: hits.length, hits: hits };
+    });
+    return out;
+  }
+
+  // ------ Tree data builders ------
+
+  function buildScenarioTree() {
+    // Region > Dossier > Scenario (currently 1 scenario per dossier)
+    var regions = {};
+    DOSSIER_MAIN_KEYS.forEach(function(k) {
+      var mat = window.GEODATA.insurance.scenarioImpact[k];
+      if (!mat) return;
+      var reg = mat.region || 'Other';
+      if (!regions[reg]) regions[reg] = [];
+      regions[reg].push({
+        scenarioKey: k,
+        family: mat.scenarioFamily,
+        narrative: mat.scenarioNarrative
+      });
+    });
+    var tree = [];
+    Object.keys(regions).sort().forEach(function(reg) {
+      var dossiers = regions[reg].map(function(s) {
+        return {
+          type: 'dossier',
+          id: 'dossier:' + s.scenarioKey,
+          label: s.family,
+          scenarioKeys: [s.scenarioKey],
+          children: [{
+            type: 'scenario',
+            id: 'scenario:' + s.scenarioKey,
+            label: s.narrative,
+            scenarioKeys: [s.scenarioKey],
+            children: []
+          }]
+        };
+      });
+      tree.push({
+        type: 'region',
+        id: 'region:' + reg,
+        label: reg,
+        scenarioKeys: dossiers.reduce(function(acc, d) { return acc.concat(d.scenarioKeys); }, []),
+        children: dossiers
+      });
+    });
+    return tree;
+  }
+
+  function buildExposureTree() {
+    var pf = window.GEODATA.insurance.portfolio;
+    // Group investments by asset class
+    var invByClass = {};
+    pf.investments.forEach(function(inv) {
+      if (!invByClass[inv.assetClass]) invByClass[inv.assetClass] = [];
+      invByClass[inv.assetClass].push(inv);
+    });
+    var invChildren = Object.keys(invByClass).map(function(cls) {
+      return {
+        type: 'invclass',
+        id: 'invclass:' + cls,
+        label: cls,
+        positions: invByClass[cls].map(function(x) { return { id: x.id, kind: 'inv' }; }),
+        children: invByClass[cls].map(function(inv) {
+          return {
+            type: 'position',
+            kind: 'inv',
+            id: 'position:inv:' + inv.id,
+            positionId: inv.id,
+            label: inv.issuer + ' (' + inv.mv + 'm)',
+            children: []
+          };
+        })
+      };
+    });
+
+    // Group P&C by LoB
+    var pcByLob = {};
+    pf.pandc.forEach(function(p) {
+      if (!pcByLob[p.lob]) pcByLob[p.lob] = [];
+      pcByLob[p.lob].push(p);
+    });
+    var pcChildren = Object.keys(pcByLob).map(function(lob) {
+      return {
+        type: 'pclob',
+        id: 'pclob:' + lob,
+        label: lob,
+        positions: pcByLob[lob].map(function(x) { return { id: x.id, kind: 'pol' }; }),
+        children: pcByLob[lob].map(function(p) {
+          return {
+            type: 'position',
+            kind: 'pol',
+            id: 'position:pol:' + p.id,
+            positionId: p.id,
+            label: p.lob + ' - ' + p.country + ' (GWP ' + p.gwpShare + 'm)',
+            children: []
+          };
+        })
+      };
+    });
+
+    // Ops by type
+    var opsByType = {};
+    pf.operations.forEach(function(o) {
+      if (!opsByType[o.type]) opsByType[o.type] = [];
+      opsByType[o.type].push(o);
+    });
+    var opsChildren = Object.keys(opsByType).map(function(t) {
+      return {
+        type: 'opstype',
+        id: 'opstype:' + t,
+        label: t,
+        positions: opsByType[t].map(function(x) { return { id: x.id, kind: 'op' }; }),
+        children: opsByType[t].map(function(o) {
+          return {
+            type: 'position',
+            kind: 'op',
+            id: 'position:op:' + o.id,
+            positionId: o.id,
+            label: o.location + ' (' + o.country + ')',
+            children: []
+          };
+        })
+      };
+    });
+
+    return [
+      { type: 'bucket', id: 'bucket:inv', label: 'Investments', positions: pf.investments.map(function(x){return {id:x.id, kind:'inv'};}), children: invChildren },
+      { type: 'bucket', id: 'bucket:pol', label: 'P&C book',    positions: pf.pandc.map(function(x){return {id:x.id, kind:'pol'};}), children: pcChildren },
+      { type: 'bucket', id: 'bucket:op',  label: 'Operations footprint', positions: pf.operations.map(function(x){return {id:x.id, kind:'op'};}), children: opsChildren }
+    ];
+  }
+
+  // ------ Rendering ------
 
   function renderPortfolioImpact() {
     var profileLine = document.getElementById('portfolio-profile-line');
@@ -1291,223 +1490,524 @@
       var p = window.GEODATA.insurance.profile;
       profileLine.innerHTML = '<em>' + p.name + '</em> &middot; AUM ' + p.aum + 'm EUR &middot; GWP ' + p.gwp + 'm EUR &middot; ' + p.description;
     }
-    document.querySelectorAll('.p-sub-tab').forEach(function(tab) {
-      tab.classList.toggle('active', tab.getAttribute('data-psub') === STATE.portfolio.sub);
-      tab.addEventListener('click', function() {
-        STATE.portfolio.sub = tab.getAttribute('data-psub');
-        STATE.portfolio.selectedScenario = null;
+    // Wire controls
+    document.querySelectorAll('.ctrl-btn').forEach(function(btn) {
+      var ctrl = btn.getAttribute('data-ctrl');
+      var val = btn.getAttribute('data-value');
+      btn.classList.toggle('active', STATE.portfolio[ctrl] === val);
+      btn.onclick = function() {
+        STATE.portfolio[ctrl] = val;
+        if (ctrl === 'mode') {
+          // Reset selection when switching mode; keep expansions per-tree
+          STATE.portfolio.selectedNode = null;
+        }
         renderPortfolioImpact();
-      });
+      };
     });
-    document.querySelectorAll('.horizon-btn').forEach(function(btn) {
-      btn.classList.toggle('active', btn.getAttribute('data-horizon') === STATE.portfolio.horizon);
-      btn.addEventListener('click', function() {
-        STATE.portfolio.horizon = btn.getAttribute('data-horizon');
+
+    var explorer = document.getElementById('pf-explorer');
+    var detail = document.getElementById('pf-detail');
+    if (!explorer || !detail) return;
+
+    if (STATE.portfolio.mode === 'scenario') {
+      var tree = buildScenarioTree();
+      explorer.innerHTML = renderExplorerScenario(tree);
+      wireExplorerHandlers();
+      renderDetailScenario(detail, tree);
+    } else {
+      var tree = buildExposureTree();
+      explorer.innerHTML = renderExplorerExposure(tree);
+      wireExplorerHandlers();
+      renderDetailExposure(detail, tree);
+    }
+  }
+
+  function renderExplorerScenario(tree) {
+    var html = '<div class="explorer-hdr"><span class="explorer-eyebrow">EXPLORER &middot; SCENARIOS BY REGION</span><span class="explorer-hint">Click any node to filter the view. Click empty area to see all.</span></div>';
+    html += '<div class="explorer-tree">';
+    tree.forEach(function(reg) {
+      var regExpanded = STATE.portfolio.expanded[reg.id];
+      var regSel = STATE.portfolio.selectedNode === reg.id;
+      var regImpact = rollupScenarios(reg.scenarioKeys, STATE.portfolio.horizon);
+      html += '<div class="tree-node level-0' + (regSel ? ' selected' : '') + '" data-node-id="' + reg.id + '" data-scenarios="' + reg.scenarioKeys.join(',') + '">';
+      html += '<span class="tree-caret" data-caret="' + reg.id + '">' + (regExpanded ? '&minus;' : '+') + '</span>';
+      html += '<span class="tree-label">' + reg.label + '</span>';
+      html += '<span class="tree-badge">[' + reg.children.length + ']</span>';
+      html += '<span class="tree-impact ' + (regImpact.total < 0 ? 'neg' : 'zero') + '">' + regImpact.total + 'm</span>';
+      html += '</div>';
+      if (regExpanded) {
+        reg.children.forEach(function(dos) {
+          var dosSel = STATE.portfolio.selectedNode === dos.id;
+          var dosExpanded = STATE.portfolio.expanded[dos.id];
+          var dosImpact = rollupScenarios(dos.scenarioKeys, STATE.portfolio.horizon);
+          html += '<div class="tree-node level-1' + (dosSel ? ' selected' : '') + '" data-node-id="' + dos.id + '" data-scenarios="' + dos.scenarioKeys.join(',') + '">';
+          html += '<span class="tree-caret" data-caret="' + dos.id + '">' + (dosExpanded ? '&minus;' : '+') + '</span>';
+          html += '<span class="tree-label">' + dos.label + '</span>';
+          html += '<span class="tree-impact ' + (dosImpact.total < 0 ? 'neg' : 'zero') + '">' + dosImpact.total + 'm</span>';
+          html += '</div>';
+          if (dosExpanded) {
+            dos.children.forEach(function(sc) {
+              var scSel = STATE.portfolio.selectedNode === sc.id;
+              var scImpact = totalImpactFor(sc.scenarioKeys[0], STATE.portfolio.horizon);
+              html += '<div class="tree-node level-2' + (scSel ? ' selected' : '') + '" data-node-id="' + sc.id + '" data-scenarios="' + sc.scenarioKeys.join(',') + '">';
+              html += '<span class="tree-caret-empty"></span>';
+              html += '<span class="tree-label italic">"' + sc.label + '"</span>';
+              html += '<span class="tree-impact ' + (scImpact.total < 0 ? 'neg' : 'zero') + '">' + scImpact.total + 'm</span>';
+              html += '</div>';
+            });
+          }
+        });
+      }
+    });
+    html += '</div>';
+    return html;
+  }
+
+  function renderExplorerExposure(tree) {
+    var html = '<div class="explorer-hdr"><span class="explorer-eyebrow">EXPLORER &middot; POSITIONS BY BUCKET</span><span class="explorer-hint">Click any node to see which scenarios stress it. Click empty area for portfolio totals.</span></div>';
+    html += '<div class="explorer-tree">';
+    tree.forEach(function(bkt) {
+      var bktExpanded = STATE.portfolio.expanded[bkt.id];
+      var bktSel = STATE.portfolio.selectedNode === bkt.id;
+      var agg = positionImpactAggregate(bkt.positions.map(function(x){return x.id;}), bkt.positions.length > 0 ? bkt.positions[0].kind : 'inv');
+      var bktTot = 0;
+      Object.keys(agg).forEach(function(pid) { bktTot += agg[pid].total; });
+      html += '<div class="tree-node level-0' + (bktSel ? ' selected' : '') + '" data-node-id="' + bkt.id + '">';
+      html += '<span class="tree-caret" data-caret="' + bkt.id + '">' + (bktExpanded ? '&minus;' : '+') + '</span>';
+      html += '<span class="tree-label">' + bkt.label + '</span>';
+      html += '<span class="tree-badge">[' + bkt.positions.length + ']</span>';
+      html += '<span class="tree-impact ' + (bktTot < 0 ? 'neg' : 'zero') + '">' + bktTot + 'm</span>';
+      html += '</div>';
+      if (bktExpanded) {
+        bkt.children.forEach(function(grp) {
+          var grpExpanded = STATE.portfolio.expanded[grp.id];
+          var grpSel = STATE.portfolio.selectedNode === grp.id;
+          var grpAgg = positionImpactAggregate(grp.positions.map(function(x){return x.id;}), grp.positions[0].kind);
+          var grpTot = 0;
+          Object.keys(grpAgg).forEach(function(pid) { grpTot += grpAgg[pid].total; });
+          html += '<div class="tree-node level-1' + (grpSel ? ' selected' : '') + '" data-node-id="' + grp.id + '">';
+          html += '<span class="tree-caret" data-caret="' + grp.id + '">' + (grpExpanded ? '&minus;' : '+') + '</span>';
+          html += '<span class="tree-label">' + grp.label + '</span>';
+          html += '<span class="tree-badge">[' + grp.positions.length + ']</span>';
+          html += '<span class="tree-impact ' + (grpTot < 0 ? 'neg' : 'zero') + '">' + grpTot + 'm</span>';
+          html += '</div>';
+          if (grpExpanded) {
+            grp.children.forEach(function(pos) {
+              var posSel = STATE.portfolio.selectedNode === pos.id;
+              var posHits = scenariosImpactingPosition(pos.positionId, pos.kind);
+              var posTot = 0;
+              posHits.forEach(function(h) { posTot += h.deltaEur; });
+              html += '<div class="tree-node level-2' + (posSel ? ' selected' : '') + '" data-node-id="' + pos.id + '" data-position-id="' + pos.positionId + '" data-position-kind="' + pos.kind + '">';
+              html += '<span class="tree-caret-empty"></span>';
+              html += '<span class="tree-label italic">' + pos.label + '</span>';
+              html += '<span class="tree-impact ' + (posTot < 0 ? 'neg' : 'zero') + '">' + posTot + 'm</span>';
+              html += '</div>';
+            });
+          }
+        });
+      }
+    });
+    html += '</div>';
+    return html;
+  }
+
+  function wireExplorerHandlers() {
+    // Caret expand/collapse
+    document.querySelectorAll('[data-caret]').forEach(function(el) {
+      el.onclick = function(e) {
+        e.stopPropagation();
+        var id = el.getAttribute('data-caret');
+        STATE.portfolio.expanded[id] = !STATE.portfolio.expanded[id];
         renderPortfolioImpact();
-      });
+      };
     });
-    var body = document.getElementById('portfolio-body');
-    if (!body) return;
-    if (STATE.portfolio.sub === 'portfolio')      renderPortfolioSetup(body);
-    else if (STATE.portfolio.sub === 'exposure')  renderExposureAssessment(body);
-    else if (STATE.portfolio.sub === 'scenario')  renderScenarioAssessment(body);
-  }
-
-  function renderPortfolioSetup(body) {
-    var pf = window.GEODATA.insurance.portfolio;
-    var invByClass = {};
-    pf.investments.forEach(function(inv) {
-      if (!invByClass[inv.assetClass]) invByClass[inv.assetClass] = { total: 0, count: 0 };
-      invByClass[inv.assetClass].total += inv.mv;
-      invByClass[inv.assetClass].count += 1;
-    });
-    var invAllocHtml = Object.keys(invByClass).map(function(k) {
-      var totAum = window.GEODATA.insurance.profile.aum;
-      var pct = (invByClass[k].total / totAum * 100).toFixed(1);
-      return '<div class="pf-alloc-row"><span class="pf-alloc-k">' + k + '</span><div class="pf-alloc-bar-wrap"><div class="pf-alloc-bar" style="width:' + pct + '%"></div></div><span class="pf-alloc-v">' + invByClass[k].total + 'm (' + pct + '%)</span></div>';
-    }).join('');
-
-    var invRowsHtml = pf.investments.map(function(inv) {
-      var dur = inv.duration !== null ? inv.duration.toFixed(1) : '-';
-      var rat = inv.rating || '-';
-      return '<tr><td class="pf-code">' + inv.id + '</td><td>' + inv.assetClass + '</td><td class="pf-issuer">' + inv.issuer + '</td><td class="pf-country">' + inv.country + '</td><td>' + inv.sector + '</td><td class="pf-num">' + inv.mv + '</td><td class="pf-num">' + dur + '</td><td>' + rat + '</td><td>' + inv.ccy + '</td></tr>';
-    }).join('');
-
-    var pcByLob = {};
-    pf.pandc.forEach(function(p) {
-      if (!pcByLob[p.lob]) pcByLob[p.lob] = { sumInsured: 0, gwp: 0, count: 0 };
-      pcByLob[p.lob].sumInsured += p.sumInsured;
-      pcByLob[p.lob].gwp += p.gwpShare;
-      pcByLob[p.lob].count += 1;
-    });
-    var pcAllocHtml = Object.keys(pcByLob).map(function(k) {
-      var totGwp = window.GEODATA.insurance.profile.gwp;
-      var pct = (pcByLob[k].gwp / totGwp * 100).toFixed(1);
-      return '<div class="pf-alloc-row"><span class="pf-alloc-k">' + k + '</span><div class="pf-alloc-bar-wrap"><div class="pf-alloc-bar pandc" style="width:' + (pct * 2.5) + '%"></div></div><span class="pf-alloc-v">GWP ' + pcByLob[k].gwp + 'm (' + pct + '%)</span></div>';
-    }).join('');
-
-    var pcRowsHtml = pf.pandc.map(function(p) {
-      var excl = [];
-      if (p.wordingExclusions.war === true) excl.push('war');
-      else if (typeof p.wordingExclusions.war === 'string') excl.push('war: ' + p.wordingExclusions.war);
-      if (p.wordingExclusions.terrorism === true) excl.push('terr');
-      else if (typeof p.wordingExclusions.terrorism === 'string') excl.push('terr: ' + p.wordingExclusions.terrorism);
-      if (p.wordingExclusions.cyber === true) excl.push('cyber');
-      if (p.wordingExclusions.sanctions === true) excl.push('sanct');
-      var exclStr = excl.join(', ') || 'none';
-      return '<tr><td class="pf-code">' + p.id + '</td><td>' + p.lob + '</td><td class="pf-country">' + p.country + '</td><td class="pf-num">' + p.sumInsured + '</td><td class="pf-num">' + p.deductible + '</td><td class="pf-num">' + p.gwpShare + '</td><td class="pf-excl">' + exclStr + '</td></tr>';
-    }).join('');
-
-    var opRowsHtml = pf.operations.map(function(o) {
-      var riskCls = o.riskLevel === 'critical' ? 'risk-red' : (o.riskLevel === 'high' ? 'risk-amber' : (o.riskLevel === 'medium' ? 'risk-yellow' : 'risk-green'));
-      return '<tr><td class="pf-code">' + o.id + '</td><td>' + o.type + '</td><td class="pf-issuer">' + o.location + '</td><td class="pf-country">' + o.country + '</td><td class="pf-num">' + o.staff + '</td><td>' + o.criticality + '</td><td><span class="risk-badge ' + riskCls + '">' + o.riskLevel + '</span></td></tr>';
-    }).join('');
-
-    body.innerHTML =
-      '<div class="pf-section">' +
-        '<div class="pf-section-hdr">' +
-          '<h2 class="pf-section-title">Investments <span class="pf-count">' + pf.investments.length + ' positions</span></h2>' +
-          '<div class="pf-section-total">Total AUM <span class="pf-total-val">' + window.GEODATA.insurance.profile.aum + 'm EUR</span></div>' +
-        '</div>' +
-        '<div class="pf-alloc-block">' + invAllocHtml + '</div>' +
-        '<div class="pf-table-wrap"><table class="pf-table"><thead><tr><th>ID</th><th>Asset class</th><th>Issuer / Instrument</th><th>Country</th><th>Sector</th><th>MV (m)</th><th>Duration</th><th>Rating</th><th>CCY</th></tr></thead><tbody>' + invRowsHtml + '</tbody></table></div>' +
-      '</div>' +
-      '<div class="pf-section">' +
-        '<div class="pf-section-hdr">' +
-          '<h2 class="pf-section-title">P&amp;C book <span class="pf-count">' + pf.pandc.length + ' policies</span></h2>' +
-          '<div class="pf-section-total">Total GWP <span class="pf-total-val">' + window.GEODATA.insurance.profile.gwp + 'm EUR</span></div>' +
-        '</div>' +
-        '<div class="pf-alloc-block">' + pcAllocHtml + '</div>' +
-        '<div class="pf-table-wrap"><table class="pf-table"><thead><tr><th>ID</th><th>Line of Business</th><th>Country / Route</th><th>Sum insured (m)</th><th>Deductible</th><th>GWP share (m)</th><th>Wording exclusions</th></tr></thead><tbody>' + pcRowsHtml + '</tbody></table></div>' +
-      '</div>' +
-      '<div class="pf-section">' +
-        '<div class="pf-section-hdr">' +
-          '<h2 class="pf-section-title">Operations footprint <span class="pf-count">' + pf.operations.length + ' sites</span></h2>' +
-        '</div>' +
-        '<div class="pf-table-wrap"><table class="pf-table"><thead><tr><th>ID</th><th>Type</th><th>Location</th><th>Country</th><th>Staff</th><th>Criticality</th><th>Risk level</th></tr></thead><tbody>' + opRowsHtml + '</tbody></table></div>' +
-      '</div>';
-  }
-
-  function scenarioCardHtml(scenarioKey) {
-    var mapping = window.GEODATA.insurance.scenarioImpact[scenarioKey];
-    if (!mapping) return '';
-    var impact = totalImpactFor(scenarioKey, STATE.portfolio.horizon);
-    var pct = modalPctFor(scenarioKey);
-    var expLoss = expectedLossFor(scenarioKey, STATE.portfolio.horizon);
-
-    var mult = horizonMultiplier(scenarioKey, STATE.portfolio.horizon);
-    var maturityLabel = mapping.maturationByHorizon[STATE.portfolio.horizon] || 'not material';
-
-    var driverListInv = (mapping.impact.investments.drivers || []).map(function(d) {
-      var adjusted = Math.round(d.deltaEur * mult);
-      var cls = adjusted < 0 ? 'neg' : (adjusted > 0 ? 'pos' : 'zero');
-      return '<div class="drv-row"><span class="drv-pos">' + d.positionId + '</span><span class="drv-val ' + cls + '">' + (adjusted > 0 ? '+' : '') + adjusted + 'm</span><span class="drv-rat"><em>' + d.rationale + '</em></span></div>';
-    }).join('');
-    var driverListPC = (mapping.impact.pandc.drivers || []).map(function(d) {
-      var adjusted = Math.round(d.deltaEur * mult);
-      var cls = adjusted < 0 ? 'neg' : (adjusted > 0 ? 'pos' : 'zero');
-      return '<div class="drv-row"><span class="drv-pos">' + d.policyId + '</span><span class="drv-val ' + cls + '">' + (adjusted > 0 ? '+' : '') + adjusted + 'm</span><span class="drv-rat"><em>' + d.rationale + '</em></span></div>';
-    }).join('');
-    var driverListOps = (mapping.impact.operations.drivers || []).map(function(d) {
-      var adjusted = Math.round(d.deltaEur * mult);
-      var cls = adjusted < 0 ? 'neg' : (adjusted > 0 ? 'pos' : 'zero');
-      return '<div class="drv-row"><span class="drv-pos">' + d.opId + '</span><span class="drv-val ' + cls + '">' + (adjusted > 0 ? '+' : '') + adjusted + 'm</span><span class="drv-rat"><em>' + d.rationale + '</em></span></div>';
-    }).join('');
-
-    var redFlagsHtml = (mapping.redFlags || []).map(function(rf) {
-      var statusLabel = rf.status === 'red' ? 'THRESHOLD BREACHED' : (rf.status === 'amber' ? 'NEAR THRESHOLD' : 'BELOW THRESHOLD');
-      return '<div class="rf-row"><span class="rf-status rf-' + rf.status + '" title="' + statusLabel + '"></span><div class="rf-body"><div class="rf-label">' + rf.label + '</div><div class="rf-meta">Threshold: ' + rf.threshold + ' &middot; Current: <em>' + rf.currentValue + '</em> &middot; <span class="rf-status-label rf-status-label-' + rf.status + '">' + statusLabel + '</span></div></div></div>';
-    }).join('');
-
-    var openClass = (STATE.portfolio.selectedScenario === scenarioKey) ? ' open' : '';
-
-    return '<div class="scen-card' + openClass + '" data-scenario="' + scenarioKey + '">' +
-      '<div class="scen-hdr">' +
-        '<div class="scen-hdr-left">' +
-          '<div class="scen-family-tag">Family: ' + mapping.scenarioFamily + '</div>' +
-          '<div class="scen-title">' + mapping.scenarioNarrative + '</div>' +
-          '<div class="scen-meta-row">' +
-            '<span class="scen-meta-pill"><span class="pill-lbl">MODAL PROB.</span><span class="pill-val amber">' + pct + '%</span></span>' +
-            '<span class="scen-meta-pill"><span class="pill-lbl">HORIZON MATCH</span><span class="pill-val">' + maturityLabel + '</span></span>' +
-          '</div>' +
-        '</div>' +
-        '<div class="scen-hdr-right">' +
-          '<div class="scen-impact-tot"><span class="tot-lbl">GROSS IMPACT (if it happens)</span><span class="tot-val ' + (impact.total < 0 ? 'neg' : 'pos') + '">' + (impact.total > 0 ? '+' : '') + impact.total + 'm</span></div>' +
-          '<div class="scen-impact-tot"><span class="tot-lbl">EXPECTED LOSS (impact x prob)</span><span class="tot-val-small ' + (expLoss < 0 ? 'neg' : 'pos') + '">' + (expLoss > 0 ? '+' : '') + expLoss + 'm</span></div>' +
-        '</div>' +
-      '</div>' +
-      '<div class="scen-channels">' +
-        '<div class="ch-cell"><span class="ch-lbl">INVESTMENTS</span><span class="ch-val ' + (impact.invest < 0 ? 'neg' : (impact.invest > 0 ? 'pos' : 'zero')) + '">' + (impact.invest > 0 ? '+' : '') + impact.invest + 'm</span></div>' +
-        '<div class="ch-cell"><span class="ch-lbl">P&amp;C</span><span class="ch-val ' + (impact.pandc < 0 ? 'neg' : (impact.pandc > 0 ? 'pos' : 'zero')) + '">' + (impact.pandc > 0 ? '+' : '') + impact.pandc + 'm</span></div>' +
-        '<div class="ch-cell"><span class="ch-lbl">OPERATIONS</span><span class="ch-val ' + (impact.ops < 0 ? 'neg' : (impact.ops > 0 ? 'pos' : 'zero')) + '">' + (impact.ops > 0 ? '+' : '') + impact.ops + 'm</span></div>' +
-      '</div>' +
-      '<div class="scen-expand-btn" data-toggle="' + scenarioKey + '">' + (openClass ? '&minus; Hide breakdown &amp; precursors' : '+ Show breakdown &amp; precursors') + '</div>' +
-      (openClass ?
-        '<div class="scen-expanded">' +
-          '<div class="scen-drv-block">' +
-            '<div class="scen-drv-hdr">INVESTMENTS &middot; drivers</div>' + (driverListInv || '<div class="drv-empty">No investment drivers for this scenario.</div>') +
-          '</div>' +
-          '<div class="scen-drv-block">' +
-            '<div class="scen-drv-hdr">P&amp;C &middot; drivers</div>' + (driverListPC || '<div class="drv-empty">No P&C drivers for this scenario.</div>') +
-          '</div>' +
-          '<div class="scen-drv-block">' +
-            '<div class="scen-drv-hdr">OPERATIONS &middot; drivers</div>' + (driverListOps || '<div class="drv-empty">No operations drivers for this scenario.</div>') +
-          '</div>' +
-          '<div class="scen-drv-block scen-rf-block">' +
-            '<div class="scen-drv-hdr">PRECURSORS TO MONITOR &middot; red flags for this scenario</div>' + (redFlagsHtml || '<div class="drv-empty">No precursors defined.</div>') +
-          '</div>' +
-        '</div>'
-      : '') +
-      '</div>';
-  }
-
-  function attachScenarioCardHandlers() {
-    document.querySelectorAll('.scen-expand-btn').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        var key = btn.getAttribute('data-toggle');
-        STATE.portfolio.selectedScenario = (STATE.portfolio.selectedScenario === key) ? null : key;
+    // Node click = select
+    document.querySelectorAll('.tree-node').forEach(function(el) {
+      el.onclick = function() {
+        var id = el.getAttribute('data-node-id');
+        STATE.portfolio.selectedNode = (STATE.portfolio.selectedNode === id) ? null : id;
         renderPortfolioImpact();
-      });
+      };
     });
   }
 
-  function renderExposureAssessment(body) {
-    // Q1 logic: WORST-CASE by absolute impact, ignoring probability
-    var ranked = DOSSIER_MAIN_KEYS.map(function(k) {
-      return { key: k, impact: totalImpactFor(k, STATE.portfolio.horizon) };
+  // ------ Detail panel: FROM SCENARIO mode ------
+
+  function renderDetailScenario(container, tree) {
+    var sel = STATE.portfolio.selectedNode;
+    if (!sel) {
+      // Nothing selected: aggregate across all scenarios
+      container.innerHTML = renderScenarioAggregate('All scenarios', 'Total geopolitical impact on your book', DOSSIER_MAIN_KEYS);
+      wireAggregateHandlers();
+      return;
+    }
+    // Find node
+    var node = findNodeInTree(tree, sel);
+    if (!node) {
+      container.innerHTML = '<div class="detail-empty">Selection lost. Click a node in the explorer.</div>';
+      return;
+    }
+    if (node.type === 'scenario') {
+      container.innerHTML = renderScenarioDetail(node.scenarioKeys[0]);
+    } else {
+      // region or dossier: aggregate
+      container.innerHTML = renderScenarioAggregate(node.label, node.type === 'region' ? 'Aggregate across region' : 'Aggregate across dossier', node.scenarioKeys);
+      wireAggregateHandlers();
+    }
+  }
+
+  function renderScenarioAggregate(title, subtitle, scenarioKeys) {
+    var agg = rollupScenarios(scenarioKeys, STATE.portfolio.horizon);
+    // Ranking by contribution
+    var contribs = scenarioKeys.map(function(k) {
+      var t = totalImpactFor(k, STATE.portfolio.horizon);
+      var mat = window.GEODATA.insurance.scenarioImpact[k];
+      var seedInfo = getSeedInfo(k);
+      return {
+        scenarioKey: k,
+        family: mat.scenarioFamily,
+        narrative: STATE.portfolio.seed === 'tail' ? seedInfo.body : mat.scenarioNarrative,
+        seedCode: seedInfo.seedCode,
+        seedLabel: seedInfo.label,
+        seedPct: seedInfo.pct,
+        impact: t
+      };
     }).sort(function(a, b) { return a.impact.total - b.impact.total; });
 
-    var cardsHtml = ranked.map(function(r) { return scenarioCardHtml(r.key); }).join('');
+    var worstImpact = Math.abs(contribs.length > 0 ? contribs[0].impact.total : 1);
+    if (worstImpact === 0) worstImpact = 1;
 
-    body.innerHTML =
-      '<div class="pf-q-hdr">' +
-        '<h2 class="pf-q-title">Exposure Assessment</h2>' +
-        '<div class="pf-q-sub">Ranking by <em>gross impact if the scenario happens</em>, ignoring probability. Answers the question: <em>which scenarios would hurt me most, regardless of how likely they are.</em> Horizon: <em>' + STATE.portfolio.horizon + ' months</em>.</div>' +
+    var rowsHtml = contribs.map(function(c) {
+      var absVal = Math.abs(c.impact.total);
+      var barPct = Math.round(absVal / worstImpact * 100);
+      var seedClass = STATE.portfolio.seed === 'tail' ? 'seed-tail' : 'seed-modal';
+      return '<div class="agg-row" data-jump-scenario="' + c.scenarioKey + '">' +
+        '<div class="agg-row-info">' +
+          '<div class="agg-row-family">' + c.family + '</div>' +
+          '<div class="agg-row-narrative"><em>' + c.narrative + '</em></div>' +
+          '<div class="agg-row-seed"><span class="seed-badge ' + seedClass + '">' + c.seedCode + ' ' + c.seedLabel + ' &middot; ' + c.seedPct + '% prob</span></div>' +
+        '</div>' +
+        '<div class="agg-row-bar-wrap"><div class="agg-row-bar" style="width:' + barPct + '%"></div></div>' +
+        '<div class="agg-row-val">' + c.impact.total + 'm</div>' +
+      '</div>';
+    }).join('');
+
+    var seedLabel = STATE.portfolio.seed === 'tail' ? 'WORST TAIL' : 'MODAL';
+    return '<div class="detail-hdr">' +
+        '<div class="detail-eyebrow">AGGREGATE &middot; ' + seedLabel + ' SEED &middot; HORIZON ' + STATE.portfolio.horizon + 'M</div>' +
+        '<h2 class="detail-title">' + title + '</h2>' +
+        '<div class="detail-sub"><em>' + subtitle + '</em>. ' + scenarioKeys.length + ' scenario' + (scenarioKeys.length > 1 ? 's' : '') + ' aggregated.</div>' +
       '</div>' +
-      '<div class="scen-list">' + cardsHtml + '</div>';
-    attachScenarioCardHandlers();
+      renderKpiStrip(agg, scenarioKeys.length) +
+      '<div class="detail-block-hdr">SCENARIOS RANKED BY CONTRIBUTION</div>' +
+      '<div class="agg-list">' + rowsHtml + '</div>' +
+      '<div class="detail-hint">Click any scenario to drill into full breakdown and precursors.</div>';
   }
 
-  function renderScenarioAssessment(body) {
-    // Q2 logic: EXPECTED LOSS = impact x modal probability
-    var ranked = DOSSIER_MAIN_KEYS.map(function(k) {
-      return { key: k, expLoss: expectedLossFor(k, STATE.portfolio.horizon), pct: modalPctFor(k) };
-    }).sort(function(a, b) { return a.expLoss - b.expLoss; });
+  function renderKpiStrip(agg, count) {
+    return '<div class="kpi-strip">' +
+      '<div class="kpi-cell"><div class="kpi-lbl">TOTAL IMPACT</div><div class="kpi-val ' + (agg.total < 0 ? 'neg' : 'zero') + '">' + agg.total + 'm</div></div>' +
+      '<div class="kpi-cell"><div class="kpi-lbl">INVESTMENTS</div><div class="kpi-val ' + (agg.invest < 0 ? 'neg' : 'zero') + '">' + agg.invest + 'm</div></div>' +
+      '<div class="kpi-cell"><div class="kpi-lbl">P&amp;C</div><div class="kpi-val ' + (agg.pandc < 0 ? 'neg' : 'zero') + '">' + agg.pandc + 'm</div></div>' +
+      '<div class="kpi-cell"><div class="kpi-lbl">OPERATIONS</div><div class="kpi-val ' + (agg.ops < 0 ? 'neg' : 'zero') + '">' + agg.ops + 'm</div></div>' +
+    '</div>';
+  }
 
-    var cardsHtml = ranked.map(function(r) { return scenarioCardHtml(r.key); }).join('');
+  function wireAggregateHandlers() {
+    document.querySelectorAll('[data-jump-scenario]').forEach(function(el) {
+      el.onclick = function() {
+        var key = el.getAttribute('data-jump-scenario');
+        var nodeId = 'scenario:' + key;
+        STATE.portfolio.selectedNode = nodeId;
+        // Expand region + dossier ancestors
+        var mat = window.GEODATA.insurance.scenarioImpact[key];
+        if (mat) {
+          STATE.portfolio.expanded['region:' + mat.region] = true;
+          STATE.portfolio.expanded['dossier:' + key] = true;
+        }
+        renderPortfolioImpact();
+      };
+    });
+  }
 
-    body.innerHTML =
-      '<div class="pf-q-hdr">' +
-        '<h2 class="pf-q-title">Scenario Assessment</h2>' +
-        '<div class="pf-q-sub">Ranking by <em>expected loss = gross impact multiplied by modal probability</em>. Answers the question: <em>which scenarios represent the highest risk-adjusted exposure today.</em> Horizon: <em>' + STATE.portfolio.horizon + ' months</em>. Probabilities are computed by CHESS Deep-Think.</div>' +
+  function renderScenarioDetail(scenarioKey) {
+    var mat = window.GEODATA.insurance.scenarioImpact[scenarioKey];
+    if (!mat) return '<div class="detail-empty">Scenario data missing.</div>';
+    var block = getImpactBlock(scenarioKey);
+    var seedInfo = getSeedInfo(scenarioKey);
+    var impact = totalImpactFor(scenarioKey, STATE.portfolio.horizon);
+    var mult = horizonMultiplier(scenarioKey, STATE.portfolio.horizon);
+    var seedClass = STATE.portfolio.seed === 'tail' ? 'seed-tail' : 'seed-modal';
+
+    var invDrv = block.investments.drivers.map(function(d) {
+      var adj = Math.round(d.deltaEur * mult);
+      return '<div class="drv-row"><span class="drv-pos">' + d.positionId + '</span><span class="drv-val ' + (adj < 0 ? 'neg' : 'pos') + '">' + (adj > 0 ? '+' : '') + adj + 'm</span><span class="drv-rat"><em>' + d.rationale + '</em></span></div>';
+    }).join('');
+    var pcDrv = block.pandc.drivers.map(function(d) {
+      var adj = Math.round(d.deltaEur * mult);
+      return '<div class="drv-row"><span class="drv-pos">' + d.policyId + '</span><span class="drv-val ' + (adj < 0 ? 'neg' : 'pos') + '">' + (adj > 0 ? '+' : '') + adj + 'm</span><span class="drv-rat"><em>' + d.rationale + '</em></span></div>';
+    }).join('');
+    var opDrv = block.operations.drivers.map(function(d) {
+      var adj = Math.round(d.deltaEur * mult);
+      return '<div class="drv-row"><span class="drv-pos">' + d.opId + '</span><span class="drv-val ' + (adj < 0 ? 'neg' : 'pos') + '">' + (adj > 0 ? '+' : '') + adj + 'm</span><span class="drv-rat"><em>' + d.rationale + '</em></span></div>';
+    }).join('');
+
+    var flags = (mat.redFlags || []).map(function(rf) {
+      var statusLabel = rf.status === 'red' ? 'THRESHOLD BREACHED' : (rf.status === 'amber' ? 'NEAR THRESHOLD' : 'BELOW THRESHOLD');
+      return '<div class="rf-row"><span class="rf-status rf-' + rf.status + '"></span><div class="rf-body"><div class="rf-label">' + rf.label + '</div><div class="rf-meta">Threshold: ' + rf.threshold + ' &middot; Current: <em>' + rf.currentValue + '</em> &middot; <span class="rf-status-label rf-status-label-' + rf.status + '">' + statusLabel + '</span></div></div></div>';
+    }).join('');
+
+    return '<div class="detail-hdr">' +
+        '<div class="detail-eyebrow">Family: ' + mat.scenarioFamily + '  &middot;  <span class="seed-badge ' + seedClass + '">' + seedInfo.seedCode + ' ' + seedInfo.label + ' &middot; ' + seedInfo.pct + '% prob</span></div>' +
+        '<h2 class="detail-title italic">"' + seedInfo.body + '"</h2>' +
+        '<div class="detail-sub">Horizon: <em>' + STATE.portfolio.horizon + 'M</em> &middot; ' + (STATE.portfolio.seed === 'tail' ? 'Worst tail seed of the DT tree' : 'Modal path (baseline)') + '</div>' +
       '</div>' +
-      '<div class="scen-list">' + cardsHtml + '</div>';
-    attachScenarioCardHandlers();
+      renderKpiStrip(impact, 1) +
+      '<div class="detail-block-hdr">TOP DRIVERS ON YOUR POSITIONS</div>' +
+      '<div class="drv-block-triple">' +
+        '<div class="drv-block"><div class="drv-block-title">INVESTMENTS</div>' + (invDrv || '<div class="drv-empty">No drivers.</div>') + '</div>' +
+        '<div class="drv-block"><div class="drv-block-title">P&amp;C</div>' + (pcDrv || '<div class="drv-empty">No drivers.</div>') + '</div>' +
+        '<div class="drv-block"><div class="drv-block-title">OPERATIONS</div>' + (opDrv || '<div class="drv-empty">No drivers.</div>') + '</div>' +
+      '</div>' +
+      '<div class="detail-block-hdr">PRECURSORS &middot; RED FLAGS FOR THIS SCENARIO</div>' +
+      '<div class="rf-list">' + (flags || '<div class="drv-empty">No precursors defined.</div>') + '</div>';
+  }
+
+  // ------ Detail panel: FROM EXPOSURE mode ------
+
+  function renderDetailExposure(container, tree) {
+    var sel = STATE.portfolio.selectedNode;
+    if (!sel) {
+      // All portfolio aggregate
+      container.innerHTML = renderExposureAggregate('Whole portfolio', 'Total downside across all positions', 'all', null);
+      wireExposureAggregateHandlers();
+      return;
+    }
+    var node = findNodeInTree(tree, sel);
+    if (!node) {
+      container.innerHTML = '<div class="detail-empty">Selection lost.</div>';
+      return;
+    }
+    if (node.type === 'position') {
+      container.innerHTML = renderPositionDetail(node.positionId, node.kind, node.label);
+    } else if (node.type === 'bucket') {
+      container.innerHTML = renderExposureAggregate(node.label, 'Aggregate across bucket', 'bucket', node);
+      wireExposureAggregateHandlers();
+    } else {
+      // invclass / pclob / opstype
+      container.innerHTML = renderExposureAggregate(node.label, 'Aggregate across group', 'group', node);
+      wireExposureAggregateHandlers();
+    }
+  }
+
+  function renderExposureAggregate(title, subtitle, scope, node) {
+    var pf = window.GEODATA.insurance.portfolio;
+    var positions = [];
+    if (scope === 'all') {
+      pf.investments.forEach(function(x) { positions.push({ id: x.id, kind: 'inv', label: x.issuer, container: x.assetClass }); });
+      pf.pandc.forEach(function(x) { positions.push({ id: x.id, kind: 'pol', label: x.lob + ' - ' + x.country, container: x.lob }); });
+      pf.operations.forEach(function(x) { positions.push({ id: x.id, kind: 'op', label: x.location + ' (' + x.country + ')', container: x.type }); });
+    } else {
+      // bucket or group: use node.positions with labels resolved
+      node.positions.forEach(function(p) {
+        var lbl = '';
+        var container = '';
+        if (p.kind === 'inv') {
+          var found = pf.investments.filter(function(x){return x.id === p.id;})[0];
+          if (found) { lbl = found.issuer; container = found.assetClass; }
+        } else if (p.kind === 'pol') {
+          var found = pf.pandc.filter(function(x){return x.id === p.id;})[0];
+          if (found) { lbl = found.lob + ' - ' + found.country; container = found.lob; }
+        } else {
+          var found = pf.operations.filter(function(x){return x.id === p.id;})[0];
+          if (found) { lbl = found.location + ' (' + found.country + ')'; container = found.type; }
+        }
+        positions.push({ id: p.id, kind: p.kind, label: lbl, container: container });
+      });
+    }
+
+    // Compute impact per position and stressed count
+    var enriched = positions.map(function(p) {
+      var hits = scenariosImpactingPosition(p.id, p.kind);
+      var tot = 0;
+      hits.forEach(function(h) { tot += h.deltaEur; });
+      return { id: p.id, kind: p.kind, label: p.label, container: p.container, total: tot, scenarioCount: hits.length };
+    }).sort(function(a, b) { return a.total - b.total; });
+
+    var totalAgg = { invest: 0, pandc: 0, ops: 0, total: 0 };
+    enriched.forEach(function(p) {
+      totalAgg.total += p.total;
+      if (p.kind === 'inv') totalAgg.invest += p.total;
+      else if (p.kind === 'pol') totalAgg.pandc += p.total;
+      else totalAgg.ops += p.total;
+    });
+
+    // Worst position for scaling
+    var worstImpact = Math.abs(enriched.length > 0 ? enriched[0].total : 1);
+    if (worstImpact === 0) worstImpact = 1;
+
+    var stressedCount = enriched.filter(function(p) { return p.total < 0; }).length;
+
+    var rowsHtml = enriched.slice(0, 20).map(function(p) {
+      var absVal = Math.abs(p.total);
+      var barPct = Math.round(absVal / worstImpact * 100);
+      var kindTag = p.kind === 'inv' ? 'INV' : (p.kind === 'pol' ? 'POL' : 'OPS');
+      return '<div class="agg-row" data-jump-position="' + p.id + '" data-jump-kind="' + p.kind + '">' +
+        '<div class="agg-row-info">' +
+          '<div class="agg-row-family"><span class="kind-tag ' + kindTag.toLowerCase() + '">' + kindTag + '</span> ' + p.container + '</div>' +
+          '<div class="agg-row-narrative"><em>' + p.label + '</em></div>' +
+          '<div class="agg-row-seed">' + p.scenarioCount + ' scenario' + (p.scenarioCount !== 1 ? 's' : '') + ' hit this position</div>' +
+        '</div>' +
+        '<div class="agg-row-bar-wrap"><div class="agg-row-bar" style="width:' + barPct + '%"></div></div>' +
+        '<div class="agg-row-val">' + p.total + 'm</div>' +
+      '</div>';
+    }).join('');
+
+    var seedLabel = STATE.portfolio.seed === 'tail' ? 'WORST TAIL' : 'MODAL';
+    var moreNote = enriched.length > 20 ? '<div class="detail-hint">Showing top 20 of ' + enriched.length + ' positions.</div>' : '';
+    return '<div class="detail-hdr">' +
+        '<div class="detail-eyebrow">AGGREGATE &middot; ' + seedLabel + ' SEED &middot; HORIZON ' + STATE.portfolio.horizon + 'M</div>' +
+        '<h2 class="detail-title">' + title + '</h2>' +
+        '<div class="detail-sub"><em>' + subtitle + '</em>. ' + enriched.length + ' positions &middot; ' + stressedCount + ' stressed.</div>' +
+      '</div>' +
+      renderKpiStrip(totalAgg, enriched.length) +
+      '<div class="detail-block-hdr">POSITIONS RANKED BY IMPACT (worst first)</div>' +
+      '<div class="agg-list">' + rowsHtml + '</div>' +
+      moreNote +
+      '<div class="detail-hint">Click any position to see which scenarios stress it.</div>';
+  }
+
+  function wireExposureAggregateHandlers() {
+    document.querySelectorAll('[data-jump-position]').forEach(function(el) {
+      el.onclick = function() {
+        var pid = el.getAttribute('data-jump-position');
+        var kind = el.getAttribute('data-jump-kind');
+        var pf = window.GEODATA.insurance.portfolio;
+        // Find its parent group
+        var bkt = kind === 'inv' ? 'bucket:inv' : (kind === 'pol' ? 'bucket:pol' : 'bucket:op');
+        var grpId = null;
+        if (kind === 'inv') {
+          var f = pf.investments.filter(function(x){return x.id === pid;})[0];
+          if (f) grpId = 'invclass:' + f.assetClass;
+        } else if (kind === 'pol') {
+          var f = pf.pandc.filter(function(x){return x.id === pid;})[0];
+          if (f) grpId = 'pclob:' + f.lob;
+        } else {
+          var f = pf.operations.filter(function(x){return x.id === pid;})[0];
+          if (f) grpId = 'opstype:' + f.type;
+        }
+        STATE.portfolio.expanded[bkt] = true;
+        if (grpId) STATE.portfolio.expanded[grpId] = true;
+        STATE.portfolio.selectedNode = 'position:' + kind + ':' + pid;
+        renderPortfolioImpact();
+      };
+    });
+  }
+
+  function renderPositionDetail(positionId, kind, nodeLabel) {
+    var pf = window.GEODATA.insurance.portfolio;
+    var posData = null;
+    var meta = '';
+    if (kind === 'inv') {
+      posData = pf.investments.filter(function(x){return x.id === positionId;})[0];
+      if (posData) meta = posData.assetClass + '  |  ' + posData.country + '  |  ' + posData.sector + '  |  MV ' + posData.mv + 'm  |  Duration ' + (posData.duration || '-') + '  |  Rating ' + (posData.rating || '-') + '  |  ' + posData.ccy;
+    } else if (kind === 'pol') {
+      posData = pf.pandc.filter(function(x){return x.id === positionId;})[0];
+      if (posData) meta = posData.lob + '  |  ' + posData.country + '  |  Sum Ins ' + posData.sumInsured + 'm  |  Deduct. ' + posData.deductible + 'm  |  GWP ' + posData.gwpShare + 'm';
+    } else {
+      posData = pf.operations.filter(function(x){return x.id === positionId;})[0];
+      if (posData) meta = posData.type + '  |  ' + posData.location + '  |  ' + posData.country + '  |  Staff ' + posData.staff + '  |  Risk: ' + posData.riskLevel;
+    }
+
+    var hits = scenariosImpactingPosition(positionId, kind);
+    var total = 0;
+    hits.forEach(function(h) { total += h.deltaEur; });
+    var maxHit = hits.length > 0 ? hits[0] : null;
+    var maxHitLabel = maxHit ? window.GEODATA.insurance.scenarioImpact[maxHit.scenarioKey].scenarioFamily : '-';
+
+    var kindLabel = kind === 'inv' ? 'INVESTMENT' : (kind === 'pol' ? 'P&C POLICY' : 'OPERATIONS SITE');
+    var label = posData ? (kind === 'inv' ? posData.issuer : (kind === 'pol' ? (posData.lob + ' - ' + posData.country) : (posData.location + ' (' + posData.country + ')'))) : nodeLabel;
+
+    var summaryStrip = '<div class="kpi-strip">' +
+      '<div class="kpi-cell"><div class="kpi-lbl">TOTAL DOWNSIDE</div><div class="kpi-val ' + (total < 0 ? 'neg' : 'zero') + '">' + total + 'm EUR</div></div>' +
+      '<div class="kpi-cell"><div class="kpi-lbl">STRESSED BY</div><div class="kpi-val amber">' + hits.length + ' of ' + DOSSIER_MAIN_KEYS.length + '</div></div>' +
+      '<div class="kpi-cell"><div class="kpi-lbl">WORST SINGLE HIT</div><div class="kpi-val neg">' + (maxHit ? maxHit.deltaEur + 'm' : '-') + '</div></div>' +
+      '<div class="kpi-cell"><div class="kpi-lbl">WORST HIT SCENARIO</div><div class="kpi-val small">' + maxHitLabel + '</div></div>' +
+    '</div>';
+
+    var rowsHtml = hits.map(function(h) {
+      var mat = window.GEODATA.insurance.scenarioImpact[h.scenarioKey];
+      var seedInfo = getSeedInfo(h.scenarioKey);
+      var seedClass = STATE.portfolio.seed === 'tail' ? 'seed-tail' : 'seed-modal';
+      return '<div class="agg-row" data-jump-scenario="' + h.scenarioKey + '">' +
+        '<div class="agg-row-info">' +
+          '<div class="agg-row-family">' + mat.scenarioFamily + '</div>' +
+          '<div class="agg-row-narrative"><em>' + h.rationale + '</em></div>' +
+          '<div class="agg-row-seed"><span class="seed-badge ' + seedClass + '">' + seedInfo.seedCode + ' ' + seedInfo.label + ' &middot; ' + seedInfo.pct + '% prob</span></div>' +
+        '</div>' +
+        '<div class="agg-row-val">' + h.deltaEur + 'm</div>' +
+      '</div>';
+    }).join('');
+
+    var otherKeys = DOSSIER_MAIN_KEYS.filter(function(k) {
+      return !hits.some(function(h){ return h.scenarioKey === k; });
+    });
+    var otherHtml = otherKeys.length > 0 ?
+      '<div class="detail-block-hdr">SCENARIOS BELOW THRESHOLD &middot; no material impact on this position</div>' +
+      '<div class="other-list">' + otherKeys.map(function(k){
+        return '<div class="other-item">- ' + window.GEODATA.insurance.scenarioImpact[k].scenarioFamily + '</div>';
+      }).join('') + '</div>'
+      : '';
+
+    var seedLabel = STATE.portfolio.seed === 'tail' ? 'WORST TAIL' : 'MODAL';
+
+    var detailHtml = '<div class="detail-hdr">' +
+        '<div class="detail-eyebrow">' + kindLabel + '  &middot;  ID ' + positionId + '  &middot;  ' + seedLabel + ' SEED &middot; HORIZON ' + STATE.portfolio.horizon + 'M</div>' +
+        '<h2 class="detail-title italic">' + label + '</h2>' +
+        '<div class="detail-sub">' + meta + '</div>' +
+      '</div>' +
+      summaryStrip +
+      '<div class="detail-block-hdr">SCENARIOS THAT STRESS THIS POSITION &middot; ranked by impact</div>' +
+      '<div class="agg-list">' + (rowsHtml || '<div class="drv-empty">No scenarios stress this position under current seed/horizon.</div>') + '</div>' +
+      otherHtml;
+
+    // Attach handlers after render happens
+    setTimeout(function() {
+      document.querySelectorAll('[data-jump-scenario]').forEach(function(el) {
+        el.onclick = function() {
+          // Cross-mode jump: switch to scenario mode, select scenario
+          var key = el.getAttribute('data-jump-scenario');
+          STATE.portfolio.mode = 'scenario';
+          STATE.portfolio.selectedNode = 'scenario:' + key;
+          var mat = window.GEODATA.insurance.scenarioImpact[key];
+          if (mat) {
+            STATE.portfolio.expanded['region:' + mat.region] = true;
+            STATE.portfolio.expanded['dossier:' + key] = true;
+          }
+          renderPortfolioImpact();
+        };
+      });
+    }, 0);
+
+    return detailHtml;
+  }
+
+  function findNodeInTree(tree, id) {
+    for (var i = 0; i < tree.length; i++) {
+      var node = tree[i];
+      if (node.id === id) return node;
+      if (node.children) {
+        var deep = findNodeInTree(node.children, id);
+        if (deep) return deep;
+      }
+    }
+    return null;
   }
 
   // ========================================================================
   // END PORTFOLIO IMPACT
   // ========================================================================
+
 
 
   function resetToLanding() {

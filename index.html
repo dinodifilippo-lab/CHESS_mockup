@@ -135,21 +135,35 @@
             <h1 class="portfolio-title"><em>Geopolitical exposure</em> of your book</h1>
             <div class="portfolio-profile-line" id="portfolio-profile-line"></div>
           </div>
-          <div class="portfolio-horizon">
-            <div class="horizon-label">HORIZON</div>
-            <div class="horizon-selector" id="horizon-selector">
-              <button class="horizon-btn active" data-horizon="0-12">&lt; 12 months</button>
-              <button class="horizon-btn" data-horizon="12-24">12 - 24 months</button>
-              <button class="horizon-btn" data-horizon=">24">&gt; 24 months</button>
+        </div>
+        <div class="portfolio-controls" id="portfolio-controls">
+          <div class="ctrl-group">
+            <div class="ctrl-label">HORIZON</div>
+            <div class="ctrl-selector">
+              <button class="ctrl-btn active" data-ctrl="horizon" data-value="0-12">&lt; 12M</button>
+              <button class="ctrl-btn" data-ctrl="horizon" data-value="12-24">12-24M</button>
+              <button class="ctrl-btn" data-ctrl="horizon" data-value=">24">&gt; 24M</button>
+            </div>
+          </div>
+          <div class="ctrl-group">
+            <div class="ctrl-label">SEED</div>
+            <div class="ctrl-selector">
+              <button class="ctrl-btn active" data-ctrl="seed" data-value="modal">MODAL</button>
+              <button class="ctrl-btn" data-ctrl="seed" data-value="tail">WORST TAIL</button>
+            </div>
+          </div>
+          <div class="ctrl-group">
+            <div class="ctrl-label">EXPLORE FROM</div>
+            <div class="ctrl-selector">
+              <button class="ctrl-btn active" data-ctrl="mode" data-value="scenario">SCENARIO</button>
+              <button class="ctrl-btn" data-ctrl="mode" data-value="exposure">EXPOSURE</button>
             </div>
           </div>
         </div>
-        <nav class="portfolio-subnav" id="portfolio-subnav">
-          <button class="p-sub-tab active" data-psub="portfolio">Portfolio</button>
-          <button class="p-sub-tab" data-psub="exposure">Exposure Assessment</button>
-          <button class="p-sub-tab" data-psub="scenario">Scenario Assessment</button>
-        </nav>
-        <div class="portfolio-body" id="portfolio-body"></div>
+        <div class="portfolio-split">
+          <aside class="pf-explorer" id="pf-explorer"></aside>
+          <div class="pf-detail" id="pf-detail"></div>
+        </div>
       </div>
     </section>
 
