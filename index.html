@@ -2,158 +2,110 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=1600">
-<title>CHESS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHESS Mockup</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<div id="app">
+<header class="top-bar">
+  <div class="brand">
+    <div class="brand-logo">CHESS</div>
+    <div class="brand-sub">GEOPOLITICAL INTELLIGENCE</div>
+  </div>
+  <nav class="nav-tabs">
+    <button class="nav-tab active" data-view="chat">CHAT</button>
+    <button class="nav-tab" data-view="explore">EXPLORE</button>
+    <button class="nav-tab" data-view="dashboard">DASHBOARD</button>
+    <button class="nav-tab" data-view="admin">ADMIN</button>
+  </nav>
+  <div class="user-block">
+    <div class="user-avatar">GD</div>
+    <div class="user-info">
+      <div class="user-name">G. Di Filippo</div>
+      <div class="user-role">ANALYST</div>
+    </div>
+  </div>
+</header>
 
-  <header id="header">
-    <div class="logo-block">
-      <div class="logo-mark">◈</div>
-      <div class="logo-text">
-        <div class="logo-name">CHESS</div>
-        <div class="logo-subtitle">Geopolitical Intelligence</div>
+<div class="view active" data-view="chat">
+  <aside class="chat-panel">
+    <div class="chat-panel-hdr">
+      <div>
+        <div class="panel-title">SESSION</div>
+        <div class="panel-subtitle" id="chat-subtitle">Session &middot; new</div>
+      </div>
+      <div class="chat-panel-actions">
+        <button class="chat-icon-btn" id="new-chat-btn" title="New chat">&#9998;</button>
+        <button class="chat-icon-btn" title="Archive">&#9114;</button>
       </div>
     </div>
-
-    <nav id="main-nav">
-      <button class="nav-tab active" data-view="chat">Chat</button>
-      <button class="nav-tab" data-view="explore">Explore</button>
-      <button class="nav-tab" data-view="dashboard">Dashboard</button>
-      <button class="nav-tab" data-view="admin">Admin</button>
-    </nav>
-
-    <div class="hdr-right">
-      <div class="user-badge">
-        <div class="user-avatar">GD</div>
-        <div class="user-meta">
-          <div class="user-name">G. Di Filippo</div>
-          <div class="user-role">Analyst</div>
-        </div>
-      </div>
+    <div class="breadcrumb" id="breadcrumb">
+      <span id="bc-dossier"></span> <span id="bc-actors"></span> <span id="bc-reports"></span>
     </div>
-  </header>
-
-  <main id="main">
-
-    <section class="view active" data-view="chat">
-      <div class="chat-shell" id="chat-shell">
-
-        <aside class="chat-panel">
-          <div class="chat-topbar">
-            <div class="chat-topbar-title">Session</div>
-            <div class="chat-topbar-icons">
-              <button class="chat-icon-btn" id="new-chat-btn" title="New chat">✎</button>
-              <button class="chat-icon-btn" id="archive-btn" title="Archive">⎘</button>
-            </div>
-          </div>
-
-          <div class="panel-hdr">
-            <div class="panel-title">Ask</div>
-            <div class="panel-subtitle" id="chat-subtitle">Session · new</div>
-          </div>
-
-          <div class="breadcrumb" id="breadcrumb">
-            <span class="bc-label">◉ Context accumulated</span>
-            <span class="bc-dossier" id="bc-dossier"></span>
-            <span class="bc-sep">·</span>
-            <span class="bc-actors" id="bc-actors"></span>
-            <span class="bc-reports" id="bc-reports"></span>
-          </div>
-
-          <div class="chat-body" id="chat-body"></div>
-
-          <div class="chat-input-block">
-            <div class="chat-input-wrap">
-              <textarea class="chat-input" id="chat-input" placeholder="Ask about actors, arcs, scenarios..." rows="2"></textarea>
-              <button class="run-btn idle" id="run-btn">RUN →</button>
-            </div>
-            <div class="input-hint" id="input-hint">Answer first · Deep-Think from the report if needed</div>
-          </div>
-        </aside>
-
-        <section class="center-panel" id="center-panel"></section>
-        <aside class="intel-panel hidden" id="intel-panel"></aside>
-
-      </div>
-    </section>
-
-    <section class="view" data-view="explore">
-      <div class="explore-shell">
-        <div class="demo-banner">◇ DEMO ONLY -- NOT REAL DATA</div>
-        <div class="explore-hdr">
-          <div class="explore-title-block">
-            <div class="ctx-tag">EXPLORE</div>
-            <h1 class="explore-title">Corpus <em>navigation</em></h1>
-          </div>
-          <nav class="explore-subnav" id="explore-subnav">
-            <button class="sub-tab active" data-sub="news">News</button>
-            <button class="sub-tab" data-sub="analyses">Specialized analyses</button>
-            <button class="sub-tab" data-sub="primary">Primary sources</button>
-            <button class="sub-tab" data-sub="structured">Structured data</button>
-            <button class="sub-tab" data-sub="sources">Sources</button>
-          </nav>
-        </div>
-        <div class="explore-body" id="explore-body"></div>
-      </div>
-    </section>
-
-    <section class="view" data-view="dashboard">
-      <div class="dashboard-shell" id="dashboard-shell"></div>
-    </section>
-
-    <section class="view" data-view="admin">
-      <div class="admin-shell">
-        <aside class="admin-sidebar">
-          <div class="admin-side-hdr">
-            <div class="ctx-tag red">ADMIN · RESTRICTED</div>
-            <h2 class="admin-side-title">Configuration</h2>
-          </div>
-          <nav class="admin-nav" id="admin-nav">
-            <button class="admin-nav-item active" data-admin="sources">Sources</button>
-            <button class="admin-nav-item" data-admin="users">Users</button>
-            <button class="admin-nav-item" data-admin="kg">KG Registry</button>
-            <button class="admin-nav-item" data-admin="pipelines">Pipelines</button>
-            <button class="admin-nav-item" data-admin="alerts">Alerts</button>
-            <button class="admin-nav-item" data-admin="logs">Logs</button>
-          </nav>
-        </aside>
-        <div class="admin-main" id="admin-main"></div>
-      </div>
-    </section>
-
-  </main>
-
-  <footer id="footer">
-    <div class="ft-left" id="footer-left">
-      <span class="ft-item"><span class="ft-lbl">GRAPH</span> updated 5m ago</span>
-      <span class="ft-sep">·</span>
-      <span class="ft-item"><span class="ft-lbl">ARTICLES</span> 27,533</span>
-      <span class="ft-sep">·</span>
-      <span class="ft-item"><span class="ft-lbl">SOURCES</span> 6 active</span>
+    <div class="chat-body" id="chat-body"></div>
+    <div class="chat-input-wrap">
+      <textarea class="chat-input" id="chat-input" placeholder="Ask about actors, arcs, scenarios..." rows="1"></textarea>
+      <button class="run-btn" id="run-btn">RUN &rarr;</button>
     </div>
-    <div class="ft-right" id="footer-right">
-      <span class="ft-status ok">● CONNECTED · REAL-TIME</span>
-    </div>
-  </footer>
+    <div class="input-hint" id="input-hint">Answer first &middot; Deep-Think from the report if needed</div>
+  </aside>
 
-  <div class="full-report-overlay" id="full-report-overlay">
-    <div class="fro-hdr">
+  <main class="center-panel" id="center-panel"></main>
+
+  <aside class="intel-panel hidden" id="intel-panel"></aside>
+</div>
+
+<div class="view" data-view="explore">
+  <div class="explore-hdr">
+    <div class="ctx-tag">EXPLORE</div>
+    <h1>Knowledge <em>base</em></h1>
+    <div class="sub-tabs">
+      <button class="sub-tab active" data-sub="news">News</button>
+      <button class="sub-tab" data-sub="analyses">Specialized analyses</button>
+      <button class="sub-tab" data-sub="primary">Primary sources</button>
+      <button class="sub-tab" data-sub="structured">Structured data</button>
+      <button class="sub-tab" data-sub="sources">Sources</button>
+    </div>
+  </div>
+  <div class="explore-body" id="explore-body"></div>
+</div>
+
+<div class="view" data-view="dashboard">
+  <div class="dashboard-shell" id="dashboard-shell"></div>
+</div>
+
+<div class="view" data-view="admin">
+  <aside class="admin-nav">
+    <div class="admin-nav-title">ADMIN</div>
+    <button class="admin-nav-item active" data-admin="sources">Sources</button>
+    <button class="admin-nav-item" data-admin="users">Users &amp; permissions</button>
+    <button class="admin-nav-item" data-admin="kg">KG type registry</button>
+    <button class="admin-nav-item" data-admin="pipelines">Ingestion pipelines</button>
+    <button class="admin-nav-item" data-admin="alerts">Alerts &amp; thresholds</button>
+    <button class="admin-nav-item" data-admin="logs">System logs</button>
+  </aside>
+  <main class="admin-main" id="admin-main"></main>
+</div>
+
+<footer class="footer" id="footer">
+  <div class="footer-left">CHESS &middot; DEMO BUILD v3.0</div>
+  <div class="footer-right" id="footer-right"></div>
+</footer>
+
+<div class="full-report-overlay" id="full-report-overlay">
+  <div class="fro-inner">
+    <div class="fro-header">
       <div class="fro-title" id="fro-title"></div>
-      <button class="fro-close" id="fro-close">× CLOSE</button>
+      <button class="fro-close" id="fro-close">&times;</button>
     </div>
     <div class="fro-body">
-      <div class="fro-lattice">
-        <div class="fro-section-label">◉ FULL TRAJECTORY LATTICE</div>
+      <div class="fro-lattice-wrap">
         <svg id="fro-lattice-svg" preserveAspectRatio="xMidYMid meet"></svg>
       </div>
       <div class="fro-narrative" id="fro-narrative"></div>
     </div>
   </div>
-
 </div>
 
 <script src="data.js"></script>
