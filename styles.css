@@ -1152,3 +1152,65 @@ em { font-style: italic; }
   border: 1px solid var(--accent-amber-dim); margin-right: 8px;
 }
 .lever-banner.neutral .lever-tag { color: var(--text-tertiary); border-color: var(--border-panel); background: var(--bg-panel); }
+
+/* ==========================================================================
+   PORTFOLIO IMPACT v2 - refined card design
+   ========================================================================== */
+
+.scen-family-tag {
+  font-family: var(--font-mono); font-size: 9px;
+  color: var(--text-tertiary); letter-spacing: 1.2px; text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.scen-title {
+  font-family: var(--font-serif); font-size: 15px;
+  color: var(--text-primary); line-height: 1.4;
+  margin-bottom: 8px; font-style: italic;
+}
+
+.scen-meta-row {
+  display: flex; gap: 8px; margin-top: 4px;
+}
+.scen-meta-pill {
+  display: inline-flex; align-items: baseline; gap: 6px;
+  padding: 4px 10px; background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+}
+.pill-lbl {
+  font-family: var(--font-mono); font-size: 9px;
+  color: var(--text-tertiary); letter-spacing: 1.2px; text-transform: uppercase;
+}
+.pill-val {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-primary); font-weight: 700;
+}
+.pill-val.amber { color: var(--accent-amber); }
+
+.scen-hdr-right {
+  display: flex; flex-direction: column; align-items: flex-end; gap: 10px;
+  min-width: 200px;
+}
+.scen-impact-tot {
+  display: flex; flex-direction: column; align-items: flex-end;
+  padding-bottom: 6px; border-bottom: 1px dotted var(--border-subtle);
+}
+.scen-impact-tot:last-child { border-bottom: none; padding-bottom: 0; }
+.tot-val-small {
+  font-family: var(--font-serif); font-size: 15px; line-height: 1.1;
+}
+.tot-val-small.neg { color: var(--semantic-red-light); }
+.tot-val-small.pos { color: var(--semantic-green-light); }
+
+.rf-status-label {
+  font-family: var(--font-mono); font-size: 9px;
+  font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase;
+}
+.rf-status-label.rf-status-label-red { color: var(--semantic-red-strong); }
+.rf-status-label.rf-status-label-amber { color: var(--accent-amber); }
+.rf-status-label.rf-status-label-green { color: var(--semantic-green); }
+
+.scen-rf-block {
+  background: var(--bg-elevated-amber);
+  border: 1px solid var(--border-amber);
+}

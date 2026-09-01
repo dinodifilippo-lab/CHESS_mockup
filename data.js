@@ -1312,6 +1312,8 @@ window.GEODATA = {
 
     scenarioImpact: {
       "ukraine-main": {
+        scenarioNarrative: "Compressed defensive posture in Ukraine holds; territory preserved, initiative ceded to Russia, recovery pushed to 2028",
+        scenarioFamily: "Ukraine / Russia / NATO",
         scenarioLabel: "Ukraine attrition dossier",
         horizonMonths: 12,
         maturationByHorizon: { "0-12": "materialising", "12-24": "consolidated", ">24": "stable" },
@@ -1353,6 +1355,8 @@ window.GEODATA = {
         ]
       },
       "taiwan-main": {
+        scenarioNarrative: "PLA sustains blockade rehearsals below kinetic threshold; contiguous zone activity normalises, no invasion",
+        scenarioFamily: "Taiwan Strait / Chip supply chain",
         scenarioLabel: "Taiwan blockade rehearsal dossier",
         horizonMonths: 24,
         maturationByHorizon: { "0-12": "escalating", "12-24": "critical", ">24": "structural" },
@@ -1399,6 +1403,8 @@ window.GEODATA = {
         ]
       },
       "iran-main": {
+        scenarioNarrative: "US posture holds; Bessent economic pressure on Iran-China oil trade; Israel operates within managed rivalry",
+        scenarioFamily: "Iran post-Epic Fury",
         scenarioLabel: "Iran post-Epic Fury dossier",
         horizonMonths: 12,
         maturationByHorizon: { "0-12": "active", "12-24": "recalibration", ">24": "new equilibrium" },
@@ -1441,6 +1447,8 @@ window.GEODATA = {
         ]
       },
       "eu-china-trade-main": {
+        scenarioNarrative: "Managed friction structural; incremental tariff escalation on defined sectors, aggregate trade preserved",
+        scenarioFamily: "EU-China trade friction",
         scenarioLabel: "EU-China trade friction dossier",
         horizonMonths: 24,
         maturationByHorizon: { "0-12": "escalating", "12-24": "structural", ">24": "consolidated" },
@@ -1480,6 +1488,8 @@ window.GEODATA = {
         ]
       },
       "us-debt-hyperscalers-main": {
+        scenarioNarrative: "Coupled tension persists; term premium expands, hyperscaler capex sustained, no break but cumulative pressure",
+        scenarioFamily: "US debt & hyperscaler capex",
         scenarioLabel: "US debt & hyperscalers coupled fragility dossier",
         horizonMonths: 24,
         maturationByHorizon: { "0-12": "building", "12-24": "tension peak", ">24": "resolution or break" },
@@ -1519,6 +1529,8 @@ window.GEODATA = {
         ]
       },
       "us-china-tensions-main": {
+        scenarioNarrative: "Structural competition intensifies across tech, alliances, trade with periodic tactical de-escalations",
+        scenarioFamily: "US-China strategic tensions",
         scenarioLabel: "US-China strategic tensions dossier",
         horizonMonths: 24,
         maturationByHorizon: { "0-12": "active", "12-24": "structural", ">24": "consolidated" },
@@ -1556,6 +1568,8 @@ window.GEODATA = {
         ]
       },
       "eu-hybrid-main": {
+        scenarioNarrative: "Sustained hybrid pressure with fragmented European response; Nordic-Baltic minilateral mechanisms strengthen",
+        scenarioFamily: "EU hybrid pressure",
         scenarioLabel: "EU hybrid pressure dossier",
         horizonMonths: 12,
         maturationByHorizon: { "0-12": "ongoing", "12-24": "consolidated", ">24": "structural" },
@@ -1598,6 +1612,8 @@ window.GEODATA = {
         ]
       },
       "eu-political-2027-main": {
+        scenarioNarrative: "Heterogeneous drift; individual cycles produce mixed outcomes that cancel at aggregate EU level",
+        scenarioFamily: "EU political evolution 2027",
         scenarioLabel: "EU political evolution 2027-2028 dossier",
         horizonMonths: 24,
         maturationByHorizon: { "0-12": "campaigns", "12-24": "outcomes", ">24": "post-cycle configuration" },
@@ -1638,61 +1654,8 @@ window.GEODATA = {
           { id: "rf-pol-6", label: "OAT-Bund spread widening from baseline",              threshold: ">80bp",                           status: "red",    currentValue: "+85bp" }
         ]
       }
-    },
+    }
 
-    q3Levers: [
-      {
-        id: "lever01",
-        label: "Reduce BTP exposure by 50% (rotate to Bund)",
-        description: "Sell 400m of inv01 (BTP Italia 10Y), buy 400m of Bund 10Y equivalent. Reduces sovereign concentration risk on Italy.",
-        deltaByScenario: {
-          "ukraine-main":          { investEur: 22, pandcEur: 0,  opsEur: 0, comment: "Reduces BTP spread exposure" },
-          "eu-political-2027-main":{ investEur: 18, pandcEur: 0,  opsEur: 0, comment: "Reduces election-cycle Italian sovereign risk" },
-          "us-debt-hyperscalers-main":{ investEur: -3, pandcEur: 0, opsEur: 0, comment: "Slight negative: Bund also affected but less" },
-          "eu-hybrid-main":        { investEur: 6,  pandcEur: 0,  opsEur: 0, comment: "Modest reduction in EU risk premium" }
-        }
-      },
-      {
-        id: "lever02",
-        label: "Apply war exclusion LMA5567 to all Marine Cargo",
-        description: "Standardize LMA5567 war exclusion across Suez, Hormuz, Black Sea Marine Cargo policies. Reduces GWP by 8%.",
-        deltaByScenario: {
-          "ukraine-main":          { investEur: 0, pandcEur: 22, opsEur: 0, comment: "Black Sea exposure sharply reduced" },
-          "iran-main":             { investEur: 0, pandcEur: 30, opsEur: 0, comment: "Hormuz exposure sharply reduced" },
-          "taiwan-main":           { investEur: 0, pandcEur: 8,  opsEur: 0, comment: "Suez Asia trade exposure reduced" }
-        }
-      },
-      {
-        id: "lever03",
-        label: "Close Istanbul and Beirut offices, consolidate to Milano",
-        description: "Exit high-risk operational geographies. Loss of local market presence estimated at 5% regional GWP.",
-        deltaByScenario: {
-          "iran-main":             { investEur: 0, pandcEur: 0,  opsEur: 6, comment: "Direct removal of exposed sites" },
-          "ukraine-main":          { investEur: 0, pandcEur: 0,  opsEur: 0, comment: "Neutral: exposure not in these sites" }
-        }
-      },
-      {
-        id: "lever04",
-        label: "Halve Trade Credit exposure to Turkey and Egypt",
-        description: "Reduce buyer limits for Turkish and Egyptian buyers by 50%. Reduces GWP by 3%.",
-        deltaByScenario: {
-          "iran-main":             { investEur: 0, pandcEur: 10, opsEur: 0, comment: "Turkish and Egyptian buyer risk lowered" },
-          "eu-china-trade-main":   { investEur: 0, pandcEur: 0,  opsEur: 0, comment: "Neutral" }
-        }
-      },
-      {
-        id: "lever05",
-        label: "Reduce Asia equity exposure by 50% (TSMC, MSCI EM)",
-        description: "Sell 15m of TSMC ADR and 40m of MSCI EM ETF. Rotate to European equity ETF. Reduces Asia concentration.",
-        deltaByScenario: {
-          "taiwan-main":           { investEur: 30, pandcEur: 0, opsEur: 0, comment: "Direct removal of Taiwan-exposed equity" },
-          "us-china-tensions-main":{ investEur: 15, pandcEur: 0, opsEur: 0, comment: "Reduces PRC-adjacent exposure" },
-          "us-debt-hyperscalers-main":{ investEur: 6, pandcEur: 0, opsEur: 0, comment: "Modest reduction in coupled repricing" }
-        }
-      }
-    ]
-
-  },
-
+  }
 
 };
