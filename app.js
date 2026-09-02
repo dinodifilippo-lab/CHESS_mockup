@@ -1250,6 +1250,27 @@
     'us-china-tensions-main', 'eu-hybrid-main', 'eu-political-2027-main'
   ];
 
+  // Severity dots: 1-5 filled based on |impact| / (AUM + GWP)
+  // Thresholds: <0.5% = 1, 0.5-1.5% = 2, 1.5-3% = 3, 3-5% = 4, >5% = 5
+  function severityDots(impactEur) {
+    var base = window.GEODATA.insurance.profile.aum + window.GEODATA.insurance.profile.gwp;
+    if (!base || base === 0) base = 5800;
+    var pct = Math.abs(impactEur) / base * 100;
+    var filled;
+    if (pct < 0.5) filled = 1;
+    else if (pct < 1.5) filled = 2;
+    else if (pct < 3) filled = 3;
+    else if (pct < 5) filled = 4;
+    else filled = 5;
+    if (impactEur === 0) filled = 0;
+    var html = '<span class="sev-dots">';
+    for (var i = 1; i <= 5; i++) {
+      html += '<span class="sev-dot ' + (i <= filled ? 'on' : 'off') + '"></span>';
+    }
+    html += '</span>';
+    return html;
+  }
+
   function horizonMultiplier(scenarioKey, horizon) {
     var mat = window.GEODATA.insurance.scenarioImpact[scenarioKey];
     if (!mat) return 0;
@@ -1424,7 +1445,7 @@
             kind: 'inv',
             id: 'position:inv:' + inv.id,
             positionId: inv.id,
-            label: inv.issuer + ' (' + inv.mv + 'm)',
+            label: inv.issuer,
             children: []
           };
         })
@@ -1449,7 +1470,7 @@
             kind: 'pol',
             id: 'position:pol:' + p.id,
             positionId: p.id,
-            label: p.lob + ' - ' + p.country + ' (GWP ' + p.gwpShare + 'm)',
+            label: p.lob + ' - ' + p.country,
             children: []
           };
         })
@@ -1494,7 +1515,7 @@
     var profileLine = document.getElementById('portfolio-profile-line');
     if (profileLine) {
       var p = window.GEODATA.insurance.profile;
-      profileLine.innerHTML = '<em>' + p.name + '</em> &middot; AUM ' + p.aum + 'm EUR &middot; GWP ' + p.gwp + 'm EUR &middot; ' + p.description;
+      profileLine.innerHTML = '<em>' + p.name + '</em> &middot; ' + p.description;
     }
     // Wire controls
     document.querySelectorAll('.ctrl-btn').forEach(function(btn) {
@@ -1539,7 +1560,7 @@
       html += '<span class="tree-caret" data-caret="' + reg.id + '">' + (regExpanded ? '&minus;' : '+') + '</span>';
       html += '<span class="tree-label">' + reg.label + '</span>';
       html += '<span class="tree-badge">[' + reg.children.length + ']</span>';
-      html += '<span class="tree-impact ' + (regImpact.total < 0 ? 'neg' : 'zero') + '">' + regImpact.total + 'm</span>';
+      html += '<span class="tree-impact">' + severityDots(regImpact.total) + '</span>';
       html += '</div>';
       if (regExpanded) {
         reg.children.forEach(function(dos) {
@@ -1549,7 +1570,7 @@
           html += '<div class="tree-node level-1' + (dosSel ? ' selected' : '') + '" data-node-id="' + dos.id + '" data-scenarios="' + dos.scenarioKeys.join(',') + '">';
           html += '<span class="tree-caret" data-caret="' + dos.id + '">' + (dosExpanded ? '&minus;' : '+') + '</span>';
           html += '<span class="tree-label">' + dos.label + '</span>';
-          html += '<span class="tree-impact ' + (dosImpact.total < 0 ? 'neg' : 'zero') + '">' + dosImpact.total + 'm</span>';
+          html += '<span class="tree-impact">' + severityDots(dosImpact.total) + '</span>';
           html += '</div>';
           if (dosExpanded) {
             dos.children.forEach(function(sc) {
@@ -1558,7 +1579,7 @@
               html += '<div class="tree-node level-2' + (scSel ? ' selected' : '') + '" data-node-id="' + sc.id + '" data-scenarios="' + sc.scenarioKeys.join(',') + '">';
               html += '<span class="tree-caret-empty"></span>';
               html += '<span class="tree-label italic">"' + sc.label + '"</span>';
-              html += '<span class="tree-impact ' + (scImpact.total < 0 ? 'neg' : 'zero') + '">' + scImpact.total + 'm</span>';
+              html += '<span class="tree-impact">' + severityDots(scImpact.total) + '</span>';
               html += '</div>';
             });
           }
@@ -1582,7 +1603,7 @@
       html += '<span class="tree-caret" data-caret="' + bkt.id + '">' + (bktExpanded ? '&minus;' : '+') + '</span>';
       html += '<span class="tree-label">' + bkt.label + '</span>';
       html += '<span class="tree-badge">[' + bkt.positions.length + ']</span>';
-      html += '<span class="tree-impact ' + (bktTot < 0 ? 'neg' : 'zero') + '">' + bktTot + 'm</span>';
+      html += '<span class="tree-impact">' + severityDots(bktTot) + '</span>';
       html += '</div>';
       if (bktExpanded) {
         bkt.children.forEach(function(grp) {
@@ -1595,7 +1616,7 @@
           html += '<span class="tree-caret" data-caret="' + grp.id + '">' + (grpExpanded ? '&minus;' : '+') + '</span>';
           html += '<span class="tree-label">' + grp.label + '</span>';
           html += '<span class="tree-badge">[' + grp.positions.length + ']</span>';
-          html += '<span class="tree-impact ' + (grpTot < 0 ? 'neg' : 'zero') + '">' + grpTot + 'm</span>';
+          html += '<span class="tree-impact">' + severityDots(grpTot) + '</span>';
           html += '</div>';
           if (grpExpanded) {
             grp.children.forEach(function(pos) {
@@ -1606,7 +1627,7 @@
               html += '<div class="tree-node level-2' + (posSel ? ' selected' : '') + '" data-node-id="' + pos.id + '" data-position-id="' + pos.positionId + '" data-position-kind="' + pos.kind + '">';
               html += '<span class="tree-caret-empty"></span>';
               html += '<span class="tree-label italic">' + pos.label + '</span>';
-              html += '<span class="tree-impact ' + (posTot < 0 ? 'neg' : 'zero') + '">' + posTot + 'm</span>';
+              html += '<span class="tree-impact">' + severityDots(posTot) + '</span>';
               html += '</div>';
             });
           }
@@ -1694,7 +1715,7 @@
           '<div class="agg-row-seed"><span class="seed-badge ' + seedClass + '">' + c.seedCode + ' ' + c.seedLabel + ' &middot; ' + c.seedPct + '% prob</span></div>' +
         '</div>' +
         '<div class="agg-row-bar-wrap"><div class="agg-row-bar" style="width:' + barPct + '%"></div></div>' +
-        '<div class="agg-row-val">' + c.impact.total + 'm</div>' +
+        '<div class="agg-row-val">' + severityDots(c.impact.total) + '</div>' +
       '</div>';
     }).join('');
 
@@ -1712,10 +1733,10 @@
 
   function renderKpiStrip(agg, count) {
     return '<div class="kpi-strip">' +
-      '<div class="kpi-cell"><div class="kpi-lbl">TOTAL IMPACT</div><div class="kpi-val ' + (agg.total < 0 ? 'neg' : 'zero') + '">' + agg.total + 'm</div></div>' +
-      '<div class="kpi-cell"><div class="kpi-lbl">INVESTMENTS</div><div class="kpi-val ' + (agg.invest < 0 ? 'neg' : 'zero') + '">' + agg.invest + 'm</div></div>' +
-      '<div class="kpi-cell"><div class="kpi-lbl">P&amp;C</div><div class="kpi-val ' + (agg.pandc < 0 ? 'neg' : 'zero') + '">' + agg.pandc + 'm</div></div>' +
-      '<div class="kpi-cell"><div class="kpi-lbl">OPERATIONS</div><div class="kpi-val ' + (agg.ops < 0 ? 'neg' : 'zero') + '">' + agg.ops + 'm</div></div>' +
+      '<div class="kpi-cell"><div class="kpi-lbl">TOTAL IMPACT</div><div class="kpi-val">' + severityDots(agg.total) + '</div></div>' +
+      '<div class="kpi-cell"><div class="kpi-lbl">INVESTMENTS</div><div class="kpi-val">' + severityDots(agg.invest) + '</div></div>' +
+      '<div class="kpi-cell"><div class="kpi-lbl">P&amp;C</div><div class="kpi-val">' + severityDots(agg.pandc) + '</div></div>' +
+      '<div class="kpi-cell"><div class="kpi-lbl">OPERATIONS</div><div class="kpi-val">' + severityDots(agg.ops) + '</div></div>' +
     '</div>';
   }
 
@@ -1747,15 +1768,15 @@
 
     var invDrv = block.investments.drivers.map(function(d) {
       var adj = Math.round(d.deltaEur * mult);
-      return '<div class="drv-row"><span class="drv-pos">' + d.positionId + '</span><span class="drv-val ' + (adj < 0 ? 'neg' : 'pos') + '">' + (adj > 0 ? '+' : '') + adj + 'm</span><span class="drv-rat"><em>' + d.rationale + '</em></span></div>';
+      return '<div class="drv-row"><span class="drv-pos">' + d.positionId + '</span><span class="drv-val">' + severityDots(adj) + '</span><span class="drv-rat"><em>' + d.rationale + '</em></span></div>';
     }).join('');
     var pcDrv = block.pandc.drivers.map(function(d) {
       var adj = Math.round(d.deltaEur * mult);
-      return '<div class="drv-row"><span class="drv-pos">' + d.policyId + '</span><span class="drv-val ' + (adj < 0 ? 'neg' : 'pos') + '">' + (adj > 0 ? '+' : '') + adj + 'm</span><span class="drv-rat"><em>' + d.rationale + '</em></span></div>';
+      return '<div class="drv-row"><span class="drv-pos">' + d.policyId + '</span><span class="drv-val">' + severityDots(adj) + '</span><span class="drv-rat"><em>' + d.rationale + '</em></span></div>';
     }).join('');
     var opDrv = block.operations.drivers.map(function(d) {
       var adj = Math.round(d.deltaEur * mult);
-      return '<div class="drv-row"><span class="drv-pos">' + d.opId + '</span><span class="drv-val ' + (adj < 0 ? 'neg' : 'pos') + '">' + (adj > 0 ? '+' : '') + adj + 'm</span><span class="drv-rat"><em>' + d.rationale + '</em></span></div>';
+      return '<div class="drv-row"><span class="drv-pos">' + d.opId + '</span><span class="drv-val">' + severityDots(adj) + '</span><span class="drv-rat"><em>' + d.rationale + '</em></span></div>';
     }).join('');
 
     var flags = (mat.redFlags || []).map(function(rf) {
@@ -1865,7 +1886,7 @@
           '<div class="agg-row-seed">' + p.scenarioCount + ' scenario' + (p.scenarioCount !== 1 ? 's' : '') + ' hit this position</div>' +
         '</div>' +
         '<div class="agg-row-bar-wrap"><div class="agg-row-bar" style="width:' + barPct + '%"></div></div>' +
-        '<div class="agg-row-val">' + p.total + 'm</div>' +
+        '<div class="agg-row-val">' + severityDots(p.total) + '</div>' +
       '</div>';
     }).join('');
 
@@ -1916,13 +1937,13 @@
     var meta = '';
     if (kind === 'inv') {
       posData = pf.investments.filter(function(x){return x.id === positionId;})[0];
-      if (posData) meta = posData.assetClass + '  |  ' + posData.country + '  |  ' + posData.sector + '  |  MV ' + posData.mv + 'm  |  Duration ' + (posData.duration || '-') + '  |  Rating ' + (posData.rating || '-') + '  |  ' + posData.ccy;
+      if (posData) meta = posData.assetClass + '  |  ' + posData.country + '  |  ' + posData.sector + '  |  Rating ' + (posData.rating || '-') + '  |  ' + posData.ccy;
     } else if (kind === 'pol') {
       posData = pf.pandc.filter(function(x){return x.id === positionId;})[0];
-      if (posData) meta = posData.lob + '  |  ' + posData.country + '  |  Sum Ins ' + posData.sumInsured + 'm  |  Deduct. ' + posData.deductible + 'm  |  GWP ' + posData.gwpShare + 'm';
+      if (posData) meta = posData.lob + '  |  ' + posData.country;
     } else {
       posData = pf.operations.filter(function(x){return x.id === positionId;})[0];
-      if (posData) meta = posData.type + '  |  ' + posData.location + '  |  ' + posData.country + '  |  Staff ' + posData.staff + '  |  Risk: ' + posData.riskLevel;
+      if (posData) meta = posData.type + '  |  ' + posData.location + '  |  ' + posData.country + '  |  Risk: ' + posData.riskLevel;
     }
 
     var hits = scenariosImpactingPosition(positionId, kind);
@@ -1935,9 +1956,9 @@
     var label = posData ? (kind === 'inv' ? posData.issuer : (kind === 'pol' ? (posData.lob + ' - ' + posData.country) : (posData.location + ' (' + posData.country + ')'))) : nodeLabel;
 
     var summaryStrip = '<div class="kpi-strip">' +
-      '<div class="kpi-cell"><div class="kpi-lbl">TOTAL DOWNSIDE</div><div class="kpi-val ' + (total < 0 ? 'neg' : 'zero') + '">' + total + 'm EUR</div></div>' +
+      '<div class="kpi-cell"><div class="kpi-lbl">TOTAL DOWNSIDE</div><div class="kpi-val">' + severityDots(total) + '</div></div>' +
       '<div class="kpi-cell"><div class="kpi-lbl">STRESSED BY</div><div class="kpi-val amber">' + hits.length + ' of ' + DOSSIER_MAIN_KEYS.length + '</div></div>' +
-      '<div class="kpi-cell"><div class="kpi-lbl">WORST SINGLE HIT</div><div class="kpi-val neg">' + (maxHit ? maxHit.deltaEur + 'm' : '-') + '</div></div>' +
+      '<div class="kpi-cell"><div class="kpi-lbl">WORST SINGLE HIT</div><div class="kpi-val">' + (maxHit ? severityDots(maxHit.deltaEur) : '-') + '</div></div>' +
       '<div class="kpi-cell"><div class="kpi-lbl">WORST HIT SCENARIO</div><div class="kpi-val small">' + maxHitLabel + '</div></div>' +
     '</div>';
 
@@ -1951,7 +1972,7 @@
           '<div class="agg-row-narrative"><em>' + h.rationale + '</em></div>' +
           '<div class="agg-row-seed"><span class="seed-badge ' + seedClass + '">' + seedInfo.seedCode + ' ' + seedInfo.label + ' &middot; ' + seedInfo.pct + '% prob</span></div>' +
         '</div>' +
-        '<div class="agg-row-val">' + h.deltaEur + 'm</div>' +
+        '<div class="agg-row-val">' + severityDots(h.deltaEur) + '</div>' +
       '</div>';
     }).join('');
 

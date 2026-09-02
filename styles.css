@@ -1481,3 +1481,23 @@ em { font-style: italic; }
   font-family: var(--font-serif); font-style: italic;
   font-size: 11px; color: var(--text-muted);
 }
+
+/* ==========================================================================
+   Severity dots (qualitative impact indicator)
+   ========================================================================== */
+
+.sev-dots {
+  display: inline-flex; align-items: center; gap: 3px;
+}
+.sev-dot {
+  display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+  border: 1px solid var(--accent-amber-dim);
+}
+.sev-dot.on { background: var(--accent-amber); border-color: var(--accent-amber); }
+.sev-dot.off { background: transparent; }
+
+/* Adjust containers that used to hold numbers */
+.tree-impact { min-width: 60px; text-align: right; display: inline-flex; justify-content: flex-end; }
+.kpi-val .sev-dots { margin-top: 4px; }
+.agg-row-val { text-align: right; display: flex; justify-content: flex-end; align-items: center; }
+.drv-val { display: inline-flex; align-items: center; min-width: 60px; }
